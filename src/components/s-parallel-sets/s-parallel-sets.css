@@ -30,6 +30,10 @@
   pointer-events: none;
 }
 
-.ribbon-highlight {
+.ribbon {
+  cursor: pointer;
+}
+
+.ribbon.highlight {
   opacity: var(--ribbon-highlight-opacity);
 }

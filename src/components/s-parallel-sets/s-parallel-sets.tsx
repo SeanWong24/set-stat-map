@@ -238,14 +238,15 @@ export class SParallelSets implements ComponentInterface {
           };
           const path = (
             <path
+              class="ribbon"
               ref={el => d3.select(el).datum(childDataNode)}
               d={pathD}
               fill={texture ? texture.url() : backgroundColor}
               opacity={this.ribbonOpacity}
               onMouseEnter={() => {
                 d3.select(this.hostElement.shadowRoot)
-                  .selectAll('g.ribbons path')
-                  .classed('ribbon-highlight', (node: ParallelSetsDataNode) => {
+                  .selectAll('.ribbon')
+                  .classed('highlight', (node: ParallelSetsDataNode) => {
                     const minValueHistoryLenght = d3.min([node.valueHistory.length, childDataNode.valueHistory.length]);
                     if (node.valueHistory.slice(0, minValueHistoryLenght).toString() === childDataNode.valueHistory.slice(0, minValueHistoryLenght).toString()) {
                       return true;
@@ -256,8 +257,8 @@ export class SParallelSets implements ComponentInterface {
               }}
               onMouseLeave={() => {
                 d3.select(this.hostElement.shadowRoot)
-                  .selectAll('.ribbons path')
-                  .classed('ribbon-highlight', false)
+                  .selectAll('.ribbon')
+                  .classed('highlight', false)
               }}
               onClick={() => this.ribbonClick.emit(eventData)}
               onContextMenu={event => {
