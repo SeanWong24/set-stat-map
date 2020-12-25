@@ -47,6 +47,10 @@ export namespace Components {
         "statisticsColumnDefinitions": { dimensionName: string, visType: string }[];
         "statisticsColumnsWidth": string;
     }
+    interface SStatisticsColumn {
+        "data": number[];
+        "header": string;
+    }
     interface SStatisticsColumns {
         "data": any[];
         "statisticsColumnDefinitions": { dimensionName: string, visType: string }[];
@@ -77,6 +81,12 @@ declare global {
         prototype: HTMLSSetStatElement;
         new (): HTMLSSetStatElement;
     };
+    interface HTMLSStatisticsColumnElement extends Components.SStatisticsColumn, HTMLStencilElement {
+    }
+    var HTMLSStatisticsColumnElement: {
+        prototype: HTMLSStatisticsColumnElement;
+        new (): HTMLSStatisticsColumnElement;
+    };
     interface HTMLSStatisticsColumnsElement extends Components.SStatisticsColumns, HTMLStencilElement {
     }
     var HTMLSStatisticsColumnsElement: {
@@ -88,6 +98,7 @@ declare global {
         "app-root": HTMLAppRootElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
         "s-set-stat": HTMLSSetStatElement;
+        "s-statistics-column": HTMLSStatisticsColumnElement;
         "s-statistics-columns": HTMLSStatisticsColumnsElement;
     }
 }
@@ -144,6 +155,10 @@ declare namespace LocalJSX {
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: string }[];
         "statisticsColumnsWidth"?: string;
     }
+    interface SStatisticsColumn {
+        "data"?: number[];
+        "header"?: string;
+    }
     interface SStatisticsColumns {
         "data"?: any[];
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: string }[];
@@ -153,6 +168,7 @@ declare namespace LocalJSX {
         "app-root": AppRoot;
         "s-parallel-sets": SParallelSets;
         "s-set-stat": SSetStat;
+        "s-statistics-column": SStatisticsColumn;
         "s-statistics-columns": SStatisticsColumns;
     }
 }
@@ -164,6 +180,7 @@ declare module "@stencil/core" {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
             "s-set-stat": LocalJSX.SSetStat & JSXBase.HTMLAttributes<HTMLSSetStatElement>;
+            "s-statistics-column": LocalJSX.SStatisticsColumn & JSXBase.HTMLAttributes<HTMLSStatisticsColumnElement>;
             "s-statistics-columns": LocalJSX.SStatisticsColumns & JSXBase.HTMLAttributes<HTMLSStatisticsColumnsElement>;
         }
     }

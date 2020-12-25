@@ -20,9 +20,10 @@ export class SStatisticsColumns {
         <div id="main-container">
           {
             this.statisticsColumnDefinitions?.map(statisticsColumnDefinition => (
-              <div
-                style={{ backgroundColor: 'lightblue' }}
-              >{statisticsColumnDefinition.dimensionName}</div>
+              <s-statistics-column
+                data={this.data.map(d => d[statisticsColumnDefinition.dimensionName])}
+                header={statisticsColumnDefinition.dimensionName}
+              ></s-statistics-column>
             ))
           }
         </div>
