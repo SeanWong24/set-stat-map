@@ -697,11 +697,12 @@ export class SParallelSets implements ComponentInterface {
       const previousDimensionName = this.dimensions[dimensionIndex - 1];
       const currentDimensionDataNodes: ParallelSetsDataNode[] = [];
       const currentDimensionValues = dimensionAndValuesDict[currentDimensionName];
+      const previousDimensionValues = dimensionAndValuesDict[previousDimensionName];
       const previousDimensionDataNodes = dimensionAndDataNodesDict[previousDimensionName];
       const previousDimensionDataNodeCount = previousDimensionDataNodes?.length;
 
       for (let currentDimensionValueIndex = 0; currentDimensionValueIndex < currentDimensionValues.length; currentDimensionValueIndex++) {
-        const previousDimensionValueCount = previousDimensionDataNodes?.length || 0;
+        const previousDimensionValueCount = previousDimensionValues?.length || 0;
         const currentDimensionValue = currentDimensionValues[currentDimensionValueIndex];
         if (dimensionIndex < 1) {
           currentDimensionDataNodes[currentDimensionValueIndex] = Object.assign(new ParallelSetsDataNode, {
