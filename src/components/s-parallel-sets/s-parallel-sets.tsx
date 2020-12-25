@@ -465,7 +465,7 @@ export class SParallelSets implements ComponentInterface {
             `Dimension: ${dimensionName}\n` +
             `Value: ${currentSegmentValue.toString()}\n` +
             `Count: ${dataRecordCount}\n` +
-            `Proportion: ${(proportion * 100).toFixed(2)}'%'`
+            `Proportion: ${(proportion * 100).toFixed(2)}%`
           }
         </title>
       </rect>
