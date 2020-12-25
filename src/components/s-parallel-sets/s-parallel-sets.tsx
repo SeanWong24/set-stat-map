@@ -53,6 +53,7 @@ export class SParallelSets implements ComponentInterface {
     this.dimensions = (this.dimensions?.length > 0) ? this.dimensions : Object.keys((value[0] || {}));
   }
 
+  @Event() visLoad: EventEmitter<{ data: ParallelSetsDataRecord[], dimensions: string[], valuesDict: { [dimensionName: string]: (string | number)[] }, dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] } }>;
   @Event() axisHeaderClick: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
   @Event() axisHeaderContextMenu: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
   @Event() axisHeaderMouseOver: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
@@ -99,7 +100,15 @@ export class SParallelSets implements ComponentInterface {
         const textureScale = textures ? d3.scaleOrdinal(textures) : undefined;
 
         mainContainer = (
-          <div id="main-container">
+          <div
+            id="main-container"
+            ref={() => this.visLoad.emit({
+              data: this.data,
+              dimensions: this.dimensions,
+              valuesDict: dimensionAndValuesDict,
+              dataNodesDict: dimensionAndDataNodesDict
+            })}
+          >
             {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
             {this.renderMainSvg({
               width,

@@ -137,6 +137,7 @@ declare namespace LocalJSX {
         "onRibbonContextMenu"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
         "onRibbonMouseOut"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
         "onRibbonMouseOver"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
+        "onVisLoad"?: (event: CustomEvent<{ data: ParallelSetsDataRecord[], dimensions: string[], valuesDict: { [dimensionName: string]: (string | number)[] }, dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] } }>) => void;
         "ribbonHighlightOpacity"?: number;
         "ribbonOpacity"?: number;
         "ribbonTension"?: number;
