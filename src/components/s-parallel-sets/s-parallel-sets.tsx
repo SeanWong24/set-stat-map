@@ -196,100 +196,107 @@ export class SParallelSets implements ComponentInterface {
       dimensionAndDataNodesDict
     } = params;
 
-    return this.dimensions.map((dimensionName, dimensionIndex) => {
-      const dataNodes = dimensionAndDataNodesDict[dimensionName];
-      const nextDimensionName = this.dimensions[dimensionIndex + 1];
-      const ribbons = dataNodes.map(dataNode => {
-        const x = this.obtainAxisPosition(width, this.sideMargin, dimensionIndex);
-        const childX = this.obtainAxisPosition(width, this.sideMargin, dimensionIndex + 1);
-        const childDataNodes = (dimensionAndDataNodesDict[nextDimensionName] || [])
-          // TODO try to use index calculation for the filter
-          .filter(childDataNode => childDataNode.valueHistory.slice(0, dataNode.valueHistory.length).toString() === dataNode.valueHistory.toString());
-        let totalPreviousCountRatio = 0;
-        return childDataNodes.map(childDataNode => {
-          const childCountRatio = (childDataNode.axisSegmentPosition[1] - childDataNode.axisSegmentPosition[0]) *
-            (dataNode.valueHistory[dimensionIndex] === this.autoMergedAxisSegmentName ? (1 - dataNode.autoMergedAxisSegmentAdjustmentRatio) : 1) /
-            dataNode.adjustmentRatio;
-          const y1 = (dataNode.adjustedAxisSegmentPosition[0] + totalPreviousCountRatio) * height;
-          const y2 = (dataNode.adjustedAxisSegmentPosition[0] + (totalPreviousCountRatio += childCountRatio)) * height;
-          const childY1 = childDataNode.adjustedAxisSegmentPosition[0] * height;
-          const childY2 = childDataNode.adjustedAxisSegmentPosition[1] * height;
-          const pathD = this.obtainRibbonPathD({
-            x,
-            y1,
-            y2,
-            childX,
-            childY1,
-            childY2
-          });
-          const backgroundColor = colorScale(dataNode.valueHistory[0].toString());
-          let texture;
-          if (textureScale && dataNode.valueHistory[1] !== undefined) {
-            const textureDictKey = `${dataNode.valueHistory[1]}\t${backgroundColor}`;
-            texture = this.textureDict[textureDictKey];
-            if (!texture) {
-              texture = textureScale(dataNode.valueHistory[1].toString())().background(backgroundColor);
-              this.textureDict[textureDictKey] = texture;
-            }
-            d3.select(this.textureContainerElement).call(texture);
-          }
+    // TODO extract methods
+    return (
+      <g class="ribbons">
+        {
+          this.dimensions.map((dimensionName, dimensionIndex) => {
+            const dataNodes = dimensionAndDataNodesDict[dimensionName];
+            const nextDimensionName = this.dimensions[dimensionIndex + 1];
+            const ribbons = dataNodes.map(dataNode => {
+              const x = this.obtainAxisPosition(width, this.sideMargin, dimensionIndex);
+              const childX = this.obtainAxisPosition(width, this.sideMargin, dimensionIndex + 1);
+              const childDataNodes = (dimensionAndDataNodesDict[nextDimensionName] || [])
+                // TODO try to use index calculation for the filter
+                .filter(childDataNode => childDataNode.valueHistory.slice(0, dataNode.valueHistory.length).toString() === dataNode.valueHistory.toString());
+              let totalPreviousCountRatio = 0;
+              return childDataNodes.map(childDataNode => {
+                const childCountRatio = (childDataNode.axisSegmentPosition[1] - childDataNode.axisSegmentPosition[0]) *
+                  (dataNode.valueHistory[dimensionIndex] === this.autoMergedAxisSegmentName ? (1 - dataNode.autoMergedAxisSegmentAdjustmentRatio) : 1) /
+                  dataNode.adjustmentRatio;
+                const y1 = (dataNode.adjustedAxisSegmentPosition[0] + totalPreviousCountRatio) * height;
+                const y2 = (dataNode.adjustedAxisSegmentPosition[0] + (totalPreviousCountRatio += childCountRatio)) * height;
+                const childY1 = childDataNode.adjustedAxisSegmentPosition[0] * height;
+                const childY2 = childDataNode.adjustedAxisSegmentPosition[1] * height;
+                const pathD = this.obtainRibbonPathD({
+                  x,
+                  y1,
+                  y2,
+                  childX,
+                  childY1,
+                  childY2
+                });
+                const backgroundColor = colorScale(dataNode.valueHistory[0].toString());
+                let texture;
+                if (textureScale && dataNode.valueHistory[1] !== undefined) {
+                  const textureDictKey = `${dataNode.valueHistory[1]}\t${backgroundColor}`;
+                  texture = this.textureDict[textureDictKey];
+                  if (!texture) {
+                    texture = textureScale(dataNode.valueHistory[1].toString())().background(backgroundColor);
+                    this.textureDict[textureDictKey] = texture;
+                  }
+                  d3.select(this.textureContainerElement).call(texture);
+                }
 
-          const valueHistory = childDataNode.valueHistory;
-          const dataRecordCount = childDataNode.dataRecords.length;
-          const proportion = childDataNode.dataRecords.length / this.data.length;
+                const valueHistory = childDataNode.valueHistory;
+                const dataRecordCount = childDataNode.dataRecords.length;
+                const proportion = childDataNode.dataRecords.length / this.data.length;
 
-          const eventData = {
-            dimensions: [dimensionName, nextDimensionName],
-            valueHistory,
-            count: dataRecordCount,
-            proportion,
-            dataNode
-          };
-          const path = (
-            <path
-              class="ribbon"
-              ref={el => d3.select(el).datum(childDataNode)}
-              d={pathD}
-              fill={texture ? texture.url() : backgroundColor}
-              opacity={this.ribbonOpacity}
-              onMouseEnter={() => {
-                d3.select(this.hostElement.shadowRoot)
-                  .selectAll('.ribbon')
-                  .classed('highlight', (node: ParallelSetsDataNode) => {
-                    const minValueHistoryLenght = d3.min([node.valueHistory.length, childDataNode.valueHistory.length]);
-                    if (node.valueHistory.slice(0, minValueHistoryLenght).toString() === childDataNode.valueHistory.slice(0, minValueHistoryLenght).toString()) {
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  })
-              }}
-              onMouseLeave={() => {
-                d3.select(this.hostElement.shadowRoot)
-                  .selectAll('.ribbon')
-                  .classed('highlight', false)
-              }}
-              onClick={() => this.ribbonClick.emit(eventData)}
-              onContextMenu={event => {
-                event.preventDefault();
-                this.ribbonContextMenu.emit(eventData);
-              }}
-              onMouseOver={() => this.ribbonMouseOver.emit(eventData)}
-              onMouseOut={() => this.ribbonMouseOut.emit(eventData)}
-            >
-              <title>{
-                `Dimension: ${dimensionName} -> ${nextDimensionName}\n` +
-                `Value History: ${valueHistory.join(' -> ')}\n` +
-                `Count: ${dataRecordCount}\n` +
-                `Proportion: ${(proportion * 100).toFixed(2)}%`
-              }</title>
-            </path>
-          );
-          return path;
-        });
-      });
-      return <g class="ribbons">{ribbons.flat()}</g>
-    });
+                const eventData = {
+                  dimensions: [dimensionName, nextDimensionName],
+                  valueHistory,
+                  count: dataRecordCount,
+                  proportion,
+                  dataNode
+                };
+                const path = (
+                  <path
+                    class="ribbon"
+                    ref={el => d3.select(el).datum(childDataNode)}
+                    d={pathD}
+                    fill={texture ? texture.url() : backgroundColor}
+                    opacity={this.ribbonOpacity}
+                    onMouseEnter={() => {
+                      d3.select(this.hostElement.shadowRoot)
+                        .selectAll('.ribbon')
+                        .classed('highlight', (node: ParallelSetsDataNode) => {
+                          const minValueHistoryLenght = d3.min([node.valueHistory.length, childDataNode.valueHistory.length]);
+                          if (node.valueHistory.slice(0, minValueHistoryLenght).toString() === childDataNode.valueHistory.slice(0, minValueHistoryLenght).toString()) {
+                            return true;
+                          } else {
+                            return false;
+                          }
+                        })
+                    }}
+                    onMouseLeave={() => {
+                      d3.select(this.hostElement.shadowRoot)
+                        .selectAll('.ribbon')
+                        .classed('highlight', false)
+                    }}
+                    onClick={() => this.ribbonClick.emit(eventData)}
+                    onContextMenu={event => {
+                      event.preventDefault();
+                      this.ribbonContextMenu.emit(eventData);
+                    }}
+                    onMouseOver={() => this.ribbonMouseOver.emit(eventData)}
+                    onMouseOut={() => this.ribbonMouseOut.emit(eventData)}
+                  >
+                    <title>{
+                      `Dimension: ${dimensionName} -> ${nextDimensionName}\n` +
+                      `Value History: ${valueHistory.join(' -> ')}\n` +
+                      `Count: ${dataRecordCount}\n` +
+                      `Proportion: ${(proportion * 100).toFixed(2)}%`
+                    }</title>
+                  </path>
+                );
+                return path;
+              });
+            });
+            return <g class="ribbon-group">{ribbons.flat()}</g>
+          })
+        }
+      </g>
+    );
   }
 
   private obtainRibbonPathD(params: {
