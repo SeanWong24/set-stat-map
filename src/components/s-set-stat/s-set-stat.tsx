@@ -92,11 +92,11 @@ export class SSetStat {
     for (const lastDimensionDataNode of lastDimensionDataNodes) {
       const lastDimensionValue = lastDimensionDataNode.valueHistory[lastDimensionIndex];
       const axisSegmentPosition = lastAxisSegmentValueAndPositionDict[lastDimensionValue.toString()];
-      const minAxisSegmentPosition = lastDimensionDataNode.adjustedSegmentPosition[0];
+      const minAxisSegmentPosition = lastDimensionDataNode.adjustedAxisSegmentPosition[0];
       if (Number.isNaN(axisSegmentPosition.minSegmentPosition) || axisSegmentPosition.minSegmentPosition > minAxisSegmentPosition) {
         axisSegmentPosition.minSegmentPosition = minAxisSegmentPosition;
       }
-      const maxAxisSegmentPosition = lastDimensionDataNode.adjustedSegmentPosition[1];
+      const maxAxisSegmentPosition = lastDimensionDataNode.adjustedAxisSegmentPosition[1];
       if (Number.isNaN(axisSegmentPosition.maxSegmentPosition) || axisSegmentPosition.maxSegmentPosition < maxAxisSegmentPosition) {
         axisSegmentPosition.maxSegmentPosition = maxAxisSegmentPosition;
       }

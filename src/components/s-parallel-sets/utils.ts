@@ -5,15 +5,15 @@ export declare type SortingHandler = (a: number | string, b: number | string) =>
 export class ParallelSetsDataNode {
     valueHistory: (string | number)[] = [];
     dataRecords: ParallelSetsDataRecord[] = [];
-    segmentPosition: [number, number] = [0, 0];
+    axisSegmentPosition: [number, number] = [0, 0];
     autoMergedAxisSegmentAdjustmentRatio: number = 0;
     adjustmentRatio: number = 1;
 
-    private _adjustedSegmentPosition?: [number, number];
-    get adjustedSegmentPosition() {
-        return this._adjustedSegmentPosition || this.segmentPosition;
+    private _adjustedAxisSegmentPosition?: [number, number];
+    get adjustedAxisSegmentPosition() {
+        return this._adjustedAxisSegmentPosition || this.axisSegmentPosition;
     }
-    set adjustedSegmentPosition(value) {
-        this._adjustedSegmentPosition = value;
+    set adjustedAxisSegmentPosition(value) {
+        this._adjustedAxisSegmentPosition = value;
     }
 }

@@ -206,13 +206,13 @@ export class SParallelSets implements ComponentInterface {
           .filter(childDataNode => childDataNode.valueHistory.slice(0, dataNode.valueHistory.length).toString() === dataNode.valueHistory.toString());
         let totalPreviousCountRatio = 0;
         return childDataNodes.map(childDataNode => {
-          const childCountRatio = (childDataNode.segmentPosition[1] - childDataNode.segmentPosition[0]) *
+          const childCountRatio = (childDataNode.axisSegmentPosition[1] - childDataNode.axisSegmentPosition[0]) *
             (dataNode.valueHistory[dimensionIndex] === this.autoMergedAxisSegmentName ? (1 - dataNode.autoMergedAxisSegmentAdjustmentRatio) : 1) /
             dataNode.adjustmentRatio;
-          const y1 = (dataNode.adjustedSegmentPosition[0] + totalPreviousCountRatio) * height;
-          const y2 = (dataNode.adjustedSegmentPosition[0] + (totalPreviousCountRatio += childCountRatio)) * height;
-          const childY1 = childDataNode.adjustedSegmentPosition[0] * height;
-          const childY2 = childDataNode.adjustedSegmentPosition[1] * height;
+          const y1 = (dataNode.adjustedAxisSegmentPosition[0] + totalPreviousCountRatio) * height;
+          const y2 = (dataNode.adjustedAxisSegmentPosition[0] + (totalPreviousCountRatio += childCountRatio)) * height;
+          const childY1 = childDataNode.adjustedAxisSegmentPosition[0] * height;
+          const childY2 = childDataNode.adjustedAxisSegmentPosition[1] * height;
           const pathD = this.obtainRibbonPathD({
             x,
             y1,
@@ -367,8 +367,8 @@ export class SParallelSets implements ComponentInterface {
   private renderAxisSegment(width: number, dimensionIndex: number, currentSegmentDataNodes: ParallelSetsDataNode[], height: number, dimensionName: string, currentSegmentValue: string) {
     const x = this.obtainAxisPosition(width, this.sideMargin, dimensionIndex);
     const currentSegmentPosition = [
-      currentSegmentDataNodes[0].adjustedSegmentPosition[0],
-      currentSegmentDataNodes[currentSegmentDataNodes.length - 1].adjustedSegmentPosition[1]
+      currentSegmentDataNodes[0].adjustedAxisSegmentPosition[0],
+      currentSegmentDataNodes[currentSegmentDataNodes.length - 1].adjustedAxisSegmentPosition[1]
     ];
     return (
       <g class="axis-segment">
@@ -444,7 +444,7 @@ export class SParallelSets implements ComponentInterface {
     } = params;
 
     const dataRecordCount = d3.sum(currentSegmentDataNodes.map(d => d.dataRecords.length));
-    const proportion = d3.sum(currentSegmentDataNodes.map(d => d.segmentPosition[1] - d.segmentPosition[0])) / (1 - this.maxAxisSegmentMarginRatioAllowed);
+    const proportion = d3.sum(currentSegmentDataNodes.map(d => d.axisSegmentPosition[1] - d.axisSegmentPosition[0])) / (1 - this.maxAxisSegmentMarginRatioAllowed);
     const eventData = {
       dimensionName,
       value: currentSegmentValue,
@@ -628,12 +628,12 @@ export class SParallelSets implements ComponentInterface {
       }
 
       if (autoMergedAxisSegmentAdjustmentOffset) {
-        dataNode.adjustedSegmentPosition = [
+        dataNode.adjustedAxisSegmentPosition = [
           adjustedTotalPreviousCountRatio + totalMarginRatio,
           adjustedTotalCurrentCountRatio + totalMarginRatio
         ];
       }
-      dataNode.segmentPosition = [
+      dataNode.axisSegmentPosition = [
         totalPreviousCountRatio + totalMarginRatio,
         totalCurrentCountRatio + totalMarginRatio
       ];
