@@ -1,4 +1,5 @@
 import { Component, h, Host } from '@stencil/core';
+import { data, dimensions } from '../../global/temp';
 
 @Component({
   tag: 'app-home',
@@ -15,13 +16,11 @@ export class AppHome {
         </ion-header>
 
         <ion-content class="ion-padding">
-          <s-parallel-sets
+          <s-set-stat
             style={{ width: '800px', height: '600px' }}
-            ribbonTension={.5}
-            onAxisHeaderContextMenu={({ detail }) => console.log(detail)}
-            onAxisSegmentContextMenu={({ detail }) => console.log(detail)}
-            onRibbonContextMenu={({ detail }) => console.log(detail)}
-          ></s-parallel-sets>
+            data={data}
+            parallelSetsDimensions={dimensions}
+          ></s-set-stat>
         </ion-content>
       </Host>
     );

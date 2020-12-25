@@ -34,6 +34,17 @@ export namespace Components {
         "ribbonTension": number;
         "sideMargin": number;
     }
+    interface SSetStat {
+        "colorScheme": string[];
+        "data": any[];
+        "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
+        "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
+        "parallelSetsDimensions": string[];
+        "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
+        "parallelSetsRibbonTension": number;
+        "parallelSetsWidth": string;
+    }
 }
 declare global {
     interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
@@ -54,10 +65,17 @@ declare global {
         prototype: HTMLSParallelSetsElement;
         new (): HTMLSParallelSetsElement;
     };
+    interface HTMLSSetStatElement extends Components.SSetStat, HTMLStencilElement {
+    }
+    var HTMLSSetStatElement: {
+        prototype: HTMLSSetStatElement;
+        new (): HTMLSSetStatElement;
+    };
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
+        "s-set-stat": HTMLSSetStatElement;
     }
 }
 declare namespace LocalJSX {
@@ -100,10 +118,22 @@ declare namespace LocalJSX {
         "ribbonTension"?: number;
         "sideMargin"?: number;
     }
+    interface SSetStat {
+        "colorScheme"?: string[];
+        "data"?: any[];
+        "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
+        "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
+        "parallelSetsDimensions"?: string[];
+        "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
+        "parallelSetsRibbonTension"?: number;
+        "parallelSetsWidth"?: string;
+    }
     interface IntrinsicElements {
         "app-home": AppHome;
         "app-root": AppRoot;
         "s-parallel-sets": SParallelSets;
+        "s-set-stat": SSetStat;
     }
 }
 export { LocalJSX as JSX };
@@ -113,6 +143,7 @@ declare module "@stencil/core" {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
+            "s-set-stat": LocalJSX.SSetStat & JSXBase.HTMLAttributes<HTMLSSetStatElement>;
         }
     }
 }
