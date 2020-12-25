@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  
+  --axis-text-font-size: unset;
+  --ribbon-highlight-opacity: unset;
+}
+
+#main-container {
+  width: 100%;
+  height: 100%;
+}
+
+.axis-header-text {
+  cursor: pointer;
+}
+
+.axis-segment-box {
+  cursor: pointer;
+  opacity: 0;
+}
+
+.axis-segment-box:hover {
+  opacity: .5;
+}
+
+.axis-segment-text {
+  font-size: var(--axis-text-font-size);
+  pointer-events: none;
+}
+
+.ribbon-highlight {
+  opacity: var(--ribbon-highlight-opacity);
+}

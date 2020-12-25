@@ -15,7 +15,13 @@ export class AppHome {
         </ion-header>
 
         <ion-content class="ion-padding">
-          Home
+          <s-parallel-sets
+            style={{ width: '800px', height: '600px' }}
+            ribbonTension={.5}
+            onAxisHeaderContextMenu={({ detail }) => console.log(detail)}
+            onAxisSegmentContextMenu={({ detail }) => console.log(detail)}
+            onRibbonContextMenu={({ detail }) => console.log(detail)}
+          ></s-parallel-sets>
         </ion-content>
       </Host>
     );

@@ -5,10 +5,34 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from "./components/s-parallel-sets/utils";
 export namespace Components {
     interface AppHome {
     }
     interface AppRoot {
+    }
+    interface SParallelSets {
+        "autoMergedAxisSegmentMaxRatio": number;
+        "autoMergedAxisSegmentName": string | { [dimensionName: string]: string | number };
+        "axisBoxFill": string;
+        "axisBoxWidth": number;
+        "axisHeaderTextColor": string;
+        "axisHeaderTextSize": number;
+        "axisHeaderTextWeight": string;
+        "axisSegmentTextColor": string;
+        "axisStrokeWidth": number;
+        "colorScheme": string[];
+        "data": ParallelSetsDataRecord[];
+        "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "dimensionValueSortingMethods": SortingHandler | { [dimensionName: string]: SortingHandler };
+        "dimensions": string[];
+        "maxAxisSegmentCount": number | { [dimensionName: string]: number };
+        "maxAxisSegmentMarginRatioAllowed": number;
+        "minimumRatioToShowAxisText": number;
+        "ribbonHighlightOpacity": number;
+        "ribbonOpacity": number;
+        "ribbonTension": number;
+        "sideMargin": number;
     }
 }
 declare global {
@@ -24,9 +48,16 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLSParallelSetsElement extends Components.SParallelSets, HTMLStencilElement {
+    }
+    var HTMLSParallelSetsElement: {
+        prototype: HTMLSParallelSetsElement;
+        new (): HTMLSParallelSetsElement;
+    };
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
+        "s-parallel-sets": HTMLSParallelSetsElement;
     }
 }
 declare namespace LocalJSX {
@@ -34,9 +65,45 @@ declare namespace LocalJSX {
     }
     interface AppRoot {
     }
+    interface SParallelSets {
+        "autoMergedAxisSegmentMaxRatio"?: number;
+        "autoMergedAxisSegmentName"?: string | { [dimensionName: string]: string | number };
+        "axisBoxFill"?: string;
+        "axisBoxWidth"?: number;
+        "axisHeaderTextColor"?: string;
+        "axisHeaderTextSize"?: number;
+        "axisHeaderTextWeight"?: string;
+        "axisSegmentTextColor"?: string;
+        "axisStrokeWidth"?: number;
+        "colorScheme"?: string[];
+        "data"?: ParallelSetsDataRecord[];
+        "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "dimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };
+        "dimensions"?: string[];
+        "maxAxisSegmentCount"?: number | { [dimensionName: string]: number };
+        "maxAxisSegmentMarginRatioAllowed"?: number;
+        "minimumRatioToShowAxisText"?: number;
+        "onAxisHeaderClick"?: (event: CustomEvent<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisHeaderContextMenu"?: (event: CustomEvent<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisHeaderMouseOut"?: (event: CustomEvent<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisHeaderMouseOver"?: (event: CustomEvent<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisSegmentContextMenu"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisSegmentMouseOut"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onAxisSegmentMouseOver"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onRibbonClick"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
+        "onRibbonContextMenu"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
+        "onRibbonMouseOut"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
+        "onRibbonMouseOver"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
+        "ribbonHighlightOpacity"?: number;
+        "ribbonOpacity"?: number;
+        "ribbonTension"?: number;
+        "sideMargin"?: number;
+    }
     interface IntrinsicElements {
         "app-home": AppHome;
         "app-root": AppRoot;
+        "s-parallel-sets": SParallelSets;
     }
 }
 export { LocalJSX as JSX };
@@ -45,6 +112,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
         }
     }
 }
