@@ -517,7 +517,8 @@ export class SParallelSets implements ComponentInterface {
                   color: this.axisHeaderTextColor,
                   fontSize: this.axisHeaderTextSize + 'px',
                   fontWeight: this.axisHeaderTextWeight,
-                  left: this.obtainAxisPosition(width, this.sideMargin, dimensionIndex) + 'px'
+                  left: this.obtainAxisPosition(width, this.sideMargin, dimensionIndex) + 'px',
+                  transform: this.obtainAxisHeaderTransform(dimensionIndex)
                 }}
                 onClick={() => this.axisHeaderClick.emit(eventData)}
                 onContextMenu={event => {
@@ -532,6 +533,16 @@ export class SParallelSets implements ComponentInterface {
         }
       </div>
     );
+  }
+
+  private obtainAxisHeaderTransform(dimensionIndex: number) {
+    let transform = 'translate(-50%)';
+    if (dimensionIndex === 0) {
+      transform = 'translate(0%)';
+    } else if (dimensionIndex === this.dimensions.length - 1) {
+      transform = `translate(calc(-100% + ${this.axisBoxWidth}px))`;
+    }
+    return transform;
   }
 
   private generateDimensionAndDataNodesDict(dimensionAndValuesDict: { [dimensionName: string]: (string | number)[] }) {
