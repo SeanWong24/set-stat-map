@@ -77,6 +77,10 @@ export class SParallelSets implements ComponentInterface {
     resizeObserver.observe(this.hostElement);
   }
 
+  componentWillLoad() {
+    this.dataWatchHandler(this.data);
+  }
+
   componentWillRender() {
     this.hostElement.style.setProperty("--axis-text-font-size", this.axisBoxWidth * .8 + 'px');
     this.hostElement.style.setProperty('--ribbon-highlight-opacity', this.ribbonHighlightOpacity.toString());
