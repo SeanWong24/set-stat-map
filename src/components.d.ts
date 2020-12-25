@@ -38,6 +38,7 @@ export namespace Components {
         "colorScheme": string[];
         "data": any[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "headerTextSize": number;
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
         "parallelSetsDimensions": string[];
@@ -50,9 +51,23 @@ export namespace Components {
     interface SStatisticsColumn {
         "data": number[];
         "header": string;
+        "headerTextSize": number;
+        "rowValueAndPositionDict": {
+    [value: string]: {
+      minSegmentPosition: number;
+      maxSegmentPosition: number;
+    }
+  };
     }
     interface SStatisticsColumns {
         "data": any[];
+        "headerTextSize": number;
+        "rowValueAndPositionDict": {
+    [value: string]: {
+      minSegmentPosition: number;
+      maxSegmentPosition: number;
+    }
+  };
         "statisticsColumnDefinitions": { dimensionName: string, visType: string }[];
     }
 }
@@ -147,6 +162,7 @@ declare namespace LocalJSX {
         "colorScheme"?: string[];
         "data"?: any[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "headerTextSize"?: number;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
         "parallelSetsDimensions"?: string[];
@@ -159,9 +175,23 @@ declare namespace LocalJSX {
     interface SStatisticsColumn {
         "data"?: number[];
         "header"?: string;
+        "headerTextSize"?: number;
+        "rowValueAndPositionDict"?: {
+    [value: string]: {
+      minSegmentPosition: number;
+      maxSegmentPosition: number;
+    }
+  };
     }
     interface SStatisticsColumns {
         "data"?: any[];
+        "headerTextSize"?: number;
+        "rowValueAndPositionDict"?: {
+    [value: string]: {
+      minSegmentPosition: number;
+      maxSegmentPosition: number;
+    }
+  };
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: string }[];
     }
     interface IntrinsicElements {

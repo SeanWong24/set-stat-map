@@ -11,6 +11,13 @@ export class SStatisticsColumns {
 
   @Prop() data: any[];
   @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: string }[];
+  @Prop() rowValueAndPositionDict: {
+    [value: string]: {
+      minSegmentPosition: number;
+      maxSegmentPosition: number;
+    }
+  };
+  @Prop() headerTextSize: number = 16;
 
   render() {
     this.hostElement.style.setProperty("--column-count", this.statisticsColumnDefinitions.length.toString());
@@ -23,6 +30,8 @@ export class SStatisticsColumns {
               <s-statistics-column
                 data={this.data.map(d => d[statisticsColumnDefinition.dimensionName])}
                 header={statisticsColumnDefinition.dimensionName}
+                rowValueAndPositionDict={this.rowValueAndPositionDict}
+                headerTextSize={this.headerTextSize}
               ></s-statistics-column>
             ))
           }
