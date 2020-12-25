@@ -3,8 +3,6 @@ import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from './
 import * as d3 from 'd3';
 import textureGenerator from 'textures';
 
-import { data, dimensions } from './temp';
-
 @Component({
   tag: 's-parallel-sets',
   styleUrl: 's-parallel-sets.css',
@@ -17,8 +15,8 @@ export class SParallelSets implements ComponentInterface {
 
   @Element() hostElement: HTMLElement;
 
-  @Prop() data: ParallelSetsDataRecord[] = data; // TODO remove me
-  @Prop({ mutable: true }) dimensions: string[] = dimensions; // TODO remove me
+  @Prop() data: ParallelSetsDataRecord[] = [];
+  @Prop({ mutable: true }) dimensions: string[];
   @Prop() dimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler };
   @Prop() maxAxisSegmentCount: number | { [dimensionName: string]: number } = 10;
   @Prop() autoMergedAxisSegmentName: string | { [dimensionName: string]: string | number } = '*Other*';
@@ -52,7 +50,7 @@ export class SParallelSets implements ComponentInterface {
 
   @Watch('data')
   dataWatchHandler(value: ParallelSetsDataRecord[]) {
-    this.dimensions = (this.dimensions?.length) ? this.dimensions : Object.keys((value[0] || {}));
+    this.dimensions = (this.dimensions?.length > 0) ? this.dimensions : Object.keys((value[0] || {}));
   }
 
   @Event() axisHeaderClick: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
@@ -87,27 +85,31 @@ export class SParallelSets implements ComponentInterface {
   render() {
     let mainContainer = <div>Loading...</div>;
     if (this.hostElementBoundingClientRect && this.textureContainerElement) {
-      const dimensionAndValuesDict = this.generateDimensionAndValuesDict();
-      const dimensionAndDataNodesDict = this.generateDimensionAndDataNodesDict(dimensionAndValuesDict);
+      if (this.data?.length > 0) {
+        const dimensionAndValuesDict = this.generateDimensionAndValuesDict();
+        const dimensionAndDataNodesDict = this.generateDimensionAndDataNodesDict(dimensionAndValuesDict);
 
-      const { width, height } = this.hostElementBoundingClientRect || {};
-      const colorScale = d3.scaleOrdinal(this.colorScheme);
-      const textures = this.defineTexturesHandler ? this.defineTexturesHandler(textureGenerator) : undefined;
-      const textureScale = textures ? d3.scaleOrdinal(textures) : undefined;
+        const { width, height } = this.hostElementBoundingClientRect || {};
+        const colorScale = d3.scaleOrdinal(this.colorScheme);
+        const textures = this.defineTexturesHandler ? this.defineTexturesHandler(textureGenerator) : undefined;
+        const textureScale = textures ? d3.scaleOrdinal(textures) : undefined;
 
-      mainContainer = (
-        <div id="main-container">
-          {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
-          {this.renderMainSvg({
-            width,
-            height,
-            colorScale,
-            textureScale,
-            dimensionAndDataNodesDict,
-            dimensionAndValuesDict
-          })}
-        </div>
-      );
+        mainContainer = (
+          <div id="main-container">
+            {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
+            {this.renderMainSvg({
+              width,
+              height,
+              colorScale,
+              textureScale,
+              dimensionAndDataNodesDict,
+              dimensionAndValuesDict
+            })}
+          </div>
+        );
+      } else {
+        mainContainer = <div>No data</div>;
+      }
     }
 
     return (
