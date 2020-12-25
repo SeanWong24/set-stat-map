@@ -150,7 +150,7 @@ export class SParallelSets implements ComponentInterface {
     } = params;
 
     return (
-      <svg id="main-svg" width={width} height={height}>
+      <svg id="main-svg" width={width} height={height - this.axisHeaderTextSize}>
         {
           this.renderRibbons({
             width,
