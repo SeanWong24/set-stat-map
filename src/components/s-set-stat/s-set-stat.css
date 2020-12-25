@@ -5,4 +5,10 @@
 
 s-parallel-sets {
   height: 100%;
+  vertical-align: top;
+}
+
+s-statistics-columns {
+  height: 100%;
+  vertical-align: top;
 }

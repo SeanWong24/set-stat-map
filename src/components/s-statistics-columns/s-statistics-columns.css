@@ -1,0 +1,16 @@
+:host {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+
+  --column-count: 0;
+}
+
+#main-container {
+  width: 100%;
+  height: 100%;
+  display: inline-grid;
+  grid-template-columns: repeat(var(--column-count), 1fr);
+  grid-column-gap: 2px;
+}
