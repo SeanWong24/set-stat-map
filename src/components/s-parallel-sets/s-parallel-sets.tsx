@@ -157,12 +157,13 @@ export class SParallelSets implements ComponentInterface {
       dimensionAndValuesDict
     } = params;
 
+    const svgHeight = height - this.axisHeaderTextSize;
     return (
-      <svg id="main-svg" width={width} height={height - this.axisHeaderTextSize}>
+      <svg id="main-svg" width={width} height={svgHeight}>
         {
           this.renderRibbons({
             width,
-            height,
+            height: svgHeight,
             colorScale,
             textureScale,
             dimensionAndDataNodesDict
@@ -171,7 +172,7 @@ export class SParallelSets implements ComponentInterface {
         {
           this.renderAxes({
             width,
-            height,
+            height: svgHeight,
             dimensionAndDataNodesDict,
             dimensionAndValuesDict
           })
