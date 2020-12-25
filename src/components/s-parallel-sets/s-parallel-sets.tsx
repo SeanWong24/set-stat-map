@@ -128,7 +128,6 @@ export class SParallelSets implements ComponentInterface {
     return <svg
       id="texture-container"
       ref={el => this.textureContainerElement = el}
-      height={0}
     ></svg>;
   }
 

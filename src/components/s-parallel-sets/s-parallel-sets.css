@@ -13,6 +13,12 @@
   height: 100%;
 }
 
+#texture-container {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
 .axis-header-text {
   cursor: pointer;
 }
