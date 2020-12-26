@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State } from '@stencil/core';
+import { Component, Host, h, Prop, State, ComponentInterface } from '@stencil/core';
 import * as d3 from 'd3';
 import { ParallelSetsDataNode, ParallelSetsDataRecord } from '../s-parallel-sets/utils';
 
@@ -7,7 +7,7 @@ import { ParallelSetsDataNode, ParallelSetsDataRecord } from '../s-parallel-sets
   styleUrl: 's-set-stat.css',
   shadow: true,
 })
-export class SSetStat {
+export class SSetStat implements ComponentInterface {
 
   @Prop() data: any[] = [];
   @Prop() parallelSetsWidth: string = '60%';

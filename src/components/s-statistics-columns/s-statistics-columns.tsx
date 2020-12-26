@@ -1,11 +1,11 @@
-import { Component, Host, h, Element, Prop } from '@stencil/core';
+import { Component, Host, h, Element, Prop, ComponentInterface } from '@stencil/core';
 
 @Component({
   tag: 's-statistics-columns',
   styleUrl: 's-statistics-columns.css',
   shadow: true,
 })
-export class SStatisticsColumns {
+export class SStatisticsColumns implements ComponentInterface {
 
   @Element() hostElement: HTMLElement;
 
