@@ -6,10 +6,24 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from "./components/s-parallel-sets/utils";
+import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
     interface AppHome {
     }
     interface AppRoot {
+    }
+    interface SBoxPlotItem {
+        "boxFill": string;
+        "boxStroke": string;
+        "connectionLineStroke": string;
+        "enableTooltip": boolean;
+        "maxLineStroke": string;
+        "medianLineStroke": string;
+        "minLineStroke": string;
+        "orientation": 'horizontal' | 'vertical';
+        "scaleMaxValue": number;
+        "scaleMinValue": number;
+        "values": number[];
     }
     interface SParallelSets {
         "autoMergedAxisSegmentMaxRatio": number;
@@ -47,11 +61,11 @@ export namespace Components {
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
-        "statisticsColumnDefinitions": { dimensionName: string, visType: string }[];
+        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
         "statisticsColumnsWidth": string;
     }
     interface SStatisticsColumn {
-        "data": number[];
+        "data": { [rowValue: string]: number[] };
         "header": string;
         "headerTextColor": string;
         "headerTextSize": number;
@@ -86,7 +100,8 @@ export namespace Components {
       maxSegmentPosition: number;
     }
   };
-        "statisticsColumnDefinitions": { dimensionName: string, visType: string }[];
+        "rowValueDimensionName": string;
+        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
     }
 }
 declare global {
@@ -101,6 +116,12 @@ declare global {
     var HTMLAppRootElement: {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
+    };
+    interface HTMLSBoxPlotItemElement extends Components.SBoxPlotItem, HTMLStencilElement {
+    }
+    var HTMLSBoxPlotItemElement: {
+        prototype: HTMLSBoxPlotItemElement;
+        new (): HTMLSBoxPlotItemElement;
     };
     interface HTMLSParallelSetsElement extends Components.SParallelSets, HTMLStencilElement {
     }
@@ -129,6 +150,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
+        "s-box-plot-item": HTMLSBoxPlotItemElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
         "s-set-stat": HTMLSSetStatElement;
         "s-statistics-column": HTMLSStatisticsColumnElement;
@@ -139,6 +161,20 @@ declare namespace LocalJSX {
     interface AppHome {
     }
     interface AppRoot {
+    }
+    interface SBoxPlotItem {
+        "boxFill"?: string;
+        "boxStroke"?: string;
+        "connectionLineStroke"?: string;
+        "enableTooltip"?: boolean;
+        "maxLineStroke"?: string;
+        "medianLineStroke"?: string;
+        "minLineStroke"?: string;
+        "onItemLoad"?: (event: CustomEvent<{ min: number, q1: number, median: number, q3: number, max: number }>) => void;
+        "orientation"?: 'horizontal' | 'vertical';
+        "scaleMaxValue"?: number;
+        "scaleMinValue"?: number;
+        "values"?: number[];
     }
     interface SParallelSets {
         "autoMergedAxisSegmentMaxRatio"?: number;
@@ -189,11 +225,11 @@ declare namespace LocalJSX {
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;
         "parallelSetsWidth"?: string;
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: string }[];
+        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
         "statisticsColumnsWidth"?: string;
     }
     interface SStatisticsColumn {
-        "data"?: number[];
+        "data"?: { [rowValue: string]: number[] };
         "header"?: string;
         "headerTextColor"?: string;
         "headerTextSize"?: number;
@@ -228,11 +264,13 @@ declare namespace LocalJSX {
       maxSegmentPosition: number;
     }
   };
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: string }[];
+        "rowValueDimensionName"?: string;
+        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
     }
     interface IntrinsicElements {
         "app-home": AppHome;
         "app-root": AppRoot;
+        "s-box-plot-item": SBoxPlotItem;
         "s-parallel-sets": SParallelSets;
         "s-set-stat": SSetStat;
         "s-statistics-column": SStatisticsColumn;
@@ -245,6 +283,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "s-box-plot-item": LocalJSX.SBoxPlotItem & JSXBase.HTMLAttributes<HTMLSBoxPlotItemElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
             "s-set-stat": LocalJSX.SSetStat & JSXBase.HTMLAttributes<HTMLSSetStatElement>;
             "s-statistics-column": LocalJSX.SStatisticsColumn & JSXBase.HTMLAttributes<HTMLSStatisticsColumnElement>;

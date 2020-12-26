@@ -1,4 +1,5 @@
 import { Component, Host, h, Prop, ComponentInterface } from '@stencil/core';
+import * as d3 from 'd3';
 
 @Component({
   tag: 's-statistics-column',
@@ -7,8 +8,10 @@ import { Component, Host, h, Prop, ComponentInterface } from '@stencil/core';
 })
 export class SStatisticsColumn implements ComponentInterface {
 
+  private statisticsRowElementDict: { [rowValue: string]: HTMLElement } = {};
+
   @Prop() header: string;
-  @Prop() data: number[];
+  @Prop() data: { [rowValue: string]: number[] };
   @Prop() rowValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
@@ -26,6 +29,7 @@ export class SStatisticsColumn implements ComponentInterface {
   @Prop() headerTextWeight: string = 'bold';
 
   render() {
+    const allDataRecords = Object.values(this.data).flat();
     return (
       <Host>
         {
@@ -57,13 +61,31 @@ export class SStatisticsColumn implements ComponentInterface {
                   return (
                     <div
                       class="statistics-row"
+                      ref={el => this.statisticsRowElementDict[rowValue] = el}
                       style={{
                         backgroundColor: rowValueAndBackground.backgroundColor,
                         backgroundImage: rowValueAndBackground.backgroundImage,
                         top: `${minSegmentPosition * 100}%`,
                         height: `${(maxSegmentPosition - minSegmentPosition) * 100}%`
                       }}
-                    ></div>
+                    >
+                      <s-box-plot-item
+                        class="plot-item"
+                        values={this.data[rowValue]}
+                        scaleMinValue={d3.min(allDataRecords)}
+                        scaleMaxValue={d3.max(allDataRecords)}
+                        enableTooltip={false}
+                        onItemLoad={({ detail }) => {
+                          this.statisticsRowElementDict[rowValue].title =
+                            `${rowValue}\n` +
+                            `min: ${detail.min}\n` +
+                            `25%: ${detail.q1}\n` +
+                            `median: ${detail.median}\n` +
+                            `75%: ${detail.q3}\n` +
+                            `max: ${detail.max}`
+                        }}
+                      ></s-box-plot-item>
+                    </div>
                   );
                 })
               }

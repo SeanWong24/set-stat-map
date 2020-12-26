@@ -1,4 +1,5 @@
 import { Component, Host, h, Element, Prop, ComponentInterface } from '@stencil/core';
+import { StatisticsColumnsVisType } from './utils';
 
 @Component({
   tag: 's-statistics-columns',
@@ -10,7 +11,8 @@ export class SStatisticsColumns implements ComponentInterface {
   @Element() hostElement: HTMLElement;
 
   @Prop() data: any[];
-  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: string }[];
+  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType }[];
+  @Prop() rowValueDimensionName: string;
   @Prop() rowValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
@@ -32,21 +34,32 @@ export class SStatisticsColumns implements ComponentInterface {
 
     return (
       <Host>
-        <div id="main-container">
-          {
-            this.statisticsColumnDefinitions?.map(statisticsColumnDefinition => (
-              <s-statistics-column
-                data={this.data.map(d => d[statisticsColumnDefinition.dimensionName])}
-                header={statisticsColumnDefinition.dimensionName}
-                rowValueAndPositionDict={this.rowValueAndPositionDict}
-                rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}
-                headerTextSize={this.headerTextSize}
-                headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
-                headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}
-              ></s-statistics-column>
-            ))
-          }
-        </div>
+        {
+          this.data && this.rowValueAndPositionDict && this.rowValueAndBackgroundDict &&
+          <div id="main-container">
+            {
+              this.statisticsColumnDefinitions?.map(statisticsColumnDefinition => {
+                const dataForColumn: { [rowValue: string]: number[] } = {};
+                for (const rowValue of Object.keys(this.rowValueAndPositionDict)) {
+                  dataForColumn[rowValue] = this.data
+                    .filter(dataRecord => dataRecord[this.rowValueDimensionName] === rowValue)
+                    .map(dataRecord => dataRecord[statisticsColumnDefinition.dimensionName]);
+                }
+                return (
+                  <s-statistics-column
+                    data={dataForColumn}
+                    header={statisticsColumnDefinition.dimensionName}
+                    rowValueAndPositionDict={this.rowValueAndPositionDict}
+                    rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}
+                    headerTextSize={this.headerTextSize}
+                    headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
+                    headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}
+                  ></s-statistics-column>
+                );
+              })
+            }
+          </div>
+        }
       </Host>
     );
   }

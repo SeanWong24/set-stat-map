@@ -7,6 +7,11 @@ import { data, dimensions } from '../../global/temp';
 })
 export class AppHome {
   render() {
+    data.forEach(d => {
+      d['D1'] = Math.random();
+      d['D2'] = Math.random();
+      d['D3'] = Math.random();
+    })
     return (
       <Host>
         <ion-header>
