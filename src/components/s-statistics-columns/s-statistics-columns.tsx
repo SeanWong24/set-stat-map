@@ -17,6 +17,12 @@ export class SStatisticsColumns {
       maxSegmentPosition: number;
     }
   };
+  @Prop() rowValueAndBackgroundDict: {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
@@ -33,6 +39,7 @@ export class SStatisticsColumns {
                 data={this.data.map(d => d[statisticsColumnDefinition.dimensionName])}
                 header={statisticsColumnDefinition.dimensionName}
                 rowValueAndPositionDict={this.rowValueAndPositionDict}
+                rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}
                 headerTextSize={this.headerTextSize}
                 headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
                 headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}

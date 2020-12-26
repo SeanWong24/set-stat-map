@@ -15,6 +15,12 @@ export class SStatisticsColumn {
       maxSegmentPosition: number;
     }
   };
+  @Prop() rowValueAndBackgroundDict: {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
@@ -23,7 +29,7 @@ export class SStatisticsColumn {
     return (
       <Host>
         {
-          this.data && this.rowValueAndPositionDict &&
+          this.data && this.rowValueAndPositionDict && this.rowValueAndBackgroundDict &&
           <div
             id="main-container"
             style={{
@@ -46,16 +52,20 @@ export class SStatisticsColumn {
               }}
             >
               {
-                Object.values(this.rowValueAndPositionDict).map(({ minSegmentPosition, maxSegmentPosition }) => (
-                  <div
-                    class="statistics-row"
-                    style={{
-                      backgroundColor: 'lightblue',
-                      top: `${minSegmentPosition * 100}%`,
-                      height: `${(maxSegmentPosition - minSegmentPosition) * 100}%`
-                    }}
-                  ></div>
-                ))
+                Object.entries(this.rowValueAndPositionDict).map(([rowValue, { minSegmentPosition, maxSegmentPosition }]) => {
+                  const rowValueAndBackground = this.rowValueAndBackgroundDict[rowValue];
+                  return (
+                    <div
+                      class="statistics-row"
+                      style={{
+                        backgroundColor: rowValueAndBackground.backgroundColor,
+                        backgroundImage: rowValueAndBackground.backgroundImage,
+                        top: `${minSegmentPosition * 100}%`,
+                        height: `${(maxSegmentPosition - minSegmentPosition) * 100}%`
+                      }}
+                    ></div>
+                  );
+                })
               }
             </div>
           </div>

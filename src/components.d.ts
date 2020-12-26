@@ -56,6 +56,12 @@ export namespace Components {
         "headerTextColor": string;
         "headerTextSize": number;
         "headerTextWeight": string;
+        "rowValueAndBackgroundDict": {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
         "rowValueAndPositionDict": {
     [value: string]: {
       minSegmentPosition: number;
@@ -68,6 +74,12 @@ export namespace Components {
         "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
+        "rowValueAndBackgroundDict": {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
         "rowValueAndPositionDict": {
     [value: string]: {
       minSegmentPosition: number;
@@ -186,6 +198,12 @@ declare namespace LocalJSX {
         "headerTextColor"?: string;
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
+        "rowValueAndBackgroundDict"?: {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
         "rowValueAndPositionDict"?: {
     [value: string]: {
       minSegmentPosition: number;
@@ -198,6 +216,12 @@ declare namespace LocalJSX {
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
+        "rowValueAndBackgroundDict"?: {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    }
+  };
         "rowValueAndPositionDict"?: {
     [value: string]: {
       minSegmentPosition: number;

@@ -1,4 +1,5 @@
 import { Component, Host, h, Prop, State } from '@stencil/core';
+import * as d3 from 'd3';
 import { ParallelSetsDataNode, ParallelSetsDataRecord } from '../s-parallel-sets/utils';
 
 @Component({
@@ -15,7 +16,7 @@ export class SSetStat {
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
   // TODO also give default values for parallel sets props
-  @Prop() colorScheme: string[];
+  @Prop() colorScheme: string[] = ['#eddcd2', '#fff1e6', '#fde2e4', '#fad2e1', '#c5dedd', '#dbe7e4', '#f0efeb', '#d6e2e9', '#bcd4e6', '#99c1de'];
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
   @Prop() parallelSetsDimensions: string[];
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
@@ -33,6 +34,12 @@ export class SSetStat {
       minSegmentPosition: number;
       maxSegmentPosition: number;
     }
+  };
+  @State() lastAxisSegmentValueAndBackgroundDict: {
+    [value: string]: {
+      backgroundColor: string;
+      backgroundImage: string;
+    };
   };
 
   render() {
@@ -58,6 +65,7 @@ export class SSetStat {
           data={this.data}
           statisticsColumnDefinitions={this.statisticsColumnDefinitions}
           rowValueAndPositionDict={this.lastAxisSegmentValueAndPositionDict}
+          rowValueAndBackgroundDict={this.lastAxisSegmentValueAndBackgroundDict}
           headerTextSize={this.headerTextSize}
           headerTextColor={this.headerTextColor}
           headerTextWeight={this.headerTextWeight}
@@ -79,35 +87,96 @@ export class SSetStat {
       valuesDict,
       dataNodesDict
     } = eventDetail;
-    this.lastAxisSegmentValueAndPositionDict =
-      this.generateLastAxisSegmentValueAndPositionDict(dimensions, dataNodesDict, valuesDict);
-  }
 
-
-  private generateLastAxisSegmentValueAndPositionDict(
-    dimensions: string[],
-    dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[]; },
-    valuesDict: { [dimensionName: string]: (string | number)[]; }
-  ) {
     const lastDimensionIndex = dimensions.length - 1;
     const lastDimensionName = dimensions[lastDimensionIndex];
     const lastDimensionDataNodes = dataNodesDict[lastDimensionName];
     const lastDimensionValues = valuesDict[lastDimensionName];
+    const firstDimensionValues = valuesDict[this.parallelSetsDimensions[0]];
+    const colorScale = d3.scaleOrdinal(this.colorScheme);
+
+    const lastAxisSegmentValueAndBackgroundDict = Object.fromEntries(
+      lastDimensionValues.map(value => [value.toString(), { backgroundColor: '', backgroundImage: '' }])
+    );
     const lastAxisSegmentValueAndPositionDict = Object.fromEntries(
       lastDimensionValues.map(value => [value.toString(), { minSegmentPosition: NaN, maxSegmentPosition: NaN }])
     );
-    for (const lastDimensionDataNode of lastDimensionDataNodes) {
-      const lastDimensionValue = lastDimensionDataNode.valueHistory[lastDimensionIndex];
-      const axisSegmentPosition = lastAxisSegmentValueAndPositionDict[lastDimensionValue.toString()];
-      const minAxisSegmentPosition = lastDimensionDataNode.adjustedAxisSegmentPosition[0];
-      if (Number.isNaN(axisSegmentPosition.minSegmentPosition) || axisSegmentPosition.minSegmentPosition > minAxisSegmentPosition) {
-        axisSegmentPosition.minSegmentPosition = minAxisSegmentPosition;
-      }
-      const maxAxisSegmentPosition = lastDimensionDataNode.adjustedAxisSegmentPosition[1];
-      if (Number.isNaN(axisSegmentPosition.maxSegmentPosition) || axisSegmentPosition.maxSegmentPosition < maxAxisSegmentPosition) {
-        axisSegmentPosition.maxSegmentPosition = maxAxisSegmentPosition;
-      }
+
+    for (const lastDimensionValue of lastDimensionValues) {
+      const dataNodesForTheValue = lastDimensionDataNodes
+        .filter(dataNode => dataNode.valueHistory[lastDimensionIndex] === lastDimensionValue);
+
+      this.fillLastAxisSegmentValueAndPositionDictForSingleValue({
+        lastAxisSegmentValueAndPositionDict,
+        lastDimensionValue,
+        dataNodesForTheValue
+      });
+      this.fillLastAxisSegmentValueAndBackgroundDictForSingleValue({
+        dataNodesForTheValue,
+        firstDimensionValues,
+        colorScale,
+        lastAxisSegmentValueAndBackgroundDict,
+        lastDimensionValue
+      });
     }
-    return lastAxisSegmentValueAndPositionDict;
+
+    this.lastAxisSegmentValueAndPositionDict = lastAxisSegmentValueAndPositionDict;
+    this.lastAxisSegmentValueAndBackgroundDict = lastAxisSegmentValueAndBackgroundDict;
+  }
+
+
+  private fillLastAxisSegmentValueAndBackgroundDictForSingleValue(params: {
+    dataNodesForTheValue: ParallelSetsDataNode[],
+    firstDimensionValues: (string | number)[],
+    colorScale: d3.ScaleOrdinal<string, string, never>,
+    lastAxisSegmentValueAndBackgroundDict: { [value: string]: { backgroundColor: string; backgroundImage: string; }; },
+    lastDimensionValue: string | number
+  }) {
+    const {
+      dataNodesForTheValue,
+      firstDimensionValues,
+      colorScale,
+      lastAxisSegmentValueAndBackgroundDict,
+      lastDimensionValue
+    } = params;
+
+    const axisSegmentDataRecordCount = d3.sum(dataNodesForTheValue.map(dataNode => dataNode.dataRecords.length));
+    let valuesAndRatios: { value: string | number; ratio: number; adjustedRatio: number; }[] = [];
+    let previousRatio = 0;
+    for (const firstDimensionValue of firstDimensionValues) {
+      const dataNodesForTheFirstDimensionValueAndTheLastDimensionValue = dataNodesForTheValue.filter(dataNode => dataNode.valueHistory[0] === firstDimensionValue);
+      const axisSegmentDataRecordCountForFirstDimensionValue = d3.sum(dataNodesForTheFirstDimensionValueAndTheLastDimensionValue.map(dataNode => dataNode.dataRecords.length));
+      const valueRatio = axisSegmentDataRecordCountForFirstDimensionValue / axisSegmentDataRecordCount;
+      valuesAndRatios.push({ value: firstDimensionValue, ratio: valueRatio, adjustedRatio: valueRatio / 2 + previousRatio });
+      previousRatio += valueRatio;
+    }
+    const largestRatioValue = valuesAndRatios.sort((a, b) => b.ratio - a.ratio)[0].value;
+    const colorsAndRatiosForLinearGradient = valuesAndRatios
+      .sort((a, b) => a.adjustedRatio - b.adjustedRatio)
+      .map(({ value, adjustedRatio }) => `${colorScale(value.toString())} ${adjustedRatio * 100}%`)
+      .join(', ');
+    lastAxisSegmentValueAndBackgroundDict[lastDimensionValue.toString()] = {
+      backgroundColor: colorScale(largestRatioValue.toString()),
+      backgroundImage: valuesAndRatios.length > 1 ?
+        `linear-gradient(to right, ${colorsAndRatiosForLinearGradient})` :
+        'unset'
+    };
+  }
+
+  private fillLastAxisSegmentValueAndPositionDictForSingleValue(params: {
+    lastAxisSegmentValueAndPositionDict: { [value: string]: { minSegmentPosition: number; maxSegmentPosition: number; }; },
+    lastDimensionValue: string | number,
+    dataNodesForTheValue: ParallelSetsDataNode[]
+  }) {
+    const {
+      lastAxisSegmentValueAndPositionDict,
+      lastDimensionValue,
+      dataNodesForTheValue
+    } = params;
+
+    lastAxisSegmentValueAndPositionDict[lastDimensionValue.toString()] = {
+      minSegmentPosition: d3.min(dataNodesForTheValue.map(dataNode => dataNode.adjustedAxisSegmentPosition[0])),
+      maxSegmentPosition: d3.max(dataNodesForTheValue.map(dataNode => dataNode.adjustedAxisSegmentPosition[1]))
+    };
   }
 }
