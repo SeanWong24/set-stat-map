@@ -34,8 +34,8 @@ export class SParallelSets implements ComponentInterface {
     () => textureGenerator.lines().orientation("6/8").size(10).heavier()
   ];
   @Prop() axisHeaderTextSize: number = 16;
-  @Prop() axisHeaderTextColor: string = 'rgb(0,0,0)';
-  @Prop() axisHeaderTextWeight: string = 'bold';
+  @Prop() axisHeaderTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() axisHeaderTextWeight: string | { [dimensionName: string]: string } = 'bold';
   @Prop() axisStrokeWidth: number = 3;
   @Prop() axisBoxWidth: number = 15;
   @Prop() axisBoxFill: string = 'rgb(100,100,100)';
@@ -525,14 +525,17 @@ export class SParallelSets implements ComponentInterface {
               dimensionName,
               dataNodes: dimensionAndDataNodesDict[dimensionName]
             };
+
+            const color = this.axisHeaderTextColor?.[dimensionName] || this.axisHeaderTextColor?.[''] || this.axisHeaderTextColor;
+            const fontWeight = this.axisHeaderTextWeight?.[dimensionName] || this.axisHeaderTextWeight?.[''] || this.axisHeaderTextWeight;
             return (
               <text
                 class="axis-header-text"
                 style={{
                   position: 'absolute',
-                  color: this.axisHeaderTextColor,
+                  color,
                   fontSize: this.axisHeaderTextSize + 'px',
-                  fontWeight: this.axisHeaderTextWeight,
+                  fontWeight,
                   left: this.obtainAxisPosition(width, this.sideMargin, dimensionIndex) + 'px',
                   transform: this.obtainAxisHeaderTransform(dimensionIndex)
                 }}
@@ -786,7 +789,7 @@ export class SParallelSets implements ComponentInterface {
   }
 
   private obtainAutoMergedAxisSegmentNameForDimension(dimensionName: string) {
-    return (this.autoMergedAxisSegmentName?.[dimensionName] || this.autoMergedAxisSegmentName) as string | number;
+    return (this.autoMergedAxisSegmentName?.[dimensionName] || this.autoMergedAxisSegmentName?.[''] || this.autoMergedAxisSegmentName) as string | number;
   }
 
   private obtainAxisPosition(width: number, margin: number, dimensionIndex: number) {
