@@ -38,7 +38,9 @@ export namespace Components {
         "colorScheme": string[];
         "data": any[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
+        "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
         "parallelSetsDimensions": string[];
@@ -51,7 +53,9 @@ export namespace Components {
     interface SStatisticsColumn {
         "data": number[];
         "header": string;
+        "headerTextColor": string;
         "headerTextSize": number;
+        "headerTextWeight": string;
         "rowValueAndPositionDict": {
     [value: string]: {
       minSegmentPosition: number;
@@ -61,7 +65,9 @@ export namespace Components {
     }
     interface SStatisticsColumns {
         "data": any[];
+        "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
+        "headerTextWeight": string | { [dimensionName: string]: string };
         "rowValueAndPositionDict": {
     [value: string]: {
       minSegmentPosition: number;
@@ -162,7 +168,9 @@ declare namespace LocalJSX {
         "colorScheme"?: string[];
         "data"?: any[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
+        "headerTextWeight"?: string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
         "parallelSetsDimensions"?: string[];
@@ -175,7 +183,9 @@ declare namespace LocalJSX {
     interface SStatisticsColumn {
         "data"?: number[];
         "header"?: string;
+        "headerTextColor"?: string;
         "headerTextSize"?: number;
+        "headerTextWeight"?: string;
         "rowValueAndPositionDict"?: {
     [value: string]: {
       minSegmentPosition: number;
@@ -185,7 +195,9 @@ declare namespace LocalJSX {
     }
     interface SStatisticsColumns {
         "data"?: any[];
+        "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
+        "headerTextWeight"?: string | { [dimensionName: string]: string };
         "rowValueAndPositionDict"?: {
     [value: string]: {
       minSegmentPosition: number;

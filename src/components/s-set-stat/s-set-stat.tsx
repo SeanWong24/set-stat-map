@@ -11,8 +11,10 @@ export class SSetStat {
   @Prop() data: any[] = [];
   @Prop() parallelSetsWidth: string = '60%';
   @Prop() statisticsColumnsWidth: string = '40%';
-  // TODO also give default values for parallel sets props
   @Prop() headerTextSize: number = 16;
+  @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  // TODO also give default values for parallel sets props
   @Prop() colorScheme: string[];
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
   @Prop() parallelSetsDimensions: string[];
@@ -48,12 +50,17 @@ export class SSetStat {
           defineTexturesHandler={this.defineTexturesHandler}
           ribbonTension={this.parallelSetsRibbonTension}
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
+          axisHeaderTextColor={this.headerTextColor}
+          axisHeaderTextWeight={this.headerTextWeight}
         ></s-parallel-sets>
         <s-statistics-columns
           style={{ width: this.statisticsColumnsWidth }}
           data={this.data}
           statisticsColumnDefinitions={this.statisticsColumnDefinitions}
           rowValueAndPositionDict={this.lastAxisSegmentValueAndPositionDict}
+          headerTextSize={this.headerTextSize}
+          headerTextColor={this.headerTextColor}
+          headerTextWeight={this.headerTextWeight}
         ></s-statistics-columns>
       </Host>
     );

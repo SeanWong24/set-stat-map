@@ -16,6 +16,8 @@ export class SStatisticsColumn {
     }
   };
   @Prop() headerTextSize: number = 16;
+  @Prop() headerTextColor: string = 'rgb(0,0,0)';
+  @Prop() headerTextWeight: string = 'bold';
 
   render() {
     return (
@@ -32,7 +34,8 @@ export class SStatisticsColumn {
               id="header-text"
               style={{
                 fontSize: `${this.headerTextSize}px`,
-                fontWeight: 'bold'
+                color: this.headerTextColor,
+                fontWeight: this.headerTextWeight
               }}
             >{this.header}</text>
             <div

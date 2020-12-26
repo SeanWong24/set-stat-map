@@ -18,6 +18,8 @@ export class SStatisticsColumns {
     }
   };
   @Prop() headerTextSize: number = 16;
+  @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
 
   render() {
     this.hostElement.style.setProperty("--column-count", this.statisticsColumnDefinitions.length.toString());
@@ -32,12 +34,22 @@ export class SStatisticsColumns {
                 header={statisticsColumnDefinition.dimensionName}
                 rowValueAndPositionDict={this.rowValueAndPositionDict}
                 headerTextSize={this.headerTextSize}
+                headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
+                headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}
               ></s-statistics-column>
             ))
           }
         </div>
       </Host>
     );
+  }
+
+  private obtainHeaderTextColorForDimension(dimensionName: string) {
+    return this.headerTextColor?.[dimensionName] || this.headerTextColor?.[''] || this.headerTextColor;
+  }
+
+  private obtainHeaderTextWeightForDimension(dimensionName: string) {
+    return this.headerTextWeight?.[dimensionName] || this.headerTextWeight?.[''] || this.headerTextWeight;
   }
 
 }

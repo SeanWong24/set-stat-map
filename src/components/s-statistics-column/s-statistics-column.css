@@ -11,12 +11,14 @@
 }
 
 #header-text {
+  cursor: pointer;
   position: absolute;
   left: 50%;
   transform: translate(-50%);
 }
 
 .statistics-row {
+  cursor: pointer;
   position: absolute;
   width: calc(100% - 4px);
   display: flex;
