@@ -93,34 +93,39 @@ export class SParallelSets implements ComponentInterface {
     if (this.hostElementBoundingClientRect && this.textureContainerElement) {
       if (this.data?.length > 0) {
         const dimensionAndValuesDict = this.generateDimensionAndValuesDict();
-        const dimensionAndDataNodesDict = this.generateDimensionAndDataNodesDict(dimensionAndValuesDict);
+        const isDimensionAndValuesDictValid = Object.values(dimensionAndValuesDict).every(values => values?.length > 0 && values[0] !== undefined)
+        if (isDimensionAndValuesDictValid) {
+          const dimensionAndDataNodesDict = this.generateDimensionAndDataNodesDict(dimensionAndValuesDict);
 
-        const { width, height } = this.hostElementBoundingClientRect || {};
-        const colorScale = d3.scaleOrdinal(this.colorScheme);
-        const textures = this.defineTexturesHandler ? this.defineTexturesHandler(textureGenerator) : undefined;
-        const textureScale = textures ? d3.scaleOrdinal(textures) : undefined;
+          const { width, height } = this.hostElementBoundingClientRect || {};
+          const colorScale = d3.scaleOrdinal(this.colorScheme);
+          const textures = this.defineTexturesHandler ? this.defineTexturesHandler(textureGenerator) : undefined;
+          const textureScale = textures ? d3.scaleOrdinal(textures) : undefined;
 
-        mainContainer = (
-          <div
-            id="main-container"
-            ref={() => this.visLoad.emit({
-              data: this.data,
-              dimensions: this.dimensions,
-              valuesDict: dimensionAndValuesDict,
-              dataNodesDict: dimensionAndDataNodesDict
-            })}
-          >
-            {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
-            {this.renderMainSvg({
-              width,
-              height,
-              colorScale,
-              textureScale,
-              dimensionAndDataNodesDict,
-              dimensionAndValuesDict
-            })}
-          </div>
-        );
+          mainContainer = (
+            <div
+              id="main-container"
+              ref={() => this.visLoad.emit({
+                data: this.data,
+                dimensions: this.dimensions,
+                valuesDict: dimensionAndValuesDict,
+                dataNodesDict: dimensionAndDataNodesDict
+              })}
+            >
+              {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
+              {this.renderMainSvg({
+                width,
+                height,
+                colorScale,
+                textureScale,
+                dimensionAndDataNodesDict,
+                dimensionAndValuesDict
+              })}
+            </div>
+          );
+        } else {
+          mainContainer = <div>Dimensions are not valid</div>;
+        }
       } else {
         mainContainer = <div>No data</div>;
       }
