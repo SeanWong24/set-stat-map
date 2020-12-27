@@ -61,6 +61,7 @@ export namespace Components {
         "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
+        "parallelSetsDimensionValueSortingMethods": SortingHandler | { [dimensionName: string]: SortingHandler };
         "parallelSetsDimensions": string[];
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
@@ -237,6 +238,7 @@ declare namespace LocalJSX {
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
+        "parallelSetsDimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };
         "parallelSetsDimensions"?: string[];
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;

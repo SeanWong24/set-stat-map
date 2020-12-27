@@ -1,6 +1,6 @@
 import { Component, Host, h, Prop, State, ComponentInterface } from '@stencil/core';
 import * as d3 from 'd3';
-import { ParallelSetsDataNode, ParallelSetsDataRecord } from '../s-parallel-sets/utils';
+import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from '../s-parallel-sets/utils';
 import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
 
 @Component({
@@ -21,6 +21,7 @@ export class SSetStat implements ComponentInterface {
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
   @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() parallelSetsDimensions: string[];
+  @Prop() parallelSetsDimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler };
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
   @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
@@ -62,6 +63,7 @@ export class SSetStat implements ComponentInterface {
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
+          dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
         ></s-parallel-sets>
         <s-statistics-columns
           style={{ width: this.statisticsColumnsWidth }}
