@@ -774,7 +774,7 @@ export class SParallelSets implements ComponentInterface {
     for (const currentDimensionName of this.dimensions) {
       const maxAxisSegmentCount: number = this.maxAxisSegmentCount?.[currentDimensionName] || this.maxAxisSegmentCount;
       const currentDimensionValues = dimensionValusDict[currentDimensionName];
-      if (currentDimensionValues.length >= maxAxisSegmentCount) {
+      if (currentDimensionValues.length > maxAxisSegmentCount) {
         const spliceIndex = (maxAxisSegmentCount - 1 > 0) ? maxAxisSegmentCount - 1 : 0;
         const autoMergedAxisSegmentName = this.obtainAutoMergedAxisSegmentNameForDimension(currentDimensionName);
         currentDimensionValues.splice(spliceIndex);
