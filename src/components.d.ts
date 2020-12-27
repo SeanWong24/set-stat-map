@@ -12,6 +12,21 @@ export namespace Components {
     }
     interface AppMapView {
         "centerPoint": [number, number];
+        "heatmapData": {
+    legendInnerHTML: string,
+    primaryValueTitle: string,
+    secondaryValueHeader: string,
+    dataPoints: {
+      latitude: number,
+      longitude: number,
+      primaryValue: string | number,
+      color: string,
+      secondaryValue: string | number,
+      textureDenerator: any,
+      rectWidth: number,
+      rectHeight: number
+    }[]
+  };
         "zoom": number;
     }
     interface AppRoot {
@@ -186,6 +201,21 @@ declare namespace LocalJSX {
     }
     interface AppMapView {
         "centerPoint"?: [number, number];
+        "heatmapData"?: {
+    legendInnerHTML: string,
+    primaryValueTitle: string,
+    secondaryValueHeader: string,
+    dataPoints: {
+      latitude: number,
+      longitude: number,
+      primaryValue: string | number,
+      color: string,
+      secondaryValue: string | number,
+      textureDenerator: any,
+      rectWidth: number,
+      rectHeight: number
+    }[]
+  };
         "zoom"?: number;
     }
     interface AppRoot {

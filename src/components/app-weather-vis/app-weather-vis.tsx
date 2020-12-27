@@ -3,6 +3,7 @@ import { Component, Host, h, ComponentInterface, State } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
 import * as d3 from 'd3';
+import { ParallelSetsDataNode, ParallelSetsOnLoadDetail } from '../s-parallel-sets/utils';
 
 @Component({
   tag: 'app-weather-vis',
@@ -54,6 +55,7 @@ export class AppWeatherVis implements ComponentInterface {
 
   private SQL: SqlJs.SqlJsStatic;
   private visRenderLoadingElement: HTMLIonLoadingElement;
+  private setStatOnLoadDetail: ParallelSetsOnLoadDetail; // TODO set stat not matching parallel sets here
 
   @State() file: File;
   @State() DB: SqlJs.Database;
@@ -67,6 +69,21 @@ export class AppWeatherVis implements ComponentInterface {
     minLongitude: number,
     maxLongitude: number,
     longitudeCount: number
+  };
+  @State() mapViewHeatmapData: {
+    legendInnerHTML: string,
+    primaryValueTitle: string,
+    secondaryValueHeader: string,
+    dataPoints: {
+      latitude: number,
+      longitude: number,
+      primaryValue: string | number,
+      color: string,
+      secondaryValue: string | number,
+      textureDenerator: any,
+      rectWidth: number,
+      rectHeight: number
+    }[]
   };
 
   async connectedCallback() {
@@ -154,6 +171,8 @@ export class AppWeatherVis implements ComponentInterface {
                   '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
                   'Date': undefined
                 }}
+                onVisLoad={({ detail }) => this.setStatOnLoadDetail = detail}
+                onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
               ></s-set-stat>
               <app-map-view
                 centerPoint={[
@@ -161,12 +180,44 @@ export class AppWeatherVis implements ComponentInterface {
                   (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
                 ]}
                 zoom={5.5}
+                heatmapData={this.mapViewHeatmapData}
               ></app-map-view>
             </div>
           }
         </ion-content>
       </Host >
     );
+  }
+
+  private drawHeatmapOnMapView(
+    legendHeader: string | number,
+    dataNodes: ParallelSetsDataNode[]
+  ) {
+
+    const dataRecords = dataNodes.flatMap(dataNode => dataNode.dataRecords);
+    const colorDict = this.setStatOnLoadDetail.colorDict;
+    const textureGeneratorDict = this.setStatOnLoadDetail.textureGeneratorDict;
+    const dataPoints = dataRecords.map(dataRecord => {
+      const primaryValue = dataRecord['_' + this.selectedVariables[0]];
+      const secondaryValue = dataRecord['_' + this.selectedVariables[1]];
+      return {
+        latitude: +dataRecord.Latitude,
+        longitude: +dataRecord.Longitude,
+        primaryValue,
+        color: colorDict[primaryValue],
+        secondaryValue,
+        textureDenerator: textureGeneratorDict[secondaryValue],
+        rectWidth: .312,
+        rectHeight: .312
+      };
+    });
+    const legendInnerHTML = `<h4>${legendHeader}</h4>${Object.entries(colorDict).map(([value, color]) => `<i style="background: ${color}"></i><span>${value}</span><br/>`).join('')}`;
+    this.mapViewHeatmapData = {
+      dataPoints,
+      legendInnerHTML,
+      primaryValueTitle: this.selectedVariables[0],
+      secondaryValueHeader: this.selectedVariables[1]
+    };
   }
 
   private async toggleVisRenderLoading(isEnabled: boolean) {
