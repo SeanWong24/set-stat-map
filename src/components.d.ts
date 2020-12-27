@@ -10,6 +10,8 @@ import { StatisticsColumnsVisType } from "./components/s-statistics-columns/util
 export namespace Components {
     interface AppHome {
     }
+    interface AppMapView {
+    }
     interface AppRoot {
     }
     interface AppWeatherVis {
@@ -117,6 +119,12 @@ declare global {
         prototype: HTMLAppHomeElement;
         new (): HTMLAppHomeElement;
     };
+    interface HTMLAppMapViewElement extends Components.AppMapView, HTMLStencilElement {
+    }
+    var HTMLAppMapViewElement: {
+        prototype: HTMLAppMapViewElement;
+        new (): HTMLAppMapViewElement;
+    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
@@ -161,6 +169,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
+        "app-map-view": HTMLAppMapViewElement;
         "app-root": HTMLAppRootElement;
         "app-weather-vis": HTMLAppWeatherVisElement;
         "s-box-plot-item": HTMLSBoxPlotItemElement;
@@ -172,6 +181,8 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AppHome {
+    }
+    interface AppMapView {
     }
     interface AppRoot {
     }
@@ -288,6 +299,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "app-home": AppHome;
+        "app-map-view": AppMapView;
         "app-root": AppRoot;
         "app-weather-vis": AppWeatherVis;
         "s-box-plot-item": SBoxPlotItem;
@@ -302,6 +314,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
+            "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "app-weather-vis": LocalJSX.AppWeatherVis & JSXBase.HTMLAttributes<HTMLAppWeatherVisElement>;
             "s-box-plot-item": LocalJSX.SBoxPlotItem & JSXBase.HTMLAttributes<HTMLSBoxPlotItemElement>;

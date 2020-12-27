@@ -126,26 +126,29 @@ export class AppWeatherVis implements ComponentInterface {
           {
             this.data && this.selectedVariables?.length &&
             this.toggleVisRenderLoading(true) &&
-            <s-set-stat
-              ref={() => this.toggleVisRenderLoading(false)}
-              data={this.data}
-              parallel-sets-ribbon-tension={.5}
-              parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
-              parallelSetsMaxAxisSegmentCount={12}
-              colorScheme={this.colorScheme}
-              defineTexturesHandler={this.defineTexturesHandler}
-              statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
-                dimensionName: variableName,
-                visType: 'box'
-              }))}
-              dimensionDisplyedNameDict={
-                Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
-              }
-              parallelSetsDimensionValueSortingMethods={{
-                '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-                'Date': undefined
-              }}
-            ></s-set-stat>
+            <div class="vis-container">
+              <s-set-stat
+                ref={() => this.toggleVisRenderLoading(false)}
+                data={this.data}
+                parallel-sets-ribbon-tension={.5}
+                parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
+                parallelSetsMaxAxisSegmentCount={12}
+                colorScheme={this.colorScheme}
+                defineTexturesHandler={this.defineTexturesHandler}
+                statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
+                  dimensionName: variableName,
+                  visType: 'box'
+                }))}
+                dimensionDisplyedNameDict={
+                  Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
+                }
+                parallelSetsDimensionValueSortingMethods={{
+                  '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+                  'Date': undefined
+                }}
+              ></s-set-stat>
+              <app-map-view></app-map-view>
+            </div>
           }
         </ion-content>
       </Host>

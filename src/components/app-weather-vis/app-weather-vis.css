@@ -2,8 +2,20 @@
   display: block;
 }
 
-s-set-stat {
+.vis-container {
   height: 600px;
+}
+
+s-set-stat {
   width: calc(100% - 650px);
+  height: 100%;
   display: inline-block;
+  vertical-align: top;
+}
+
+app-map-view {
+  width: 650px;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
 }
