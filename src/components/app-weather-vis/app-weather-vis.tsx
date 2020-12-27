@@ -124,6 +124,9 @@ export class AppWeatherVis implements ComponentInterface {
                 dimensionName: variableName,
                 visType: 'box'
               }))}
+              dimensionDisplyedNameDict={
+                Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
+              }
             ></s-set-stat>
           }
         </ion-content>
