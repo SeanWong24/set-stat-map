@@ -1,4 +1,6 @@
 import { Config } from '@stencil/core';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
+import copy from 'rollup-plugin-copy';
 
 // https://stenciljs.com/docs/config
 
@@ -10,4 +12,16 @@ export const config: Config = {
     type: 'www',
     serviceWorker: null
   }],
+  rollupPlugins: {
+    after: [
+      nodePolyfills(),
+      copy({
+        targets: [
+          {
+            src: 'node_modules/sql.js/dist/sql-wasm.wasm', dest: 'www/assets/sql.js/'
+          }
+        ]
+      })
+    ]
+  },
 };

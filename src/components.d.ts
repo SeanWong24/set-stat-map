@@ -12,6 +12,8 @@ export namespace Components {
     }
     interface AppRoot {
     }
+    interface AppWeatherVis {
+    }
     interface SBoxPlotItem {
         "boxFill": string;
         "boxStroke": string;
@@ -117,6 +119,12 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLAppWeatherVisElement extends Components.AppWeatherVis, HTMLStencilElement {
+    }
+    var HTMLAppWeatherVisElement: {
+        prototype: HTMLAppWeatherVisElement;
+        new (): HTMLAppWeatherVisElement;
+    };
     interface HTMLSBoxPlotItemElement extends Components.SBoxPlotItem, HTMLStencilElement {
     }
     var HTMLSBoxPlotItemElement: {
@@ -150,6 +158,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
+        "app-weather-vis": HTMLAppWeatherVisElement;
         "s-box-plot-item": HTMLSBoxPlotItemElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
         "s-set-stat": HTMLSSetStatElement;
@@ -161,6 +170,8 @@ declare namespace LocalJSX {
     interface AppHome {
     }
     interface AppRoot {
+    }
+    interface AppWeatherVis {
     }
     interface SBoxPlotItem {
         "boxFill"?: string;
@@ -270,6 +281,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "app-home": AppHome;
         "app-root": AppRoot;
+        "app-weather-vis": AppWeatherVis;
         "s-box-plot-item": SBoxPlotItem;
         "s-parallel-sets": SParallelSets;
         "s-set-stat": SSetStat;
@@ -283,6 +295,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "app-weather-vis": LocalJSX.AppWeatherVis & JSXBase.HTMLAttributes<HTMLAppWeatherVisElement>;
             "s-box-plot-item": LocalJSX.SBoxPlotItem & JSXBase.HTMLAttributes<HTMLSBoxPlotItemElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
             "s-set-stat": LocalJSX.SSetStat & JSXBase.HTMLAttributes<HTMLSSetStatElement>;

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+s-set-stat {
+  height: 600px;
+  width: calc(100% - 650px);
+  display: inline-block;
+}

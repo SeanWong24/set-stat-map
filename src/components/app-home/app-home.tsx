@@ -1,17 +1,12 @@
-import { Component, h, Host } from '@stencil/core';
-import { data, dimensions } from '../../global/temp';
+import { Component, ComponentInterface, h, Host } from '@stencil/core';
 
 @Component({
   tag: 'app-home',
   styleUrl: 'app-home.css',
+  scoped: true,
 })
-export class AppHome {
+export class AppHome implements ComponentInterface {
   render() {
-    data.forEach(d => {
-      d['D1'] = Math.random();
-      d['D2'] = Math.random();
-      d['D3'] = Math.random();
-    })
     return (
       <Host>
         <ion-header>
@@ -21,11 +16,9 @@ export class AppHome {
         </ion-header>
 
         <ion-content class="ion-padding">
-          <s-set-stat
-            style={{ width: '800px', height: '600px' }}
-            data={data}
-            parallelSetsDimensions={dimensions}
-          ></s-set-stat>
+          <ion-list>
+            <ion-item button href="/weather">Weather</ion-item>
+          </ion-list>
         </ion-content>
       </Host>
     );

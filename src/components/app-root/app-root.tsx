@@ -10,6 +10,7 @@ export class AppRoot {
       <ion-app>
         <ion-router useHash={true}>
           <ion-route url="/" component="app-home" />
+          <ion-route url="/weather" component="app-weather-vis" />
         </ion-router>
         <ion-nav />
       </ion-app>
