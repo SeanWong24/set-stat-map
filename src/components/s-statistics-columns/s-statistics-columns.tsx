@@ -13,6 +13,7 @@ export class SStatisticsColumns implements ComponentInterface {
   @Prop() data: any[];
   @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType }[];
   @Prop() rowValueDimensionName: string;
+  @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() rowValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
@@ -39,6 +40,7 @@ export class SStatisticsColumns implements ComponentInterface {
           <div id="main-container">
             {
               this.statisticsColumnDefinitions?.map(statisticsColumnDefinition => {
+                const dimensionName = statisticsColumnDefinition.dimensionName;
                 const dataForColumn: { [rowValue: string]: number[] } = {};
                 for (const rowValue of Object.keys(this.rowValueAndPositionDict)) {
                   dataForColumn[rowValue] = this.data
@@ -48,7 +50,7 @@ export class SStatisticsColumns implements ComponentInterface {
                 return (
                   <s-statistics-column
                     data={dataForColumn}
-                    header={statisticsColumnDefinition.dimensionName}
+                    header={this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}
                     rowValueAndPositionDict={this.rowValueAndPositionDict}
                     rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}
                     headerTextSize={this.headerTextSize}

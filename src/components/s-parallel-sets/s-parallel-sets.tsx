@@ -17,6 +17,7 @@ export class SParallelSets implements ComponentInterface {
 
   @Prop() data: ParallelSetsDataRecord[] = [];
   @Prop({ mutable: true }) dimensions: string[];
+  @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() dimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler };
   @Prop() maxAxisSegmentCount: number | { [dimensionName: string]: number } = 10;
   @Prop() autoMergedAxisSegmentName: string | { [dimensionName: string]: string | number } = '*Other*';
@@ -546,7 +547,7 @@ export class SParallelSets implements ComponentInterface {
                 }}
                 onMouseOver={() => this.axisHeaderMouseOver.emit(eventData)}
                 onMouseOut={() => this.axisHeaderMouseOut.emit(eventData)}
-              >{dimensionName}</text>
+              >{this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}</text>
             );
           })
         }

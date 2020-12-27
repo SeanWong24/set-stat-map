@@ -19,6 +19,7 @@ export class SSetStat implements ComponentInterface {
   // TODO also give default values for parallel sets props
   @Prop() colorScheme: string[] = ['#eddcd2', '#fff1e6', '#fde2e4', '#fad2e1', '#c5dedd', '#dbe7e4', '#f0efeb', '#d6e2e9', '#bcd4e6', '#99c1de'];
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
+  @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() parallelSetsDimensions: string[];
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
   @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
@@ -60,6 +61,7 @@ export class SSetStat implements ComponentInterface {
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
+          dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
         ></s-parallel-sets>
         <s-statistics-columns
           style={{ width: this.statisticsColumnsWidth }}

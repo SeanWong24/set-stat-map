@@ -40,6 +40,7 @@ export namespace Components {
         "colorScheme": string[];
         "data": ParallelSetsDataRecord[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "dimensionValueSortingMethods": SortingHandler | { [dimensionName: string]: SortingHandler };
         "dimensions": string[];
         "maxAxisSegmentCount": number | { [dimensionName: string]: number };
@@ -54,6 +55,7 @@ export namespace Components {
         "colorScheme": string[];
         "data": any[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
+        "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
@@ -87,6 +89,7 @@ export namespace Components {
     }
     interface SStatisticsColumns {
         "data": any[];
+        "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
@@ -200,6 +203,7 @@ declare namespace LocalJSX {
         "colorScheme"?: string[];
         "data"?: ParallelSetsDataRecord[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "dimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };
         "dimensions"?: string[];
         "maxAxisSegmentCount"?: number | { [dimensionName: string]: number };
@@ -227,6 +231,7 @@ declare namespace LocalJSX {
         "colorScheme"?: string[];
         "data"?: any[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
+        "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
@@ -260,6 +265,7 @@ declare namespace LocalJSX {
     }
     interface SStatisticsColumns {
         "data"?: any[];
+        "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
