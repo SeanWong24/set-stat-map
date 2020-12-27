@@ -786,7 +786,7 @@ export class SParallelSets implements ComponentInterface {
   private generateDimensionValuesDictWithoutMerging() {
     const dimensionValusDict: { [dimensionName: string]: (string | number)[]; } = {};
     for (const currentDimensionName of this.dimensions) {
-      const sortingMethod = this.dimensionValueSortingMethods?.[currentDimensionName] || this.dimensionValueSortingMethods;
+      const sortingMethod = this.dimensionValueSortingMethods?.[currentDimensionName] || this.dimensionValueSortingMethods?.[''] || this.dimensionValueSortingMethods;
       const currentDimensionValues = [...new Set(this.data.map(dataRecord => dataRecord[currentDimensionName]))]
         .sort(sortingMethod);
       dimensionValusDict[currentDimensionName] = currentDimensionValues;
