@@ -158,6 +158,7 @@ export class SSetStat implements ComponentInterface {
     }
     const largestRatioValue = valuesAndRatios.sort((a, b) => b.ratio - a.ratio)[0].value;
     const colorsAndRatiosForLinearGradient = valuesAndRatios
+      .filter(({ ratio }) => ratio > 0)
       .sort((a, b) => a.adjustedRatio - b.adjustedRatio)
       .map(({ value, adjustedRatio }) => `${colorScale(value.toString())} ${adjustedRatio * 100}%`)
       .join(', ');
