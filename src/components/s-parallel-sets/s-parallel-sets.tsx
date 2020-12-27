@@ -475,7 +475,7 @@ export class SParallelSets implements ComponentInterface {
         width={this.axisBoxWidth}
         height={(currentSegmentPosition[1] - currentSegmentPosition[0]) * height}
         fill={this.axisBoxFill}
-        onClick={() => this.axisSegmentMouseOver.emit(eventData)}
+        onClick={() => this.axisSegmentClick.emit(eventData)}
         onContextMenu={event => {
           event.preventDefault();
           this.axisSegmentContextMenu.emit(eventData);
