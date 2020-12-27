@@ -230,7 +230,15 @@ export class AppWeatherVis implements ComponentInterface {
     const fileBuffer = await file.arrayBuffer();
     this.file = file;
     this.DB = new this.SQL.Database(new Uint8Array(fileBuffer));
+    this.resetVisStates();
+
     await loading.dismiss();
+  }
+
+  private resetVisStates() {
+    this.data = undefined;
+    this.categorizationMethod = 'quantile';
+    this.selectedVariables = undefined;
   }
 
   private obtainDateString(date: string) {
