@@ -11,6 +11,8 @@ export namespace Components {
     interface AppHome {
     }
     interface AppMapView {
+        "centerPoint": [number, number];
+        "zoom": number;
     }
     interface AppRoot {
     }
@@ -183,6 +185,8 @@ declare namespace LocalJSX {
     interface AppHome {
     }
     interface AppMapView {
+        "centerPoint"?: [number, number];
+        "zoom"?: number;
     }
     interface AppRoot {
     }

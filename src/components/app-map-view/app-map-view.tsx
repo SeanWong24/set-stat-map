@@ -1,4 +1,4 @@
-import { Component, Host, h, ComponentInterface } from '@stencil/core';
+import { Component, Host, h, ComponentInterface, Prop } from '@stencil/core';
 import leaflet from 'leaflet';
 
 @Component({
@@ -15,19 +15,24 @@ export class AppMapView implements ComponentInterface {
 
   private map: leaflet.Map;
 
+  @Prop() centerPoint: [number, number] = [0, 0];
+  @Prop() zoom: number = 1;
+
   render() {
     return (
       <Host>
         <div
           id="map-container"
-          ref={el => this.initializeMap(el)}
+          ref={el => this.updateMap(el)}
         ></div>
       </Host>
     );
   }
 
-  private initializeMap(mapContainerElement: HTMLDivElement) {
-    this.map = leaflet.map(mapContainerElement, { center: [0, 0], zoom: 1 });
+  private updateMap(mapContainerElement: HTMLDivElement) {
+    if (!this.map) {
+      this.map = leaflet.map(mapContainerElement, { center: this.centerPoint, zoom: this.zoom });
+    }
     leaflet
       .tileLayer(this.mapTileUrlTemplate, { attribution: this.mapTileAttribution })
       .addTo(this.map);

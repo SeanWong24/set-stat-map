@@ -1,4 +1,4 @@
-import { loadingController } from '@ionic/core';
+import { alertController, loadingController } from '@ionic/core';
 import { Component, Host, h, ComponentInterface, State } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
@@ -60,6 +60,14 @@ export class AppWeatherVis implements ComponentInterface {
   @State() categorizationMethod: 'quantile' | 'value' = 'quantile';
   @State() selectedVariables: string[];
   @State() data: any[];
+  @State() datasetInfo: {
+    minLatitude: number,
+    maxLatitude: number,
+    latitudeCount: number,
+    minLongitude: number,
+    maxLongitude: number,
+    longitudeCount: number
+  };
 
   async connectedCallback() {
     this.SQL = await initSqlJs({ locateFile: fileName => `./assets/sql.js/${fileName}` });
@@ -100,7 +108,7 @@ export class AppWeatherVis implements ComponentInterface {
 
         <ion-content class="ion-padding">
           <ion-list>
-            <ion-item disabled={!this.DB}>
+            <ion-item disabled={!this.datasetInfo}>
               <ion-label>Categorization Method</ion-label>
               <ion-select
                 value={this.categorizationMethod}
@@ -110,7 +118,7 @@ export class AppWeatherVis implements ComponentInterface {
                 <ion-select-option value="value">By Value</ion-select-option>
               </ion-select>
             </ion-item>
-            <ion-item disabled={!this.DB}>
+            <ion-item disabled={!this.datasetInfo}>
               <ion-label>Variables</ion-label>
               <ion-select
                 multiple
@@ -147,11 +155,17 @@ export class AppWeatherVis implements ComponentInterface {
                   'Date': undefined
                 }}
               ></s-set-stat>
-              <app-map-view></app-map-view>
+              <app-map-view
+                centerPoint={[
+                  (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
+                  (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
+                ]}
+                zoom={5.5}
+              ></app-map-view>
             </div>
           }
         </ion-content>
-      </Host>
+      </Host >
     );
   }
 
@@ -248,18 +262,57 @@ export class AppWeatherVis implements ComponentInterface {
       message: `Opening ${file.name}...`
     });
     await loading.present();
-    const fileBuffer = await file.arrayBuffer();
-    this.file = file;
-    this.DB = new this.SQL.Database(new Uint8Array(fileBuffer));
     this.resetVisStates();
-
+    const fileBuffer = await file.arrayBuffer();
+    const DB = new this.SQL.Database(new Uint8Array(fileBuffer));
+    const datasetInfo = this.obtainDatasetInfo(DB);
     await loading.dismiss();
+
+    if (datasetInfo) {
+      this.file = file;
+      this.DB = DB;
+      this.datasetInfo = datasetInfo;
+    } else {
+      const alert = await alertController.create({
+        header: 'Invalid Database File',
+        message: 'The database file opened seems to be invalid, please check the file and try again.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
+  }
+
+  private obtainDatasetInfo(DB: SqlJs.Database) {
+    try {
+      const sqlQueryString = 'select min(Latitude) as minLatitude, max(Latitude) as maxLatitude, count(distinct Latitude) as latitudeCount, min(Longitude) as minLongitude, max(Longitude) as maxLongitude, count(distinct Longitude) as longitudeCount from weather';
+      const result = DB?.exec(sqlQueryString)?.[0];
+      const datasetInfo: {
+        minLatitude: number,
+        maxLatitude: number,
+        latitudeCount: number,
+        minLongitude: number,
+        maxLongitude: number,
+        longitudeCount: number
+      } = result?.values.map(value => {
+        const datum: any = {};
+        for (let i = 0; i < value.length; i++) {
+          datum[result.columns[i]] = +value[i];
+        }
+        return datum;
+      })[0];
+      return datasetInfo;
+    } catch {
+      return null;
+    }
   }
 
   private resetVisStates() {
+    this.file = undefined;
+    this.DB = undefined;
     this.data = undefined;
     this.categorizationMethod = 'quantile';
     this.selectedVariables = undefined;
+    this.datasetInfo = undefined;
   }
 
 }
