@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from "./components/s-parallel-sets/utils";
+import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, SortingHandler } from "./components/s-parallel-sets/utils";
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
     interface AppHome {
@@ -237,7 +237,7 @@ declare namespace LocalJSX {
         "onRibbonContextMenu"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
         "onRibbonMouseOut"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
         "onRibbonMouseOver"?: (event: CustomEvent<{ dimensions: string[], valueHistory: (string | number)[], count: number, proportion: number, dataNode: ParallelSetsDataNode }>) => void;
-        "onVisLoad"?: (event: CustomEvent<{ data: ParallelSetsDataRecord[], dimensions: string[], valuesDict: { [dimensionName: string]: (string | number)[] }, dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] } }>) => void;
+        "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
         "ribbonHighlightOpacity"?: number;
         "ribbonOpacity"?: number;
         "ribbonTension"?: number;
@@ -251,6 +251,8 @@ declare namespace LocalJSX {
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
+        "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
         "parallelSetsDimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };

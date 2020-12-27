@@ -2,6 +2,15 @@ export declare type ParallelSetsDataRecord = { [dimensionName: string]: string |
 
 export declare type SortingHandler = (a: number | string, b: number | string) => number;
 
+export declare type ParallelSetsOnLoadDetail = {
+    data: ParallelSetsDataRecord[],
+    dimensions: string[],
+    valuesDict: { [dimensionName: string]: (string | number)[] },
+    dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] },
+    colorDict: { [value: string]: string },
+    textureGeneratorDict: { [value: string]: any }
+}
+
 export class ParallelSetsDataNode {
     valueHistory: (string | number)[] = [];
     dataRecords: ParallelSetsDataRecord[] = [];

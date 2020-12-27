@@ -1,6 +1,6 @@
-import { Component, Host, h, Prop, State, ComponentInterface } from '@stencil/core';
+import { Component, Host, h, Prop, State, ComponentInterface, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
-import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from '../s-parallel-sets/utils';
+import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, SortingHandler } from '../s-parallel-sets/utils';
 import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
 
 @Component({
@@ -45,6 +45,9 @@ export class SSetStat implements ComponentInterface {
     };
   };
 
+  @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
+  @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>;
+
   render() {
     return (
       <Host>
@@ -64,6 +67,7 @@ export class SSetStat implements ComponentInterface {
           axisHeaderTextWeight={this.headerTextWeight}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
+          onAxisSegmentClick={({ detail }) => this.parallelSetsAxisSegmentClick.emit(detail)}
         ></s-parallel-sets>
         <s-statistics-columns
           style={{ width: this.statisticsColumnsWidth }}
@@ -80,19 +84,13 @@ export class SSetStat implements ComponentInterface {
     );
   }
 
-  private parallelSetsLoadHandler(
-    eventDetail: {
-      data: ParallelSetsDataRecord[],
-      dimensions: string[],
-      valuesDict: { [dimensionName: string]: (string | number)[] },
-      dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] }
-    }
-  ) {
+  private parallelSetsLoadHandler(eventDetail: ParallelSetsOnLoadDetail) {
     const {
       dimensions,
       valuesDict,
       dataNodesDict
     } = eventDetail;
+    setTimeout(() => this.visLoad.emit(eventDetail));
 
     const lastDimensionIndex = dimensions.length - 1;
     const lastDimensionName = dimensions[lastDimensionIndex];

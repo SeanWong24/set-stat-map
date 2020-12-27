@@ -1,5 +1,5 @@
 import { Component, Host, h, ComponentInterface, Element, State, Prop, Watch, Event, EventEmitter } from '@stencil/core';
-import { ParallelSetsDataNode, ParallelSetsDataRecord, SortingHandler } from './utils';
+import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, SortingHandler } from './utils';
 import * as d3 from 'd3';
 import textureGenerator from 'textures';
 
@@ -54,7 +54,7 @@ export class SParallelSets implements ComponentInterface {
     this.dimensions = (this.dimensions?.length > 0) ? this.dimensions : Object.keys((value[0] || {}));
   }
 
-  @Event() visLoad: EventEmitter<{ data: ParallelSetsDataRecord[], dimensions: string[], valuesDict: { [dimensionName: string]: (string | number)[] }, dataNodesDict: { [dimensionName: string]: ParallelSetsDataNode[] } }>;
+  @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>
   @Event() axisHeaderClick: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
   @Event() axisHeaderContextMenu: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
   @Event() axisHeaderMouseOver: EventEmitter<{ dimensionName: string, dataNodes: ParallelSetsDataNode[] }>;
@@ -109,7 +109,10 @@ export class SParallelSets implements ComponentInterface {
                 data: this.data,
                 dimensions: this.dimensions,
                 valuesDict: dimensionAndValuesDict,
-                dataNodesDict: dimensionAndDataNodesDict
+                dataNodesDict: dimensionAndDataNodesDict,
+                // TODO generate colorDict and textureDict first and then pass it into renderMainSvg
+                colorDict: Object.fromEntries(dimensionAndValuesDict[this.dimensions[0]]?.map(value => [value, colorScale(value.toString())])),
+                textureGeneratorDict: Object.fromEntries(dimensionAndValuesDict[this.dimensions[1]]?.map(value => [value, textureScale(value.toString())]))
               })}
             >
               {this.renderAxisHeaders(width, dimensionAndDataNodesDict)}
