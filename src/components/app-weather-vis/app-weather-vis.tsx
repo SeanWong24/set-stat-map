@@ -27,6 +27,20 @@ export class AppWeatherVis implements ComponentInterface {
     '#fee090',
     '#f46d43'
   ];
+  private readonly monthNumberAndNameDict = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec'
+  };
   private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
     () => textureGenerator.lines().stroke("transparent"),
     () => textureGenerator.circles().radius(2),
@@ -127,6 +141,10 @@ export class AppWeatherVis implements ComponentInterface {
               dimensionDisplyedNameDict={
                 Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
               }
+              parallelSetsDimensionValueSortingMethods={{
+                '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+                'Date': undefined
+              }}
             ></s-set-stat>
           }
         </ion-content>
@@ -167,7 +185,7 @@ export class AppWeatherVis implements ComponentInterface {
       const data = result?.values.map(value => {
         const datum = {};
         for (let i = 0; i < value.length; i++) {
-          datum[result.columns[i]] = (result.columns[i] === 'Date') ? this.obtainDateString(value[i] as string) : +value[i];
+          datum[result.columns[i]] = (result.columns[i] === 'Date') ? this.monthNumberAndNameDict[value[i].toString().substring(5)] : +value[i];
         }
         return datum;
       });
@@ -239,35 +257,6 @@ export class AppWeatherVis implements ComponentInterface {
     this.data = undefined;
     this.categorizationMethod = 'quantile';
     this.selectedVariables = undefined;
-  }
-
-  private obtainDateString(date: string) {
-    switch (date.substring(5)) {
-      case '01':
-        return 'Jan';
-      case '02':
-        return 'Feb';
-      case '03':
-        return 'Mar';
-      case '04':
-        return 'Apr';
-      case '05':
-        return 'May';
-      case '06':
-        return 'Jun';
-      case '07':
-        return 'Jul';
-      case '08':
-        return 'Aug';
-      case '09':
-        return 'Sep';
-      case '10':
-        return 'Oct';
-      case '11':
-        return 'Nov';
-      case '12':
-        return 'Dec';
-    }
   }
 
 }
