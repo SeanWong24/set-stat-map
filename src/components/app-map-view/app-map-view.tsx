@@ -61,10 +61,8 @@ export class AppMapView implements ComponentInterface {
       .tileLayer(this.mapTileUrlTemplate, { attribution: this.mapTileAttribution })
       .addTo(this.map);
 
-    if (this.heatmapData) {
-      this.drawHeatmap();
-      this.drawLegend();
-    }
+    this.drawHeatmap();
+    this.drawLegend();
 
     setTimeout(() => {
       this.map.invalidateSize()
@@ -75,52 +73,58 @@ export class AppMapView implements ComponentInterface {
   private drawLegend() {
     if (this.legendControl) {
       this.map.removeControl(this.legendControl);
+      this.legendControl = undefined;
     }
-    this.legendControl = (leaflet as any).control({ position: "bottomleft" });
-    this.legendControl.onAdd = () => {
-      const div = leaflet.DomUtil.create('div', 'legend');
-      div.innerHTML = this.heatmapData.legendInnerHTML;
-      return div;
-    };
-    this.legendControl.addTo(this.map);
+    if (this.heatmapData) {
+      this.legendControl = (leaflet as any).control({ position: "bottomleft" });
+      this.legendControl.onAdd = () => {
+        const div = leaflet.DomUtil.create('div', 'legend');
+        div.innerHTML = this.heatmapData.legendInnerHTML;
+        return div;
+      };
+      this.legendControl.addTo(this.map);
+    }
   }
 
   private drawHeatmap() {
     const textureSvg = d3.select(this.textureContainerElement);
     if (this.heatmapLayerGroup) {
       this.map.removeLayer(this.heatmapLayerGroup);
+      this.heatmapLayerGroup = undefined;
     }
-    this.heatmapLayerGroup = leaflet.layerGroup().addTo(this.map);
-    for (const dataPoint of this.heatmapData.dataPoints) {
-      const textureDictKey = `${dataPoint.secondaryValue}\t${dataPoint.color}`;
-      let textureUrl = this.textureUrlDict[textureDictKey];
-      if (!textureUrl) {
-        const texture = dataPoint.textureDenerator().background(dataPoint.color);
-        textureSvg.call(texture);
-        textureUrl = texture.url();
-        this.textureUrlDict[textureDictKey] = textureUrl;
-      }
-      const cellLayer = leaflet
-        .rectangle(
-          [
+    if (this.heatmapData) {
+      this.heatmapLayerGroup = leaflet.layerGroup().addTo(this.map);
+      for (const dataPoint of this.heatmapData.dataPoints) {
+        const textureDictKey = `${dataPoint.secondaryValue}\t${dataPoint.color}`;
+        let textureUrl = this.textureUrlDict[textureDictKey];
+        if (!textureUrl) {
+          const texture = dataPoint.textureDenerator().background(dataPoint.color);
+          textureSvg.call(texture);
+          textureUrl = texture.url();
+          this.textureUrlDict[textureDictKey] = textureUrl;
+        }
+        const cellLayer = leaflet
+          .rectangle(
             [
-              dataPoint.latitude - dataPoint.rectHeight / 2,
-              dataPoint.longitude - dataPoint.rectWidth / 2
+              [
+                dataPoint.latitude - dataPoint.rectHeight / 2,
+                dataPoint.longitude - dataPoint.rectWidth / 2
+              ],
+              [
+                dataPoint.latitude + dataPoint.rectHeight / 2,
+                dataPoint.longitude + dataPoint.rectWidth / 2
+              ]
             ],
-            [
-              dataPoint.latitude + dataPoint.rectHeight / 2,
-              dataPoint.longitude + dataPoint.rectWidth / 2
-            ]
-          ],
-          { color: 'transparent', fillOpacity: .5, fillColor: textureUrl }
-        )
-        .bindTooltip(
-          `Latitude: ${dataPoint.latitude}<br/>` +
-          `Longitude: ${dataPoint.longitude}<br/>` +
-          `${this.heatmapData.primaryValueTitle}: ${dataPoint.primaryValue}<br/>` +
-          `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`
-        );
-      this.heatmapLayerGroup.addLayer(cellLayer);
+            { color: 'transparent', fillOpacity: .5, fillColor: textureUrl }
+          )
+          .bindTooltip(
+            `Latitude: ${dataPoint.latitude}<br/>` +
+            `Longitude: ${dataPoint.longitude}<br/>` +
+            `${this.heatmapData.primaryValueTitle}: ${dataPoint.primaryValue}<br/>` +
+            `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`
+          );
+        this.heatmapLayerGroup.addLayer(cellLayer);
+      }
     }
   }
 

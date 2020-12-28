@@ -284,6 +284,8 @@ export class AppWeatherVis implements ComponentInterface {
         return datum;
       });
 
+      this.mapViewHeatmapData = undefined;
+
       await loading.dismiss();
 
       return data;
