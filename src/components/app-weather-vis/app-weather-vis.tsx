@@ -148,6 +148,26 @@ export class AppWeatherVis implements ComponentInterface {
                   }
                 </ion-select>
               </ion-item>
+              <ion-item disabled={!this.datasetInfo}>
+                <ion-label>Order By</ion-label>
+                <ion-reorder-group
+                  disabled={false}
+                  onIonItemReorder={({ detail }) => {
+                    const selectedVariables = [...this.selectedVariables];
+                    detail.complete(selectedVariables);
+                    this.selectedVariables = selectedVariables;
+                  }}
+                >
+                  {
+                    this.selectedVariables?.map(variable => (
+                      <ion-item>
+                        <ion-label>{variable}</ion-label>
+                        <ion-reorder slot="start"></ion-reorder>
+                      </ion-item>
+                    ))
+                  }
+                </ion-reorder-group>
+              </ion-item>
             </ion-list>
           </ion-menu>
 
