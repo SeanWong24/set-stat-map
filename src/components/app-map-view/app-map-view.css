@@ -17,6 +17,15 @@
   height: 0;
 }
 
+.heatmap-cell {
+  stroke-opacity: 0;
+  fill-opacity: .5;
+}
+
+.heatmap-cell:hover {
+  fill-opacity: .8;
+}
+
 .legend {
   padding: 6px 8px;
   font: 14px Arial, Helvetica, sans-serif;

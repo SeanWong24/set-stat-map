@@ -115,7 +115,7 @@ export class AppMapView implements ComponentInterface {
                 dataPoint.longitude + dataPoint.rectWidth / 2
               ]
             ],
-            { color: 'transparent', fillOpacity: .5, fillColor: textureUrl }
+            { fillColor: textureUrl, className: 'heatmap-cell' },
           )
           .bindTooltip(
             `Latitude: ${dataPoint.latitude}<br/>` +
