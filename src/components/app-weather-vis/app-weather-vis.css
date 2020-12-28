@@ -8,18 +8,18 @@ ion-split-pane {
 }
 
 .vis-container {
-  height: 600px;
+  height: 50%;
 }
 
 s-set-stat {
-  width: calc(100% - 650px);
+  width: calc(100% - 35%);
   height: 100%;
   display: inline-block;
   vertical-align: top;
 }
 
 app-map-view {
-  width: 650px;
+  width: 35%;
   height: 100%;
   display: inline-block;
   vertical-align: top;
