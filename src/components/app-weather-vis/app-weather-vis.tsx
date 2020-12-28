@@ -150,10 +150,13 @@ export class AppWeatherVis implements ComponentInterface {
           </ion-list>
           {
             this.data && this.selectedVariables?.length &&
-            this.toggleVisRenderLoading(true) &&
             <div class="vis-container">
               <s-set-stat
-                ref={() => this.toggleVisRenderLoading(false)}
+                onVisWillRender={() => this.toggleVisRenderLoading(true)}
+                onVisLoad={({ detail }) => {
+                  this.toggleVisRenderLoading(false);
+                  this.setStatOnLoadDetail = detail;
+                }}
                 data={this.data}
                 parallel-sets-ribbon-tension={.5}
                 parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
@@ -171,7 +174,6 @@ export class AppWeatherVis implements ComponentInterface {
                   '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
                   'Date': undefined
                 }}
-                onVisLoad={({ detail }) => this.setStatOnLoadDetail = detail}
                 onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
               ></s-set-stat>
               <app-map-view

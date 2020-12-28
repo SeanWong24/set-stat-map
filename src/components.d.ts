@@ -283,6 +283,7 @@ declare namespace LocalJSX {
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
+        "onVisWillRender"?: (event: CustomEvent<any>) => void;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
         "parallelSetsDimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };

@@ -45,10 +45,16 @@ export class SSetStat implements ComponentInterface {
     };
   };
 
+  @Event() visWillRender: EventEmitter;
   @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
   @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>;
 
+  componentWillRender() {
+    this.visWillRender.emit();
+  }
+
   render() {
+
     return (
       <Host>
         <s-parallel-sets
