@@ -2,6 +2,11 @@
   display: block;
 }
 
+ion-split-pane {
+  top: 56px;
+  --side-width: 350px;
+}
+
 .vis-container {
   height: 600px;
 }

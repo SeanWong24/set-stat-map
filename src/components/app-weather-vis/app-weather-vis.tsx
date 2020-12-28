@@ -119,75 +119,80 @@ export class AppWeatherVis implements ComponentInterface {
               <ion-button title="Open" onClick={() => this.openFile()}>
                 <ion-icon slot="icon-only" name="open"></ion-icon>
               </ion-button>
+              <ion-menu-button></ion-menu-button>
             </ion-buttons>
           </ion-toolbar>
         </ion-header>
+        <ion-split-pane when="(min-width: 1600px)" content-id="main-container">
+          <ion-menu side="end" content-id="main-container">
+            <ion-list>
+              <ion-item disabled={!this.datasetInfo}>
+                <ion-label>Categorization Method</ion-label>
+                <ion-select
+                  value={this.categorizationMethod}
+                  onIonChange={({ detail }) => this.categorizationMethod = detail.value}
+                >
+                  <ion-select-option value="quantile">By Quantile</ion-select-option>
+                  <ion-select-option value="value">By Value</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item disabled={!this.datasetInfo}>
+                <ion-label>Variables</ion-label>
+                <ion-select
+                  multiple
+                  value={this.selectedVariables}
+                  onIonChange={async ({ detail }) => this.selectedVariables = detail.value}
+                >
+                  {
+                    this.variableOptions.map(variable => (<ion-select-option>{variable}</ion-select-option>))
+                  }
+                </ion-select>
+              </ion-item>
+            </ion-list>
+          </ion-menu>
 
-        <ion-content class="ion-padding">
-          <ion-list>
-            <ion-item disabled={!this.datasetInfo}>
-              <ion-label>Categorization Method</ion-label>
-              <ion-select
-                value={this.categorizationMethod}
-                onIonChange={({ detail }) => this.categorizationMethod = detail.value}
-              >
-                <ion-select-option value="quantile">By Quantile</ion-select-option>
-                <ion-select-option value="value">By Value</ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item disabled={!this.datasetInfo}>
-              <ion-label>Variables</ion-label>
-              <ion-select
-                multiple
-                value={this.selectedVariables}
-                onIonChange={async ({ detail }) => this.selectedVariables = detail.value}
-              >
-                {
-                  this.variableOptions.map(variable => (<ion-select-option>{variable}</ion-select-option>))
-                }
-              </ion-select>
-            </ion-item>
-          </ion-list>
-          {
-            this.data && this.selectedVariables?.length &&
-            <div class="vis-container">
-              <s-set-stat
-                onVisWillRender={() => this.toggleVisRenderLoading(true)}
-                onVisLoad={({ detail }) => {
-                  this.toggleVisRenderLoading(false);
-                  this.setStatOnLoadDetail = detail;
-                }}
-                data={this.data}
-                parallel-sets-ribbon-tension={.5}
-                parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
-                parallelSetsMaxAxisSegmentCount={12}
-                colorScheme={this.colorScheme}
-                defineTexturesHandler={this.defineTexturesHandler}
-                statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
-                  dimensionName: variableName,
-                  visType: 'box'
-                }))}
-                dimensionDisplyedNameDict={
-                  Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
-                }
-                parallelSetsDimensionValueSortingMethods={{
-                  '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-                  'Date': undefined
-                }}
-                onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
-              ></s-set-stat>
-              <app-map-view
-                centerPoint={[
-                  (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
-                  (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
-                ]}
-                zoom={5.5}
-                heatmapData={this.mapViewHeatmapData}
-              ></app-map-view>
-            </div>
-          }
-        </ion-content>
-      </Host >
+          <ion-content id="main-container" class="ion-padding">
+            {
+              this.data && this.selectedVariables?.length &&
+              <div class="vis-container">
+                <s-set-stat
+                  onVisWillRender={() => this.toggleVisRenderLoading(true)}
+                  onVisLoad={({ detail }) => {
+                    this.toggleVisRenderLoading(false);
+                    this.setStatOnLoadDetail = detail;
+                  }}
+                  data={this.data}
+                  parallel-sets-ribbon-tension={.5}
+                  parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
+                  parallelSetsMaxAxisSegmentCount={12}
+                  colorScheme={this.colorScheme}
+                  defineTexturesHandler={this.defineTexturesHandler}
+                  statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
+                    dimensionName: variableName,
+                    visType: 'box'
+                  }))}
+                  dimensionDisplyedNameDict={
+                    Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
+                  }
+                  parallelSetsDimensionValueSortingMethods={{
+                    '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+                    'Date': undefined
+                  }}
+                  onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
+                ></s-set-stat>
+                <app-map-view
+                  centerPoint={[
+                    (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
+                    (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
+                  ]}
+                  zoom={5.5}
+                  heatmapData={this.mapViewHeatmapData}
+                ></app-map-view>
+              </div>
+            }
+          </ion-content>
+        </ion-split-pane>
+      </Host>
     );
   }
 
@@ -195,7 +200,6 @@ export class AppWeatherVis implements ComponentInterface {
     legendHeader: string | number,
     dataNodes: ParallelSetsDataNode[]
   ) {
-
     const dataRecords = dataNodes.flatMap(dataNode => dataNode.dataRecords);
     const colorDict = this.setStatOnLoadDetail.colorDict;
     const textureGeneratorDict = this.setStatOnLoadDetail.textureGeneratorDict;
