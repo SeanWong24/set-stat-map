@@ -8,6 +8,9 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, SortingHandler } from "./components/s-parallel-sets/utils";
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
+    interface AppDataProcess {
+        "datasetType": string;
+    }
     interface AppHome {
     }
     interface AppMapView {
@@ -130,6 +133,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLAppDataProcessElement extends Components.AppDataProcess, HTMLStencilElement {
+    }
+    var HTMLAppDataProcessElement: {
+        prototype: HTMLAppDataProcessElement;
+        new (): HTMLAppDataProcessElement;
+    };
     interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
     }
     var HTMLAppHomeElement: {
@@ -185,6 +194,7 @@ declare global {
         new (): HTMLSStatisticsColumnsElement;
     };
     interface HTMLElementTagNameMap {
+        "app-data-process": HTMLAppDataProcessElement;
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
         "app-root": HTMLAppRootElement;
@@ -197,6 +207,9 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface AppDataProcess {
+        "datasetType"?: string;
+    }
     interface AppHome {
     }
     interface AppMapView {
@@ -335,6 +348,7 @@ declare namespace LocalJSX {
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
     }
     interface IntrinsicElements {
+        "app-data-process": AppDataProcess;
         "app-home": AppHome;
         "app-map-view": AppMapView;
         "app-root": AppRoot;
@@ -350,6 +364,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "app-data-process": LocalJSX.AppDataProcess & JSXBase.HTMLAttributes<HTMLAppDataProcessElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;

@@ -116,6 +116,9 @@ export class AppWeatherVis implements ComponentInterface {
             </ion-buttons>
             <ion-title>Weather Vis{` - ${this.file?.name || 'No File Opened'}`}</ion-title>
             <ion-buttons slot="end">
+              <ion-button title="Process Data" href="/weather/data-process">
+                <ion-icon slot="icon-only" name="time"></ion-icon>
+              </ion-button>
               <ion-button title="Open" onClick={() => this.openFile()}>
                 <ion-icon slot="icon-only" name="open"></ion-icon>
               </ion-button>
