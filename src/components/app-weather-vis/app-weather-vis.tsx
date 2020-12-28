@@ -213,6 +213,14 @@ export class AppWeatherVis implements ComponentInterface {
                 ></app-map-view>
               </div>
             }
+            {
+              !this.file &&
+              <ion-text>Please open a database file to start. If you do not have a database file, you will need to generate one. You can check the buttons on the upper-right corner to open a database file (Open) or generate a new one (Process Data).</ion-text>
+            }
+            {
+              this.file && !this.selectedVariables?.length &&
+              <ion-text>Please select some variables to display the visualization. You can configure parameters of the visualization from the side menu. (the suggested number of variables to be selected is from 2 to 4)</ion-text>
+            }
           </ion-content>
         </ion-split-pane>
       </Host>
