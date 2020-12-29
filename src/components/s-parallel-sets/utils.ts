@@ -1,6 +1,6 @@
 export declare type ParallelSetsDataRecord = { [dimensionName: string]: string | number };
 
-export declare type SortingHandler = (a: number | string, b: number | string) => number;
+export declare type ParallelSetsDimensionValueSortingHandler = (a: number | string, b: number | string) => number;
 
 export declare type ParallelSetsOnLoadDetail = {
     data: ParallelSetsDataRecord[],

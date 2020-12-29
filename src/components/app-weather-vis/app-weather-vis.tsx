@@ -3,7 +3,7 @@ import { Component, Host, h, ComponentInterface, State } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
 import * as d3 from 'd3';
-import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, SortingHandler } from '../s-parallel-sets/utils';
+import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, ParallelSetsDimensionValueSortingHandler } from '../s-parallel-sets/utils';
 
 @Component({
   tag: 'app-weather-vis',
@@ -86,7 +86,7 @@ export class AppWeatherVis implements ComponentInterface {
       rectHeight: number
     }[]
   };
-  @State() parallelSetsDimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler } = {
+  @State() parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler } = {
     '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
     'Date': undefined
   };
@@ -240,7 +240,7 @@ export class AppWeatherVis implements ComponentInterface {
       const median = d3.median(values);
       return median;
     }
-    let dataSortingMethod: SortingHandler;
+    let dataSortingMethod: ParallelSetsDimensionValueSortingHandler;
     if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'ascending') {
       dataSortingMethod = (a, b) => d3.descending(obtainMedian(a), obtainMedian(b));
       this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };

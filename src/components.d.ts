@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, SortingHandler } from "./components/s-parallel-sets/utils";
+import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsDimensionValueSortingHandler, ParallelSetsOnLoadDetail } from "./components/s-parallel-sets/utils";
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
     interface AppDataProcess {
@@ -63,7 +63,7 @@ export namespace Components {
         "data": ParallelSetsDataRecord[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
-        "dimensionValueSortingMethods": SortingHandler | { [dimensionName: string]: SortingHandler };
+        "dimensionValueSortingMethods": ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "dimensions": string[];
         "maxAxisSegmentCount": number | { [dimensionName: string]: number };
         "maxAxisSegmentMarginRatioAllowed": number;
@@ -83,7 +83,7 @@ export namespace Components {
         "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
-        "parallelSetsDimensionValueSortingMethods": SortingHandler | { [dimensionName: string]: SortingHandler };
+        "parallelSetsDimensionValueSortingMethods": ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions": string[];
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
@@ -263,7 +263,7 @@ declare namespace LocalJSX {
         "data"?: ParallelSetsDataRecord[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
-        "dimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };
+        "dimensionValueSortingMethods"?: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "dimensions"?: string[];
         "maxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "maxAxisSegmentMarginRatioAllowed"?: number;
@@ -300,7 +300,7 @@ declare namespace LocalJSX {
         "onVisWillRender"?: (event: CustomEvent<any>) => void;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
-        "parallelSetsDimensionValueSortingMethods"?: SortingHandler | { [dimensionName: string]: SortingHandler };
+        "parallelSetsDimensionValueSortingMethods"?: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions"?: string[];
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;

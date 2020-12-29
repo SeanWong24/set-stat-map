@@ -1,5 +1,5 @@
 import { Component, Host, h, ComponentInterface, Element, State, Prop, Watch, Event, EventEmitter } from '@stencil/core';
-import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, SortingHandler } from './utils';
+import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsOnLoadDetail, ParallelSetsDimensionValueSortingHandler } from './utils';
 import * as d3 from 'd3';
 import textureGenerator from 'textures';
 
@@ -18,7 +18,7 @@ export class SParallelSets implements ComponentInterface {
   @Prop() data: ParallelSetsDataRecord[] = [];
   @Prop({ mutable: true }) dimensions: string[];
   @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
-  @Prop() dimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler };
+  @Prop() dimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
   @Prop() maxAxisSegmentCount: number | { [dimensionName: string]: number } = 10;
   @Prop() autoMergedAxisSegmentName: string | { [dimensionName: string]: string | number } = '*Other*';
   @Prop() autoMergedAxisSegmentMaxRatio: number = 1;
