@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, ComponentInterface } from '@stencil/core';
+import { Component, Host, h, Prop, ComponentInterface, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -28,6 +28,8 @@ export class SStatisticsColumn implements ComponentInterface {
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
 
+  @Event() headerClick: EventEmitter<string>;
+
   render() {
     const allDataRecords = Object.values(this.data).flat();
     return (
@@ -47,6 +49,7 @@ export class SStatisticsColumn implements ComponentInterface {
                 color: this.headerTextColor,
                 fontWeight: this.headerTextWeight
               }}
+              onClick={() => this.headerClick.emit(this.header)}
             >{this.header}</text>
             <div
               id="statistics-row-container"

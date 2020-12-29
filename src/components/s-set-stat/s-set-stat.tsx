@@ -48,6 +48,7 @@ export class SSetStat implements ComponentInterface {
   @Event() visWillRender: EventEmitter;
   @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
   @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>;
+  @Event() statisticsColumnsHeaderClick: EventEmitter<string>;
 
   componentWillRender() {
     this.visWillRender.emit();
@@ -85,6 +86,7 @@ export class SSetStat implements ComponentInterface {
           headerTextSize={this.headerTextSize}
           headerTextColor={this.headerTextColor}
           headerTextWeight={this.headerTextWeight}
+          onColumnHeaderClick={({ detail }) => this.statisticsColumnsHeaderClick.emit(detail)}
         ></s-statistics-columns>
       </Host>
     );
@@ -149,7 +151,7 @@ export class SSetStat implements ComponentInterface {
       lastAxisSegmentValueAndBackgroundDict,
       lastDimensionValue
     } = params;
-
+    
     const axisSegmentDataRecordCount = d3.sum(dataNodesForTheValue.map(dataNode => dataNode.dataRecords.length));
     let valuesAndRatios: { value: string | number; ratio: number; startRatio: number; }[] = [];
     let previousRatio = 0;

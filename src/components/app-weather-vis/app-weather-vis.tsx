@@ -3,7 +3,7 @@ import { Component, Host, h, ComponentInterface, State } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
 import * as d3 from 'd3';
-import { ParallelSetsDataNode, ParallelSetsOnLoadDetail } from '../s-parallel-sets/utils';
+import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, SortingHandler } from '../s-parallel-sets/utils';
 
 @Component({
   tag: 'app-weather-vis',
@@ -56,6 +56,7 @@ export class AppWeatherVis implements ComponentInterface {
   private SQL: SqlJs.SqlJsStatic;
   private visRenderLoadingElement: HTMLIonLoadingElement;
   private setStatOnLoadDetail: ParallelSetsOnLoadDetail; // TODO set stat not matching parallel sets here
+  private parallelSetsDateAxisSortedBy: { dimensionName: string, orderBy: 'ascending' | 'descending' };
 
   @State() file: File;
   @State() DB: SqlJs.Database;
@@ -85,6 +86,11 @@ export class AppWeatherVis implements ComponentInterface {
       rectHeight: number
     }[]
   };
+  @State() parallelSetsDimensionValueSortingMethods: SortingHandler | { [dimensionName: string]: SortingHandler } = {
+    '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+    'Date': undefined
+  };
+  @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
 
   async connectedCallback() {
     this.SQL = await initSqlJs({ locateFile: fileName => `./assets/sql.js/${fileName}` });
@@ -197,11 +203,10 @@ export class AppWeatherVis implements ComponentInterface {
                   dimensionDisplyedNameDict={
                     Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
                   }
-                  parallelSetsDimensionValueSortingMethods={{
-                    '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-                    'Date': undefined
-                  }}
+                  parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
+                  headerTextColor={this.headerTextColor}
                   onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
+                  onStatisticsColumnsHeaderClick={({ detail }) => this.reorderParallelSetsLastAxisByDimension(detail)}
                 ></s-set-stat>
                 <app-map-view
                   centerPoint={[
@@ -225,6 +230,40 @@ export class AppWeatherVis implements ComponentInterface {
         </ion-split-pane>
       </Host>
     );
+  }
+
+  private reorderParallelSetsLastAxisByDimension(dimensionName: string) {
+    // TODO consider to move this feature to s-set-stat
+    const obtainMedian = dataValue => {
+      const dataRecords = this.data.filter(dataRecord => dataRecord['Date'] === dataValue);
+      const values = dataRecords.map(dataRecord => +dataRecord[dimensionName]);
+      const median = d3.median(values);
+      return median;
+    }
+    let dataSortingMethod: SortingHandler;
+    if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'ascending') {
+      dataSortingMethod = (a, b) => d3.descending(obtainMedian(a), obtainMedian(b));
+      this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };
+      const headerTextColor = {};
+      headerTextColor[''] = 'black';
+      headerTextColor[dimensionName] = 'blue';
+      this.headerTextColor = headerTextColor;
+    } else if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'descending') {
+      dataSortingMethod = undefined
+      this.parallelSetsDateAxisSortedBy = undefined;
+      this.headerTextColor = 'black';
+    } else {
+      dataSortingMethod = (a, b) => d3.ascending(obtainMedian(a), obtainMedian(b));
+      this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'ascending' };
+      const headerTextColor = {};
+      headerTextColor[''] = 'black';
+      headerTextColor[dimensionName] = 'red';
+      this.headerTextColor = headerTextColor;
+    }
+    this.parallelSetsDimensionValueSortingMethods = {
+      '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+      'Date': dataSortingMethod
+    };
   }
 
   private drawHeatmapOnMapView(

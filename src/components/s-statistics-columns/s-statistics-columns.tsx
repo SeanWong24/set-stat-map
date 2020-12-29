@@ -1,4 +1,4 @@
-import { Component, Host, h, Element, Prop, ComponentInterface } from '@stencil/core';
+import { Component, Host, h, Element, Prop, ComponentInterface, Event, EventEmitter } from '@stencil/core';
 import { StatisticsColumnsVisType } from './utils';
 
 @Component({
@@ -30,6 +30,8 @@ export class SStatisticsColumns implements ComponentInterface {
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
 
+  @Event() columnHeaderClick: EventEmitter<string>;
+
   render() {
     this.hostElement.style.setProperty("--column-count", this.statisticsColumnDefinitions.length.toString());
 
@@ -56,6 +58,7 @@ export class SStatisticsColumns implements ComponentInterface {
                     headerTextSize={this.headerTextSize}
                     headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
                     headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}
+                    onHeaderClick={() => this.columnHeaderClick.emit(statisticsColumnDefinition.dimensionName)}
                   ></s-statistics-column>
                 );
               })

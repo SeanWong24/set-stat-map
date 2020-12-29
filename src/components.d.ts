@@ -295,6 +295,7 @@ declare namespace LocalJSX {
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onStatisticsColumnsHeaderClick"?: (event: CustomEvent<string>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
         "onVisWillRender"?: (event: CustomEvent<any>) => void;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
@@ -313,6 +314,7 @@ declare namespace LocalJSX {
         "headerTextColor"?: string;
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
+        "onHeaderClick"?: (event: CustomEvent<string>) => void;
         "rowValueAndBackgroundDict"?: {
     [value: string]: {
       backgroundColor: string;
@@ -332,6 +334,7 @@ declare namespace LocalJSX {
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
+        "onColumnHeaderClick"?: (event: CustomEvent<string>) => void;
         "rowValueAndBackgroundDict"?: {
     [value: string]: {
       backgroundColor: string;
