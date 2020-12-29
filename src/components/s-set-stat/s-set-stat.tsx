@@ -151,20 +151,20 @@ export class SSetStat implements ComponentInterface {
     } = params;
 
     const axisSegmentDataRecordCount = d3.sum(dataNodesForTheValue.map(dataNode => dataNode.dataRecords.length));
-    let valuesAndRatios: { value: string | number; ratio: number; adjustedRatio: number; }[] = [];
+    let valuesAndRatios: { value: string | number; ratio: number; startRatio: number; }[] = [];
     let previousRatio = 0;
     for (const firstDimensionValue of firstDimensionValues) {
       const dataNodesForTheFirstDimensionValueAndTheLastDimensionValue = dataNodesForTheValue.filter(dataNode => dataNode.valueHistory[0] === firstDimensionValue);
       const axisSegmentDataRecordCountForFirstDimensionValue = d3.sum(dataNodesForTheFirstDimensionValueAndTheLastDimensionValue.map(dataNode => dataNode.dataRecords.length));
       const valueRatio = axisSegmentDataRecordCountForFirstDimensionValue / axisSegmentDataRecordCount;
-      valuesAndRatios.push({ value: firstDimensionValue, ratio: valueRatio, adjustedRatio: valueRatio / 2 + previousRatio });
+      valuesAndRatios.push({ value: firstDimensionValue, ratio: valueRatio, startRatio: previousRatio });
       previousRatio += valueRatio;
     }
     const largestRatioValue = valuesAndRatios.sort((a, b) => b.ratio - a.ratio)[0].value;
     const colorsAndRatiosForLinearGradient = valuesAndRatios
       .filter(({ ratio }) => ratio > 0)
-      .sort((a, b) => a.adjustedRatio - b.adjustedRatio)
-      .map(({ value, adjustedRatio }) => `${colorScale(value.toString())} ${adjustedRatio * 100}%`)
+      .sort((a, b) => a.startRatio - b.startRatio)
+      .map(({ value, ratio, startRatio }) => `${colorScale(value.toString())} ${(startRatio + ratio * .2) * 100}%, ${colorScale(value.toString())} ${(startRatio + ratio * .8) * 100}%`)
       .join(', ');
     lastAxisSegmentValueAndBackgroundDict[lastDimensionValue.toString()] = {
       backgroundColor: colorScale(largestRatioValue.toString()),
