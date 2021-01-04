@@ -57,6 +57,7 @@ export class AppWeatherVis implements ComponentInterface {
   private visRenderLoadingElement: HTMLIonLoadingElement;
   private setStatOnLoadDetail: ParallelSetsOnLoadDetail; // TODO set stat not matching parallel sets here
   private parallelSetsDateAxisSortedBy: { dimensionName: string, orderBy: 'ascending' | 'descending' };
+  private setStatElement: HTMLSSetStatElement;
 
   @State() file: File;
   @State() DB: SqlJs.Database;
@@ -185,6 +186,7 @@ export class AppWeatherVis implements ComponentInterface {
               this.data && this.selectedVariables?.length &&
               <div class="vis-container">
                 <s-set-stat
+                  ref={el => this.setStatElement = el}
                   onVisWillRender={() => this.toggleVisRenderLoading(true)}
                   onVisLoad={({ detail }) => {
                     this.toggleVisRenderLoading(false);
@@ -206,7 +208,7 @@ export class AppWeatherVis implements ComponentInterface {
                   parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
                   headerTextColor={this.headerTextColor}
                   onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
-                  onStatisticsColumnsHeaderClick={({ detail }) => this.reorderParallelSetsLastAxisByDimension(detail)}
+                  onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
                 ></s-set-stat>
                 <app-map-view
                   centerPoint={[
@@ -242,38 +244,25 @@ export class AppWeatherVis implements ComponentInterface {
     );
   }
 
-  private reorderParallelSetsLastAxisByDimension(dimensionName: string) {
-    // TODO consider to move this feature to s-set-stat
-    const obtainMedian = dataValue => {
-      const dataRecords = this.data.filter(dataRecord => dataRecord['Date'] === dataValue);
-      const values = dataRecords.map(dataRecord => +dataRecord[dimensionName]);
-      const median = d3.median(values);
-      return median;
-    }
-    let dataSortingMethod: ParallelSetsDimensionValueSortingHandler;
+  private async statisticsColumnsHeaderClickHanlder(dimensionName: string) {
     if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'ascending') {
-      dataSortingMethod = (a, b) => d3.descending(obtainMedian(a), obtainMedian(b));
       this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };
       const headerTextColor = {};
       headerTextColor[''] = 'black';
       headerTextColor[dimensionName] = 'blue';
       this.headerTextColor = headerTextColor;
     } else if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'descending') {
-      dataSortingMethod = undefined
       this.parallelSetsDateAxisSortedBy = undefined;
       this.headerTextColor = 'black';
     } else {
-      dataSortingMethod = (a, b) => d3.ascending(obtainMedian(a), obtainMedian(b));
       this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'ascending' };
       const headerTextColor = {};
       headerTextColor[''] = 'black';
       headerTextColor[dimensionName] = 'red';
       this.headerTextColor = headerTextColor;
     }
-    this.parallelSetsDimensionValueSortingMethods = {
-      '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-      'Date': dataSortingMethod
-    };
+
+    await this.setStatElement.reorderParallelSetsLastAxisByDimension(this.parallelSetsDateAxisSortedBy?.dimensionName, this.parallelSetsDateAxisSortedBy?.orderBy);
   }
 
   private drawHeatmapOnMapView(

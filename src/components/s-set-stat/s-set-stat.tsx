@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State, ComponentInterface, Event, EventEmitter } from '@stencil/core';
+import { Component, Host, h, Prop, State, ComponentInterface, Event, EventEmitter, Method } from '@stencil/core';
 import * as d3 from 'd3';
 import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, ParallelSetsDimensionValueSortingHandler } from '../s-parallel-sets/utils';
 import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
@@ -21,7 +21,7 @@ export class SSetStat implements ComponentInterface {
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
   @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() parallelSetsDimensions: string[];
-  @Prop() parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
+  @Prop({ mutable: true }) parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
   @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
@@ -49,6 +49,36 @@ export class SSetStat implements ComponentInterface {
   @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
   @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>;
   @Event() statisticsColumnsHeaderClick: EventEmitter<string>;
+
+  @Method()
+  async reorderParallelSetsLastAxisByDimension(dimensionName?: string, orderBy?: 'ascending' | 'descending') {
+    const obtainMedian = dataValue => {
+      const dataRecords = this.data.filter(dataRecord => dataRecord['Date'] === dataValue);
+      const values = dataRecords.map(dataRecord => +dataRecord[dimensionName]);
+      const median = d3.median(values);
+      return median;
+    };
+    let parallelSetsLastAxisSortingMethod: ParallelSetsDimensionValueSortingHandler;
+    if (dimensionName && orderBy === 'ascending') {
+      parallelSetsLastAxisSortingMethod = (a, b) => d3.ascending(obtainMedian(a), obtainMedian(b));
+    } else if (dimensionName && orderBy === 'descending') {
+      parallelSetsLastAxisSortingMethod = (a, b) => d3.descending(obtainMedian(a), obtainMedian(b));
+      this.headerTextColor = 'black';
+    } else {
+      parallelSetsLastAxisSortingMethod = undefined;
+    }
+
+    if (this.parallelSetsDimensionValueSortingMethods) {
+      this.parallelSetsDimensionValueSortingMethods['Date'] = parallelSetsLastAxisSortingMethod;
+    } else {
+      this.parallelSetsDimensionValueSortingMethods = {
+        '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+        'Date': parallelSetsLastAxisSortingMethod
+      };
+    }
+
+    return this.parallelSetsDimensionValueSortingMethods;
+  }
 
   componentWillRender() {
     this.visWillRender.emit();

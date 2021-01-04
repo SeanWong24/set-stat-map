@@ -88,6 +88,7 @@ export namespace Components {
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
+        "reorderParallelSetsLastAxisByDimension": (dimensionName?: string, orderBy?: 'ascending' | 'descending') => Promise<ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler; }>;
         "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
         "statisticsColumnsWidth": string;
     }
