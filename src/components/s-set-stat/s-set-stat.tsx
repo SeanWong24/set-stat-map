@@ -104,8 +104,11 @@ export class SSetStat implements ComponentInterface {
     const lastDimensionName = dimensions[lastDimensionIndex];
     const lastDimensionDataNodes = dataNodesDict[lastDimensionName];
     const lastDimensionValues = valuesDict[lastDimensionName];
-    const firstDimensionValues = valuesDict[this.parallelSetsDimensions[0]];
-    const colorScale = d3.scaleOrdinal(this.colorScheme);
+    const parallelSetsDimensionValueSortingMethod = this.parallelSetsDimensionValueSortingMethods?.[this.parallelSetsDimensions[0]] || this.parallelSetsDimensionValueSortingMethods?.[''] || this.parallelSetsDimensionValueSortingMethods;
+    const firstDimensionValues = valuesDict[this.parallelSetsDimensions[0]]
+      .sort(parallelSetsDimensionValueSortingMethod);
+    const colorScale = d3.scaleOrdinal(this.colorScheme)
+      .domain(firstDimensionValues.map(value => value.toString()));
 
     const lastAxisSegmentValueAndBackgroundDict = Object.fromEntries(
       lastDimensionValues.map(value => [value.toString(), { backgroundColor: '', backgroundImage: '' }])
@@ -151,7 +154,7 @@ export class SSetStat implements ComponentInterface {
       lastAxisSegmentValueAndBackgroundDict,
       lastDimensionValue
     } = params;
-    
+
     const axisSegmentDataRecordCount = d3.sum(dataNodesForTheValue.map(dataNode => dataNode.dataRecords.length));
     let valuesAndRatios: { value: string | number; ratio: number; startRatio: number; }[] = [];
     let previousRatio = 0;
