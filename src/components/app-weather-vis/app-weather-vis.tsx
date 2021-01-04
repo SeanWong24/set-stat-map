@@ -64,6 +64,12 @@ export class AppWeatherVis implements ComponentInterface {
   @State() categorizationMethod: 'quantile' | 'value' = 'quantile';
   @State() selectedVariables: string[];
   @State() data: any[];
+  @State() mapRange: {
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
+  };
   @State() datasetInfo: {
     minLatitude: number,
     maxLatitude: number,
@@ -101,7 +107,7 @@ export class AppWeatherVis implements ComponentInterface {
   }
 
   componentShouldUpdate(_newValue: any, _oldValue: any, propName: string) {
-    const propertiesRequireQueryingData = ['DB', 'selectedVariables'];
+    const propertiesRequireQueryingData = ['DB', 'selectedVariables', 'mapRange'];
     const shouldQueryData = propertiesRequireQueryingData.find(name => name === propName);
     const propertiesRequireReprocessingData = ['categorizationMethod'];
     const shouldReprocessData = propertiesRequireReprocessingData.find(name => name === propName);
@@ -217,6 +223,7 @@ export class AppWeatherVis implements ComponentInterface {
                   ]}
                   zoom={5.5}
                   heatmapData={this.mapViewHeatmapData}
+                  onMouseDraw={({ detail }) => this.mapRange = detail}
                 ></app-map-view>
               </div>
             }
@@ -319,10 +326,13 @@ export class AppWeatherVis implements ComponentInterface {
       });
       await loading.present();
 
-      const sqlQueryString =
+      let sqlQueryString =
         `select substr(Date, 0, 8) as Date, Latitude, Longitude, ${this.selectedVariables.map(variable => `avg(${variable}) as ${variable}`).join(', ')} ` +
-        `from ${this.databaseName} ` +
-        `group by substr(Date, 0, 8), Latitude, Longitude`;
+        `from ${this.databaseName}`;
+      if (this.mapRange) {
+        sqlQueryString += ` where Latitude >= ${this.mapRange.minLatitude} and Latitude <= ${this.mapRange.maxLatitude} and Longitude >= ${this.mapRange.minLongitude} and Longitude <= ${this.mapRange.maxLongitude}`;
+      }
+      sqlQueryString += ` group by substr(Date, 0, 8), Latitude, Longitude`
       const result = this.DB.exec(sqlQueryString)?.[0];
 
       const data = result?.values.map(value => {

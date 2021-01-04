@@ -230,6 +230,12 @@ declare namespace LocalJSX {
       rectHeight: number
     }[]
   };
+        "onMouseDraw"?: (event: CustomEvent<{
+    minLatitude: number,
+    maxLatitude: number,
+    minLongitude: number,
+    maxLongitude: number
+  }>) => void;
         "zoom"?: number;
     }
     interface AppRoot {

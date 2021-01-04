@@ -1,4 +1,4 @@
-import { Component, Host, h, ComponentInterface, Prop } from '@stencil/core';
+import { Component, Host, h, ComponentInterface, Prop, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
 import leaflet from 'leaflet';
 
@@ -19,6 +19,10 @@ export class AppMapView implements ComponentInterface {
   private legendControl: leaflet.Control;
   private textureContainerElement: SVGElement;
   private textureUrlDict: { [valueAndBackgroundColor: string]: string } = {};
+  private isMouseDrawing: boolean = false;
+  private mouseDrawStart: [number, number];
+  private mouseDrawEnd: [number, number];
+  private mouseDrawRectLayer: leaflet.Layer;
 
   @Prop() centerPoint: [number, number] = [0, 0];
   @Prop() zoom: number = 1;
@@ -37,6 +41,13 @@ export class AppMapView implements ComponentInterface {
       rectHeight: number
     }[]
   };
+
+  @Event() mouseDraw: EventEmitter<{
+    minLatitude: number,
+    maxLatitude: number,
+    minLongitude: number,
+    maxLongitude: number
+  }>;
 
   render() {
     return (
@@ -63,12 +74,60 @@ export class AppMapView implements ComponentInterface {
 
     this.drawHeatmap();
     this.drawLegend();
+    this.addMouseDrawEvents();
 
     setTimeout(() => {
       this.map.invalidateSize()
     });
   }
 
+
+  private addMouseDrawEvents() {
+    this.map.addEventListener('contextmenu', event => (event as any).originalEvent.preventDefault());
+    this.map.addEventListener('mousedown', event => {
+      if ((event as any).originalEvent.button === 2) {
+        this.mouseDrawStart = [(event as any).latlng.lat, (event as any).latlng.lng];
+        this.isMouseDrawing = true;
+        this.map.dragging.disable();
+      }
+    });
+    this.map.addEventListener('mousemove', event => {
+      if (this.isMouseDrawing) {
+        this.mouseDrawEnd = [(event as any).latlng.lat, (event as any).latlng.lng];
+        const minLatitude = Math.min(this.mouseDrawStart[0], this.mouseDrawEnd[0]);
+        const maxLatitude = Math.max(this.mouseDrawStart[0], this.mouseDrawEnd[0]);
+        const minLongitude = Math.min(this.mouseDrawStart[1], this.mouseDrawEnd[1]);
+        const maxLongitude = Math.max(this.mouseDrawStart[1], this.mouseDrawEnd[1]);
+
+        if (this.mouseDrawRectLayer) {
+          this.map.removeLayer(this.mouseDrawRectLayer);
+        }
+        this.mouseDrawRectLayer = leaflet.rectangle(
+          [[minLatitude, minLongitude], [maxLatitude, maxLongitude]],
+          { color: "grey", fillColor: 'transparent', weight: 1 }
+        )
+          .addTo(this.map);
+      }
+    });
+    this.map.addEventListener('mouseup', event => {
+      if ((event as any).originalEvent.button === 2) {
+        this.isMouseDrawing = false;
+        this.map.dragging.enable();
+
+        const minLatitude = Math.min(this.mouseDrawStart[0], this.mouseDrawEnd[0]);
+        const maxLatitude = Math.max(this.mouseDrawStart[0], this.mouseDrawEnd[0]);
+        const minLongitude = Math.min(this.mouseDrawStart[1], this.mouseDrawEnd[1]);
+        const maxLongitude = Math.max(this.mouseDrawStart[1], this.mouseDrawEnd[1]);
+
+        this.mouseDraw.emit({
+          minLatitude,
+          maxLatitude,
+          minLongitude,
+          maxLongitude
+        });
+      }
+    });
+  }
 
   private drawLegend() {
     if (this.legendControl) {
