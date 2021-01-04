@@ -129,10 +129,10 @@ export class AppWeatherVis implements ComponentInterface {
             </ion-buttons>
             <ion-title>Weather Vis{` - ${this.file?.name || 'No File Opened'}`}</ion-title>
             <ion-buttons slot="end">
-              <ion-button title="Process Data" href="/weather/data-process">
+              <ion-button title="Generate Database File" href="/weather/data-process">
                 <ion-icon slot="icon-only" name="cube"></ion-icon>
               </ion-button>
-              <ion-button title="Open" onClick={() => this.openFile()}>
+              <ion-button title="Open Database File" onClick={() => this.openFile()}>
                 <ion-icon slot="icon-only" name="open"></ion-icon>
               </ion-button>
               <ion-menu-button></ion-menu-button>
@@ -238,7 +238,7 @@ export class AppWeatherVis implements ComponentInterface {
                   <li>Relative Humidity (fraction)</li>
                   <li>Solar (MJ/m2)</li>
                 </ul>
-                Please open a database file to start. If you do not have a database file, you will need to generate one. You can check the buttons on the upper-right corner to open a database file (Open) or generate a new one (Process Data).
+                Please open a database file to start. If you do not have a database file, you will need to generate one. You can check the buttons on the upper-right corner to open a database file (Open Database File) or generate a new one (Generate Database File).
                  </ion-text>
             }
             {
