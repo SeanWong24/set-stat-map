@@ -220,7 +220,17 @@ export class AppWeatherVis implements ComponentInterface {
             }
             {
               !this.file &&
-              <ion-text>Please open a database file to start. If you do not have a database file, you will need to generate one. You can check the buttons on the upper-right corner to open a database file (Open) or generate a new one (Process Data).</ion-text>
+              <ion-text>
+                In this visualization, the dataset contains multiple weather variables for a certain area. The variables are as below:
+                <ul>
+                  <li>Temperature (°C)</li>
+                  <li>Precipitation (mm)</li>
+                  <li>Wind (m/s)</li>
+                  <li>Relative Humidity (fraction)</li>
+                  <li>Solar (MJ/m2)</li>
+                </ul>
+                Please open a database file to start. If you do not have a database file, you will need to generate one. You can check the buttons on the upper-right corner to open a database file (Open) or generate a new one (Process Data).
+                 </ion-text>
             }
             {
               this.file && !this.selectedVariables?.length &&
