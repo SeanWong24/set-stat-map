@@ -11,11 +11,14 @@ export class AppHome implements ComponentInterface {
       <Host>
         <ion-header>
           <ion-toolbar color="primary">
-            <ion-title>Home</ion-title>
+            <ion-title>Set-Stat-Map Demos</ion-title>
           </ion-toolbar>
         </ion-header>
 
         <ion-content class="ion-padding">
+          <ion-card>
+            <ion-card-content>Please click one of below options for different demos of Set-Stat-Map. The demo requires a browser based on Chromium of version 86 or higher for the best compatibility.</ion-card-content>
+          </ion-card>
           <ion-list>
             <ion-item button href="/weather">Weather</ion-item>
           </ion-list>
