@@ -190,7 +190,7 @@ export class AppWeatherVis implements ComponentInterface {
           <ion-content id="main-container" class="ion-padding">
             {
               this.data && this.selectedVariables?.length &&
-              <div class="vis-container">
+              <ion-card class="vis-container">
                 <s-set-stat
                   ref={el => this.setStatElement = el}
                   onVisWillRender={() => this.toggleVisRenderLoading(true)}
@@ -225,7 +225,7 @@ export class AppWeatherVis implements ComponentInterface {
                   heatmapData={this.mapViewHeatmapData}
                   onMouseDraw={({ detail }) => this.mapRange = detail}
                 ></app-map-view>
-              </div>
+              </ion-card>
             }
             {
               !this.file &&
