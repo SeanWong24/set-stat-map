@@ -46,7 +46,7 @@ export class AppDataProcess implements ComponentInterface {
               <ul>
                 <li>Go to <a href="https://globalweather.tamu.edu/" target="_blank">Global Weather Data for SWAT</a>.</li>
                 <li>Select a valid area range on the map.</li>
-                <li>Select a date range.</li>
+                <li>Select a date range (within the same year, preferably the whole year).</li>
                 <li>Select all available variables.</li>
                 <li>Select to generate CSV files.</li>
                 <li>Enter your email address.</li>
