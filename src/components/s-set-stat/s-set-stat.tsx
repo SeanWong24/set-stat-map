@@ -113,6 +113,7 @@ export class SSetStat implements ComponentInterface {
           rowValueDimensionName={this.parallelSetsDimensions[this.parallelSetsDimensions.length - 1]}
           rowValueAndPositionDict={this.lastAxisSegmentValueAndPositionDict}
           rowValueAndBackgroundDict={this.lastAxisSegmentValueAndBackgroundDict}
+          dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           headerTextSize={this.headerTextSize}
           headerTextColor={this.headerTextColor}
           headerTextWeight={this.headerTextWeight}

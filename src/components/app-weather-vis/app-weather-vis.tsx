@@ -13,14 +13,23 @@ import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, ParallelSetsDimensionVa
 export class AppWeatherVis implements ComponentInterface {
 
   private readonly databaseName = 'weather';
+  private readonly variableDisplayNameDict: { [variableName: string]: string } = {
+    'Elevation': 'Elevation',
+    'MaxTemperature': 'MaxTemp',
+    'MinTemperature': 'MinTemp',
+    'Precipitation': 'Precipitation',
+    'Wind': 'Wind',
+    'RelativeHumidity': 'RelHumi',
+    'Solar': 'Solar'
+  }
   private readonly variableOptions: string[] = [
-    "Elevation",
-    "MaxTemperature",
-    "MinTemperature",
-    "Precipitation",
-    "Wind",
-    "RelativeHumidity",
-    "Solar"
+    'Elevation',
+    'MaxTemperature',
+    'MinTemperature',
+    'Precipitation',
+    'Wind',
+    'RelativeHumidity',
+    'Solar'
   ];
   private readonly colorScheme = [
     '#4575b4',
@@ -43,14 +52,14 @@ export class AppWeatherVis implements ComponentInterface {
     '12': 'Dec'
   };
   private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
-    () => textureGenerator.lines().stroke("transparent"),
+    () => textureGenerator.lines().stroke('transparent'),
     () => textureGenerator.circles().radius(2),
-    () => textureGenerator.lines().orientation("2/8").size(10),
-    () => textureGenerator.lines().orientation("2/8").size(10).heavier(),
-    () => textureGenerator.lines().orientation("8/8").size(10),
-    () => textureGenerator.lines().orientation("8/8").size(10).heavier(),
-    () => textureGenerator.lines().orientation("6/8").size(10),
-    () => textureGenerator.lines().orientation("6/8").size(10).heavier()
+    () => textureGenerator.lines().orientation('2/8').size(10),
+    () => textureGenerator.lines().orientation('2/8').size(10).heavier(),
+    () => textureGenerator.lines().orientation('8/8').size(10),
+    () => textureGenerator.lines().orientation('8/8').size(10).heavier(),
+    () => textureGenerator.lines().orientation('6/8').size(10),
+    () => textureGenerator.lines().orientation('6/8').size(10).heavier()
   ];
 
   private SQL: SqlJs.SqlJsStatic;
@@ -213,7 +222,10 @@ export class AppWeatherVis implements ComponentInterface {
                     visType: 'box'
                   }))}
                   dimensionDisplyedNameDict={
-                    Object.fromEntries(this.selectedVariables.map(variableName => [`_${variableName}`, variableName]))
+                    Object.fromEntries([
+                      ...this.selectedVariables.map(variableName => [`_${variableName}`, this.variableDisplayNameDict[variableName]]),
+                      ...this.selectedVariables.map(variableName => [variableName, this.variableDisplayNameDict[variableName]]),
+                    ])
                   }
                   parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
                   headerTextColor={this.headerTextColor}
