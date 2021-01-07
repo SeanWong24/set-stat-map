@@ -30,6 +30,7 @@ export class AppMapView implements ComponentInterface {
     legendInnerHTML: string,
     primaryValueTitle: string,
     secondaryValueHeader: string,
+    isTooltipEnabled: boolean,
     dataPoints: {
       latitude: number,
       longitude: number,
@@ -175,13 +176,16 @@ export class AppMapView implements ComponentInterface {
               ]
             ],
             { fillColor: textureUrl, className: 'heatmap-cell' },
-          )
-          .bindTooltip(
-            `Latitude: ${dataPoint.latitude}<br/>` +
-            `Longitude: ${dataPoint.longitude}<br/>` +
-            `${this.heatmapData.primaryValueTitle}: ${dataPoint.primaryValue}<br/>` +
-            `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`
           );
+        if (this.heatmapData.isTooltipEnabled) {
+          cellLayer
+            .bindTooltip(
+              `Latitude: ${dataPoint.latitude}<br/>` +
+              `Longitude: ${dataPoint.longitude}<br/>` +
+              `${this.heatmapData.primaryValueTitle}: ${dataPoint.primaryValue}<br/>` +
+              `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`
+            );
+        }
         this.heatmapLayerGroup.addLayer(cellLayer);
       }
     }

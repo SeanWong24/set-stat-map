@@ -19,6 +19,7 @@ export namespace Components {
     legendInnerHTML: string,
     primaryValueTitle: string,
     secondaryValueHeader: string,
+    isTooltipEnabled: boolean,
     dataPoints: {
       latitude: number,
       longitude: number,
@@ -219,6 +220,7 @@ declare namespace LocalJSX {
     legendInnerHTML: string,
     primaryValueTitle: string,
     secondaryValueHeader: string,
+    isTooltipEnabled: boolean,
     dataPoints: {
       latitude: number,
       longitude: number,

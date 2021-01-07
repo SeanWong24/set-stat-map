@@ -91,6 +91,7 @@ export class AppWeatherVis implements ComponentInterface {
     legendInnerHTML: string,
     primaryValueTitle: string,
     secondaryValueHeader: string,
+    isTooltipEnabled: boolean,
     dataPoints: {
       latitude: number,
       longitude: number,
@@ -229,7 +230,7 @@ export class AppWeatherVis implements ComponentInterface {
                   }
                   parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
                   headerTextColor={this.headerTextColor}
-                  onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.value, detail.dataNodes)}
+                  onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes)}
                   onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
                 ></s-set-stat>
                 <app-map-view
@@ -289,6 +290,7 @@ export class AppWeatherVis implements ComponentInterface {
   }
 
   private drawHeatmapOnMapView(
+    dimensionName: string,
     legendHeader: string | number,
     dataNodes: ParallelSetsDataNode[]
   ) {
@@ -314,7 +316,8 @@ export class AppWeatherVis implements ComponentInterface {
       dataPoints,
       legendInnerHTML,
       primaryValueTitle: this.selectedVariables[0],
-      secondaryValueHeader: this.selectedVariables[1]
+      secondaryValueHeader: this.selectedVariables[1],
+      isTooltipEnabled: dimensionName === 'Date'
     };
   }
 
