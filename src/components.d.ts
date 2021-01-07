@@ -15,6 +15,10 @@ export namespace Components {
     }
     interface AppMapView {
         "centerPoint": [number, number];
+        "header": string;
+        "headerTextColor": string;
+        "headerTextSize": number;
+        "headerTextWeight": string;
         "heatmapData": {
     legendInnerHTML: string,
     primaryValueTitle: string,
@@ -224,6 +228,10 @@ declare namespace LocalJSX {
     }
     interface AppMapView {
         "centerPoint"?: [number, number];
+        "header"?: string;
+        "headerTextColor"?: string;
+        "headerTextSize"?: number;
+        "headerTextWeight"?: string;
         "heatmapData"?: {
     legendInnerHTML: string,
     primaryValueTitle: string,

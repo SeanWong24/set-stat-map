@@ -8,6 +8,10 @@
   --heatmap-highlight-opacity: unset;
 }
 
+#header-text {
+  cursor: pointer;
+}
+
 #map-container {
   position: absolute;
   width: 100%;

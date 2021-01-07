@@ -47,6 +47,10 @@ export class AppMapView implements ComponentInterface {
   };
   @Prop() heatmapOpacity: number = .5;
   @Prop() heatmapHighlightOpacity: number = .5;
+  @Prop() header: string;
+  @Prop() headerTextSize: number = 16;
+  @Prop() headerTextColor: string = 'rgb(0,0,0)';
+  @Prop() headerTextWeight: string = 'bold';
 
   @Event() mouseDraw: EventEmitter<{
     minLatitude: number,
@@ -63,9 +67,20 @@ export class AppMapView implements ComponentInterface {
   render() {
     return (
       <Host>
+        <text
+          id="header-text"
+          style={{
+            fontSize: `${this.headerTextSize}px`,
+            color: this.headerTextColor,
+            fontWeight: this.headerTextWeight
+          }}
+        >{this.header}</text>
         <div
           id="map-container"
           ref={el => this.updateMap(el)}
+          style={{
+            height: `calc(100% - ${this.headerTextSize}px)`
+          }}
         ></div>
         <svg
           id="texture-container"

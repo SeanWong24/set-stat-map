@@ -20,7 +20,8 @@ export class AppWeatherVis implements ComponentInterface {
     'Precipitation': 'Precipitation',
     'Wind': 'Wind',
     'RelativeHumidity': 'RelHumi',
-    'Solar': 'Solar'
+    'Solar': 'Solar',
+    'Date': 'Month'
   }
   private readonly variableOptions: string[] = [
     'Elevation',
@@ -117,6 +118,7 @@ export class AppWeatherVis implements ComponentInterface {
     'Date': undefined
   };
   @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @State() mapViewHeader: string = 'No Selected Subset';
 
   async connectedCallback() {
     this.SQL = await initSqlJs({ locateFile: fileName => `./assets/sql.js/${fileName}` });
@@ -300,6 +302,7 @@ export class AppWeatherVis implements ComponentInterface {
         dimensionDisplyedNameDict={Object.fromEntries([
           ...this.selectedVariables.map(variableName => [`_${variableName}`, this.variableDisplayNameDict[variableName]]),
           ...this.selectedVariables.map(variableName => [variableName, this.variableDisplayNameDict[variableName]]),
+          ['Date', this.variableDisplayNameDict['Date']]
         ])}
         parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
         headerTextColor={this.headerTextColor}
@@ -312,6 +315,7 @@ export class AppWeatherVis implements ComponentInterface {
           (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
         ]}
         zoom={5.5}
+        header={this.mapViewHeader}
         heatmapData={this.mapViewHeatmapData}
         heatmapOpacity={this.visFillOpacity}
         heatmapHighlightOpacity={this.visFillHighlightOpacity}
@@ -343,7 +347,7 @@ export class AppWeatherVis implements ComponentInterface {
 
   private drawHeatmapOnMapView(
     dimensionName: string,
-    legendHeader: string | number,
+    dimensionValue: string | number,
     dataNodes: ParallelSetsDataNode[]
   ) {
     const dataRecords = dataNodes.flatMap(dataNode => dataNode.dataRecords);
@@ -363,7 +367,8 @@ export class AppWeatherVis implements ComponentInterface {
         rectHeight: .312
       };
     });
-    const legendInnerHTML = `<h4>${legendHeader}</h4>${Object.entries(colorDict).map(([value, color]) => `<i style="background: ${color}"></i><span>${value}</span><br/>`).join('')}`;
+    const legendInnerHTML = `<h4>${this.variableDisplayNameDict[this.selectedVariables[0]]}</h4>${Object.entries(colorDict).map(([value, color]) => `<i style="background: ${color}"></i><span>${value}</span><br/>`).join('')}`;
+    this.mapViewHeader = `${this.variableDisplayNameDict[dimensionName.replace(/^_/, '')]} - ${dimensionValue}`;
     this.mapViewHeatmapData = {
       dataPoints,
       legendInnerHTML,
