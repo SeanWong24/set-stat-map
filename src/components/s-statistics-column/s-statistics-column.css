@@ -5,6 +5,8 @@
   height: 100%;
 
   --plot-item-margin: 10px;
+  --row-opacity: unset;
+  --row-highlight-opacity: unset;
 }
 
 #statistics-row-container {
@@ -25,10 +27,22 @@
   width: calc(100% - 4px);
 }
 
+.statistics-row-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: var(--row-opacity);
+}
+
+.statistics-row-background:hover {
+  opacity: var(--row-highlight-opacity);
+}
+
 .plot-item {
   position: absolute;
   top: 50%;
   transform: translate(var(--plot-item-margin), -100%);
   width: calc(100% - var(--plot-item-margin) * 2);
   height: 10px;
+  pointer-events: none;
 }

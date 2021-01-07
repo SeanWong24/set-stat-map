@@ -26,6 +26,8 @@ export class SStatisticsColumns implements ComponentInterface {
       backgroundImage: string;
     }
   };
+  @Prop() rowOpacity: number = .5;
+  @Prop() rowHighlightOpacity: number = .8;
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
@@ -55,6 +57,8 @@ export class SStatisticsColumns implements ComponentInterface {
                     header={this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}
                     rowValueAndPositionDict={this.rowValueAndPositionDict}
                     rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}
+                    rowOpacity={this.rowOpacity}
+                    rowHighlightOpacity={this.rowHighlightOpacity}
                     headerTextSize={this.headerTextSize}
                     headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
                     headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}

@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, ComponentInterface, Event, EventEmitter } from '@stencil/core';
+import { Component, Host, h, Prop, ComponentInterface, Element, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -9,6 +9,8 @@ import * as d3 from 'd3';
 export class SStatisticsColumn implements ComponentInterface {
 
   private statisticsRowElementDict: { [rowValue: string]: HTMLElement } = {};
+
+  @Element() hostElement: HTMLElement;
 
   @Prop() header: string;
   @Prop() data: { [rowValue: string]: number[] };
@@ -24,11 +26,18 @@ export class SStatisticsColumn implements ComponentInterface {
       backgroundImage: string;
     }
   };
+  @Prop() rowOpacity: number = .5;
+  @Prop() rowHighlightOpacity: number = .8;
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
 
   @Event() headerClick: EventEmitter<string>;
+
+  componentWillRender() {
+    this.hostElement.style.setProperty('--row-opacity', this.rowOpacity.toString());
+    this.hostElement.style.setProperty('--row-highlight-opacity', this.rowHighlightOpacity.toString());
+  }
 
   render() {
     const allDataRecords = Object.values(this.data).flat();
@@ -66,12 +75,17 @@ export class SStatisticsColumn implements ComponentInterface {
                       class="statistics-row"
                       ref={el => this.statisticsRowElementDict[rowValue] = el}
                       style={{
-                        backgroundColor: rowValueAndBackground.backgroundColor,
-                        backgroundImage: rowValueAndBackground.backgroundImage,
                         top: `${minSegmentPosition * 100}%`,
                         height: `${(maxSegmentPosition - minSegmentPosition) * 100}%`
                       }}
                     >
+                      <div
+                        class="statistics-row-background"
+                        style={{
+                          backgroundColor: rowValueAndBackground.backgroundColor,
+                          backgroundImage: rowValueAndBackground.backgroundImage,
+                        }}
+                      ></div>
                       <s-box-plot-item
                         class="plot-item"
                         values={this.data[rowValue]}

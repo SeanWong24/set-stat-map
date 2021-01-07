@@ -3,6 +3,9 @@
   display: inline-block;
   width: 100%;
   height: 100%;
+
+  --heatmap-opacity: unset;
+  --heatmap-highlight-opacity: unset;
 }
 
 #map-container {
@@ -19,11 +22,11 @@
 
 .heatmap-cell {
   stroke-opacity: 0;
-  fill-opacity: .5;
+  fill-opacity: var(--heatmap-opacity);
 }
 
 .heatmap-cell:hover {
-  fill-opacity: .8;
+  fill-opacity: var(--heatmap-highlight-opacity);
 }
 
 .legend {

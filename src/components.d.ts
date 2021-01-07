@@ -31,6 +31,8 @@ export namespace Components {
       rectHeight: number
     }[]
   };
+        "heatmapHighlightOpacity": number;
+        "heatmapOpacity": number;
         "zoom": number;
     }
     interface AppRoot {
@@ -90,6 +92,8 @@ export namespace Components {
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
         "reorderParallelSetsLastAxisByDimension": (dimensionName?: string, orderBy?: 'ascending' | 'descending') => Promise<ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler; }>;
+        "ribbonAndRowHighlightOpacity": number;
+        "ribbonAndRowOpacity": number;
         "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
         "statisticsColumnsWidth": string;
     }
@@ -99,6 +103,8 @@ export namespace Components {
         "headerTextColor": string;
         "headerTextSize": number;
         "headerTextWeight": string;
+        "rowHighlightOpacity": number;
+        "rowOpacity": number;
         "rowValueAndBackgroundDict": {
     [value: string]: {
       backgroundColor: string;
@@ -118,6 +124,8 @@ export namespace Components {
         "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
+        "rowHighlightOpacity": number;
+        "rowOpacity": number;
         "rowValueAndBackgroundDict": {
     [value: string]: {
       backgroundColor: string;
@@ -232,6 +240,8 @@ declare namespace LocalJSX {
       rectHeight: number
     }[]
   };
+        "heatmapHighlightOpacity"?: number;
+        "heatmapOpacity"?: number;
         "onMouseDraw"?: (event: CustomEvent<{
     minLatitude: number,
     maxLatitude: number,
@@ -314,6 +324,8 @@ declare namespace LocalJSX {
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;
         "parallelSetsWidth"?: string;
+        "ribbonAndRowHighlightOpacity"?: number;
+        "ribbonAndRowOpacity"?: number;
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
         "statisticsColumnsWidth"?: string;
     }
@@ -324,6 +336,8 @@ declare namespace LocalJSX {
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
         "onHeaderClick"?: (event: CustomEvent<string>) => void;
+        "rowHighlightOpacity"?: number;
+        "rowOpacity"?: number;
         "rowValueAndBackgroundDict"?: {
     [value: string]: {
       backgroundColor: string;
@@ -344,6 +358,8 @@ declare namespace LocalJSX {
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onColumnHeaderClick"?: (event: CustomEvent<string>) => void;
+        "rowHighlightOpacity"?: number;
+        "rowOpacity"?: number;
         "rowValueAndBackgroundDict"?: {
     [value: string]: {
       backgroundColor: string;

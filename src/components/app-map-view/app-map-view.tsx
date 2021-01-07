@@ -1,4 +1,4 @@
-import { Component, Host, h, ComponentInterface, Prop, Event, EventEmitter } from '@stencil/core';
+import { Component, Host, h, ComponentInterface, Element, Prop, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
 import leaflet from 'leaflet';
 
@@ -24,6 +24,9 @@ export class AppMapView implements ComponentInterface {
   private mouseDrawEnd: [number, number];
   private mouseDrawRectLayer: leaflet.Layer;
 
+
+  @Element() hostElement: HTMLElement;
+
   @Prop() centerPoint: [number, number] = [0, 0];
   @Prop() zoom: number = 1;
   @Prop() heatmapData: {
@@ -42,6 +45,8 @@ export class AppMapView implements ComponentInterface {
       rectHeight: number
     }[]
   };
+  @Prop() heatmapOpacity: number = .5;
+  @Prop() heatmapHighlightOpacity: number = .5;
 
   @Event() mouseDraw: EventEmitter<{
     minLatitude: number,
@@ -49,6 +54,11 @@ export class AppMapView implements ComponentInterface {
     minLongitude: number,
     maxLongitude: number
   }>;
+
+  componentWillRender() {
+    this.hostElement.style.setProperty('--heatmap-opacity', this.heatmapOpacity.toString());
+    this.hostElement.style.setProperty('--heatmap-highlight-opacity', this.heatmapHighlightOpacity.toString());
+  }
 
   render() {
     return (

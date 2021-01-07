@@ -16,6 +16,8 @@ export class SSetStat implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() ribbonAndRowOpacity: number = .5;
+  @Prop() ribbonAndRowHighlightOpacity: number = .8;
   // TODO also give default values for parallel sets props
   @Prop() colorScheme: string[] = ['#eddcd2', '#fff1e6', '#fde2e4', '#fad2e1', '#c5dedd', '#dbe7e4', '#f0efeb', '#d6e2e9', '#bcd4e6', '#99c1de'];
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
@@ -99,6 +101,8 @@ export class SSetStat implements ComponentInterface {
           autoMergedAxisSegmentMaxRatio={this.parallelSetsAutoMergedAxisSegmentMaxRatio}
           defineTexturesHandler={this.defineTexturesHandler}
           ribbonTension={this.parallelSetsRibbonTension}
+          ribbonOpacity={this.ribbonAndRowOpacity}
+          ribbonHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
@@ -117,6 +121,8 @@ export class SSetStat implements ComponentInterface {
           headerTextSize={this.headerTextSize}
           headerTextColor={this.headerTextColor}
           headerTextWeight={this.headerTextWeight}
+          rowOpacity={this.ribbonAndRowOpacity}
+          rowHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           onColumnHeaderClick={({ detail }) => this.statisticsColumnsHeaderClick.emit(detail)}
         ></s-statistics-columns>
       </Host>

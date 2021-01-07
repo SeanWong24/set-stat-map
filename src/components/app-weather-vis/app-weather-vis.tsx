@@ -61,6 +61,8 @@ export class AppWeatherVis implements ComponentInterface {
     () => textureGenerator.lines().orientation('6/8').size(10),
     () => textureGenerator.lines().orientation('6/8').size(10).heavier()
   ];
+  private readonly visFillOpacity: number = .5;
+  private readonly visFillHighlightOpacity: number = .8;
 
   private SQL: SqlJs.SqlJsStatic;
   private visRenderLoadingElement: HTMLIonLoadingElement;
@@ -214,6 +216,8 @@ export class AppWeatherVis implements ComponentInterface {
                   }}
                   data={this.data}
                   parallel-sets-ribbon-tension={.5}
+                  ribbonAndRowOpacity={this.visFillOpacity}
+                  ribbonAndRowHighlightOpacity={this.visFillHighlightOpacity}
                   parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
                   parallelSetsMaxAxisSegmentCount={12}
                   colorScheme={this.colorScheme}
@@ -240,6 +244,8 @@ export class AppWeatherVis implements ComponentInterface {
                   ]}
                   zoom={5.5}
                   heatmapData={this.mapViewHeatmapData}
+                  heatmapOpacity={this.visFillOpacity}
+                  heatmapHighlightOpacity={this.visFillHighlightOpacity}
                   onMouseDraw={({ detail }) => this.mapRange = detail}
                 ></app-map-view>
               </ion-card>
