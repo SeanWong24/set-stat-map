@@ -11,6 +11,10 @@ ion-split-pane {
   height: 50%;
 }
 
+.control-panel-item-label {
+  min-width: 100px;
+}
+
 s-set-stat {
   width: calc(100% - 35%);
   height: 100%;

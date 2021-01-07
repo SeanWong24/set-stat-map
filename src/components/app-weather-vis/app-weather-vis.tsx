@@ -61,8 +61,6 @@ export class AppWeatherVis implements ComponentInterface {
     () => textureGenerator.lines().orientation('6/8').size(10),
     () => textureGenerator.lines().orientation('6/8').size(10).heavier()
   ];
-  private readonly visFillOpacity: number = .5;
-  private readonly visFillHighlightOpacity: number = .8;
 
   private SQL: SqlJs.SqlJsStatic;
   private visRenderLoadingElement: HTMLIonLoadingElement;
@@ -75,6 +73,8 @@ export class AppWeatherVis implements ComponentInterface {
   @State() categorizationMethod: 'quantile' | 'value' = 'quantile';
   @State() selectedVariables: string[];
   @State() data: any[];
+  @State() visFillOpacity: number = .5;
+  @State() visFillHighlightOpacity: number = .8;
   @State() mapRange: {
     minLatitude: number;
     maxLatitude: number;
@@ -158,8 +158,34 @@ export class AppWeatherVis implements ComponentInterface {
         <ion-split-pane when="(min-width: 1600px)" content-id="main-container">
           <ion-menu side="end" content-id="main-container">
             <ion-list>
-              <ion-item disabled={!this.datasetInfo}>
-                <ion-label>Categorization Method</ion-label>
+              <ion-item class="control-panel-item">
+                <ion-label class="control-panel-item-label">Base Opacity</ion-label>
+                <ion-range
+                  min={0}
+                  max={1}
+                  step={.01}
+                  value={this.visFillOpacity}
+                  onIonChange={({ detail }) => this.visFillOpacity = +detail.value}
+                >
+                  <ion-label slot="start">0</ion-label>
+                  <ion-label slot="end">1</ion-label>
+                </ion-range>
+              </ion-item>
+              <ion-item class="control-panel-item">
+                <ion-label class="control-panel-item-label">Highlight Opacity</ion-label>
+                <ion-range
+                  min={0}
+                  max={1}
+                  step={.01}
+                  value={this.visFillHighlightOpacity}
+                  onIonChange={({ detail }) => this.visFillHighlightOpacity = +detail.value}
+                >
+                  <ion-label slot="start">0</ion-label>
+                  <ion-label slot="end">1</ion-label>
+                </ion-range>
+              </ion-item>
+              <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
+                <ion-label class="control-panel-item-label">Categorization Method</ion-label>
                 <ion-select
                   value={this.categorizationMethod}
                   onIonChange={({ detail }) => this.categorizationMethod = detail.value}
@@ -168,8 +194,8 @@ export class AppWeatherVis implements ComponentInterface {
                   <ion-select-option value="value">By Value</ion-select-option>
                 </ion-select>
               </ion-item>
-              <ion-item disabled={!this.datasetInfo}>
-                <ion-label>Variables</ion-label>
+              <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
+                <ion-label class="control-panel-item-label">Variables</ion-label>
                 <ion-select
                   multiple
                   value={this.selectedVariables}
@@ -180,8 +206,8 @@ export class AppWeatherVis implements ComponentInterface {
                   }
                 </ion-select>
               </ion-item>
-              <ion-item disabled={!this.datasetInfo}>
-                <ion-label>Order By</ion-label>
+              <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
+                <ion-label class="control-panel-item-label">Order By</ion-label>
                 <ion-reorder-group
                   disabled={false}
                   onIonItemReorder={({ detail }) => {
