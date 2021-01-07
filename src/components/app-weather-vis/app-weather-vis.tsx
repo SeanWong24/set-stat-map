@@ -51,7 +51,13 @@ export class AppWeatherVis implements ComponentInterface {
     '11': 'Nov',
     '12': 'Dec'
   };
-  private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
+  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
+    () => textureGenerator.lines().stroke('transparent'),
+    () => textureGenerator.lines().orientation('2/8').size(10),
+    () => textureGenerator.lines().orientation('8/8').size(10),
+    () => textureGenerator.lines().orientation('6/8').size(10),
+  ];
+  private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
     () => textureGenerator.lines().stroke('transparent'),
     () => textureGenerator.circles().radius(2),
     () => textureGenerator.lines().orientation('2/8').size(10),
@@ -286,7 +292,7 @@ export class AppWeatherVis implements ComponentInterface {
         parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
         parallelSetsMaxAxisSegmentCount={12}
         colorScheme={this.colorScheme}
-        defineTexturesHandler={this.defineTexturesHandler}
+        defineTexturesHandler={this.categorizationMethod === 'quantile' ? this.defineTexturesHandlerForFour : this.defineTexturesHandlerForEight}
         statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
           dimensionName: variableName,
           visType: 'box'
