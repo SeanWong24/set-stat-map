@@ -75,6 +75,7 @@ export class AppWeatherVis implements ComponentInterface {
   @State() data: any[];
   @State() visFillOpacity: number = .5;
   @State() visFillHighlightOpacity: number = .8;
+  @State() isSecondaryVisEnabled: boolean = false;
   @State() mapRange: {
     minLatitude: number;
     maxLatitude: number;
@@ -226,55 +227,24 @@ export class AppWeatherVis implements ComponentInterface {
                   }
                 </ion-reorder-group>
               </ion-item>
+              <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
+                <ion-label class="control-panel-item-label">Enable Secondary Vis</ion-label>
+                <ion-toggle
+                  checked={this.isSecondaryVisEnabled}
+                  onIonChange={({ detail }) => this.isSecondaryVisEnabled = detail.checked}
+                ></ion-toggle>
+              </ion-item>
             </ion-list>
           </ion-menu>
 
           <ion-content id="main-container" class="ion-padding">
             {
               this.data && this.selectedVariables?.length &&
-              <ion-card class="vis-container">
-                <s-set-stat
-                  ref={el => this.setStatElement = el}
-                  onVisWillRender={() => this.toggleVisRenderLoading(true)}
-                  onVisLoad={({ detail }) => {
-                    this.toggleVisRenderLoading(false);
-                    this.setStatOnLoadDetail = detail;
-                  }}
-                  data={this.data}
-                  parallel-sets-ribbon-tension={.5}
-                  ribbonAndRowOpacity={this.visFillOpacity}
-                  ribbonAndRowHighlightOpacity={this.visFillHighlightOpacity}
-                  parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
-                  parallelSetsMaxAxisSegmentCount={12}
-                  colorScheme={this.colorScheme}
-                  defineTexturesHandler={this.defineTexturesHandler}
-                  statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
-                    dimensionName: variableName,
-                    visType: 'box'
-                  }))}
-                  dimensionDisplyedNameDict={
-                    Object.fromEntries([
-                      ...this.selectedVariables.map(variableName => [`_${variableName}`, this.variableDisplayNameDict[variableName]]),
-                      ...this.selectedVariables.map(variableName => [variableName, this.variableDisplayNameDict[variableName]]),
-                    ])
-                  }
-                  parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
-                  headerTextColor={this.headerTextColor}
-                  onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes)}
-                  onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
-                ></s-set-stat>
-                <app-map-view
-                  centerPoint={[
-                    (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
-                    (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
-                  ]}
-                  zoom={5.5}
-                  heatmapData={this.mapViewHeatmapData}
-                  heatmapOpacity={this.visFillOpacity}
-                  heatmapHighlightOpacity={this.visFillHighlightOpacity}
-                  onMouseDraw={({ detail }) => this.mapRange = detail}
-                ></app-map-view>
-              </ion-card>
+              this.renderMainVis()
+            }
+            {
+              this.data && this.selectedVariables?.length && this.isSecondaryVisEnabled &&
+              this.renderMainVis()
             }
             {
               !this.file &&
@@ -298,6 +268,50 @@ export class AppWeatherVis implements ComponentInterface {
         </ion-split-pane>
       </Host>
     );
+  }
+
+  private renderMainVis() {
+    return <ion-card class="vis-container">
+      <s-set-stat
+        ref={el => this.setStatElement = el}
+        onVisWillRender={() => this.toggleVisRenderLoading(true)}
+        onVisLoad={({ detail }) => {
+          this.toggleVisRenderLoading(false);
+          this.setStatOnLoadDetail = detail;
+        }}
+        data={this.data}
+        parallel-sets-ribbon-tension={.5}
+        ribbonAndRowOpacity={this.visFillOpacity}
+        ribbonAndRowHighlightOpacity={this.visFillHighlightOpacity}
+        parallelSetsDimensions={this.selectedVariables.map(variableName => `_${variableName}`).concat('Date')}
+        parallelSetsMaxAxisSegmentCount={12}
+        colorScheme={this.colorScheme}
+        defineTexturesHandler={this.defineTexturesHandler}
+        statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
+          dimensionName: variableName,
+          visType: 'box'
+        }))}
+        dimensionDisplyedNameDict={Object.fromEntries([
+          ...this.selectedVariables.map(variableName => [`_${variableName}`, this.variableDisplayNameDict[variableName]]),
+          ...this.selectedVariables.map(variableName => [variableName, this.variableDisplayNameDict[variableName]]),
+        ])}
+        parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
+        headerTextColor={this.headerTextColor}
+        onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes)}
+        onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
+      ></s-set-stat>
+      <app-map-view
+        centerPoint={[
+          (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
+          (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
+        ]}
+        zoom={5.5}
+        heatmapData={this.mapViewHeatmapData}
+        heatmapOpacity={this.visFillOpacity}
+        heatmapHighlightOpacity={this.visFillHighlightOpacity}
+        onMouseDraw={({ detail }) => this.mapRange = detail}
+      ></app-map-view>
+    </ion-card>;
   }
 
   private async statisticsColumnsHeaderClickHanlder(dimensionName: string) {
