@@ -73,17 +73,26 @@ export class AppWeatherVis implements ComponentInterface {
   private visRenderLoadingElement: HTMLIonLoadingElement;
   private setStatOnLoadDetail: ParallelSetsOnLoadDetail; // TODO set stat not matching parallel sets here
   private parallelSetsDateAxisSortedBy: { dimensionName: string, orderBy: 'ascending' | 'descending' };
+  private secondaryVisParallelSetsDateAxisSortedBy: { dimensionName: string, orderBy: 'ascending' | 'descending' };
   private setStatElement: HTMLSSetStatElement;
+  private secondaryVisSetStatElement: HTMLSSetStatElement;
 
   @State() file: File;
   @State() DB: SqlJs.Database;
   @State() categorizationMethod: 'quantile' | 'value' = 'quantile';
   @State() selectedVariables: string[];
   @State() data: any[];
+  @State() secondaryVisData: any[];
   @State() visFillOpacity: number = .5;
   @State() visFillHighlightOpacity: number = .8;
   @State() isSecondaryVisEnabled: boolean = false;
   @State() mapRange: {
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
+  };
+  @State() secondaryVisMapRange: {
     minLatitude: number;
     maxLatitude: number;
     minLongitude: number;
@@ -113,12 +122,29 @@ export class AppWeatherVis implements ComponentInterface {
       rectHeight: number
     }[]
   };
+  @State() secondaryVisMapViewHeatmapData: {
+    legendInnerHTML: string,
+    primaryValueTitle: string,
+    secondaryValueHeader: string,
+    isTooltipEnabled: boolean,
+    dataPoints: {
+      latitude: number,
+      longitude: number,
+      primaryValue: string | number,
+      color: string,
+      secondaryValue: string | number,
+      textureDenerator: any,
+      rectWidth: number,
+      rectHeight: number
+    }[]
+  };
   @State() parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler } = {
     '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
     'Date': undefined
   };
   @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @State() mapViewHeader: string = 'No Selected Subset';
+  @State() secondaryVisMapViewHeader: string = 'No Selected Subset';
 
   async connectedCallback() {
     this.SQL = await initSqlJs({ locateFile: fileName => `./assets/sql.js/${fileName}` });
@@ -132,11 +158,15 @@ export class AppWeatherVis implements ComponentInterface {
     const shouldQueryData = propertiesRequireQueryingData.find(name => name === propName);
     const propertiesRequireReprocessingData = ['categorizationMethod'];
     const shouldReprocessData = propertiesRequireReprocessingData.find(name => name === propName);
+    const propertiesRequireQueryingDataForSecondaryVis = ['secondaryVisMapRange'];
+    const shouldQueryDataForSecondaryVis = propertiesRequireQueryingDataForSecondaryVis.find(name => name === propName);
 
     if (shouldQueryData) {
       this.updateData(true);
     } else if (shouldReprocessData) {
       this.updateData(false);
+    } else if (shouldQueryDataForSecondaryVis) {
+      this.updateData(true, true)
     }
   }
 
@@ -239,7 +269,14 @@ export class AppWeatherVis implements ComponentInterface {
                 <ion-label class="control-panel-item-label">Enable Secondary Vis</ion-label>
                 <ion-toggle
                   checked={this.isSecondaryVisEnabled}
-                  onIonChange={({ detail }) => this.isSecondaryVisEnabled = detail.checked}
+                  onIonChange={({ detail }) => {
+                    this.isSecondaryVisEnabled = detail.checked;
+                    if (detail.checked) {
+                      this.updateData(true, true);
+                    } else {
+                      this.secondaryVisData = undefined;
+                    }
+                  }}
                 ></ion-toggle>
               </ion-item>
             </ion-list>
@@ -252,7 +289,7 @@ export class AppWeatherVis implements ComponentInterface {
             }
             {
               this.data && this.selectedVariables?.length && this.isSecondaryVisEnabled &&
-              this.renderMainVis()
+              this.renderMainVis(true)
             }
             {
               !this.file &&
@@ -278,16 +315,20 @@ export class AppWeatherVis implements ComponentInterface {
     );
   }
 
-  private renderMainVis() {
+  private renderMainVis(isSecondaryVis?: boolean) {
     return <ion-card class="vis-container">
       <s-set-stat
-        ref={el => this.setStatElement = el}
+        ref={isSecondaryVis ? (el => this.secondaryVisSetStatElement = el) : (el => this.setStatElement = el)}
         onVisWillRender={() => this.toggleVisRenderLoading(true)}
         onVisLoad={({ detail }) => {
           this.toggleVisRenderLoading(false);
           this.setStatOnLoadDetail = detail;
         }}
-        data={this.data}
+        data={
+          isSecondaryVis ?
+            this.secondaryVisData :
+            this.data
+        }
         parallel-sets-ribbon-tension={.5}
         ribbonAndRowOpacity={this.visFillOpacity}
         ribbonAndRowHighlightOpacity={this.visFillHighlightOpacity}
@@ -306,7 +347,7 @@ export class AppWeatherVis implements ComponentInterface {
         ])}
         parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
         headerTextColor={this.headerTextColor}
-        onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes)}
+        onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes, isSecondaryVis)}
         onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
       ></s-set-stat>
       <app-map-view
@@ -315,40 +356,71 @@ export class AppWeatherVis implements ComponentInterface {
           (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
         ]}
         zoom={5.5}
-        header={this.mapViewHeader}
-        heatmapData={this.mapViewHeatmapData}
+        header={
+          isSecondaryVis ?
+            this.secondaryVisMapViewHeader :
+            this.mapViewHeader
+        }
+        heatmapData={
+          isSecondaryVis ?
+            this.secondaryVisMapViewHeatmapData :
+            this.mapViewHeatmapData
+        }
         heatmapOpacity={this.visFillOpacity}
         heatmapHighlightOpacity={this.visFillHighlightOpacity}
-        onMouseDraw={({ detail }) => this.mapRange = detail}
+        onMouseDraw={
+          isSecondaryVis ?
+            (({ detail }) => this.secondaryVisMapRange = detail) :
+            (({ detail }) => this.mapRange = detail)
+        }
       ></app-map-view>
     </ion-card>;
   }
 
-  private async statisticsColumnsHeaderClickHanlder(dimensionName: string) {
-    if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'ascending') {
-      this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };
+  private async statisticsColumnsHeaderClickHanlder(dimensionName: string, isSecondaryVis?: boolean) {
+    const parallelSetsDateAxisSortedBy = isSecondaryVis ? this.secondaryVisParallelSetsDateAxisSortedBy : this.parallelSetsDateAxisSortedBy;
+
+    if (parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && parallelSetsDateAxisSortedBy?.orderBy === 'ascending') {
+      if (isSecondaryVis) {
+        this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };
+      } else {
+        this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'descending' };
+      }
       const headerTextColor = {};
       headerTextColor[''] = 'black';
       headerTextColor[dimensionName] = 'blue';
       this.headerTextColor = headerTextColor;
-    } else if (this.parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && this.parallelSetsDateAxisSortedBy?.orderBy === 'descending') {
-      this.parallelSetsDateAxisSortedBy = undefined;
+    } else if (parallelSetsDateAxisSortedBy?.dimensionName === dimensionName && parallelSetsDateAxisSortedBy?.orderBy === 'descending') {
+      if (isSecondaryVis) {
+        this.secondaryVisParallelSetsDateAxisSortedBy = undefined;
+      } else {
+        this.parallelSetsDateAxisSortedBy = undefined;
+      }
       this.headerTextColor = 'black';
     } else {
-      this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'ascending' };
+      if (isSecondaryVis) {
+        this.secondaryVisParallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'ascending' };
+      } else {
+        this.parallelSetsDateAxisSortedBy = { dimensionName, orderBy: 'ascending' };
+      }
       const headerTextColor = {};
       headerTextColor[''] = 'black';
       headerTextColor[dimensionName] = 'red';
       this.headerTextColor = headerTextColor;
     }
 
-    await this.setStatElement.reorderParallelSetsLastAxisByDimension(this.parallelSetsDateAxisSortedBy?.dimensionName, this.parallelSetsDateAxisSortedBy?.orderBy);
+    if (isSecondaryVis) {
+      await this.secondaryVisSetStatElement.reorderParallelSetsLastAxisByDimension(this.secondaryVisParallelSetsDateAxisSortedBy?.dimensionName, this.secondaryVisParallelSetsDateAxisSortedBy?.orderBy);
+    } else {
+      await this.setStatElement.reorderParallelSetsLastAxisByDimension(this.parallelSetsDateAxisSortedBy?.dimensionName, this.parallelSetsDateAxisSortedBy?.orderBy);
+    }
   }
 
   private drawHeatmapOnMapView(
     dimensionName: string,
     dimensionValue: string | number,
-    dataNodes: ParallelSetsDataNode[]
+    dataNodes: ParallelSetsDataNode[],
+    isSecondaryVis?: boolean
   ) {
     const dataRecords = dataNodes.flatMap(dataNode => dataNode.dataRecords);
     const colorDict = this.setStatOnLoadDetail.colorDict;
@@ -368,14 +440,21 @@ export class AppWeatherVis implements ComponentInterface {
       };
     });
     const legendInnerHTML = `<h4>${this.variableDisplayNameDict[this.selectedVariables[0]]}</h4>${Object.entries(colorDict).map(([value, color]) => `<i style="background: ${color}"></i><span>${value}</span><br/>`).join('')}`;
-    this.mapViewHeader = `${this.variableDisplayNameDict[dimensionName.replace(/^_/, '')]} - ${dimensionValue}`;
-    this.mapViewHeatmapData = {
+    const mapViewHeader = `${this.variableDisplayNameDict[dimensionName.replace(/^_/, '')]} - ${dimensionValue}`;
+    const mapViewHeatmapData = {
       dataPoints,
       legendInnerHTML,
       primaryValueTitle: this.selectedVariables[0],
       secondaryValueHeader: this.selectedVariables[1],
       isTooltipEnabled: dimensionName === 'Date'
     };
+    if (isSecondaryVis) {
+      this.secondaryVisMapViewHeader = mapViewHeader;
+      this.secondaryVisMapViewHeatmapData = mapViewHeatmapData;
+    } else {
+      this.mapViewHeader = mapViewHeader;
+      this.mapViewHeatmapData = mapViewHeatmapData;
+    }
   }
 
   private async toggleVisRenderLoading(isEnabled: boolean) {
@@ -386,16 +465,20 @@ export class AppWeatherVis implements ComponentInterface {
     }
   }
 
-  private async updateData(shouldQuery: boolean) {
-    let data = this.data;
+  private async updateData(shouldQuery: boolean, isForSecondaryVis?: boolean) {
+    let data = isForSecondaryVis ? this.secondaryVisData : this.data;
     if (shouldQuery) {
-      data = await this.queryData();
+      data = await this.queryData(isForSecondaryVis);
     }
-    data = await this.processData(data);
-    this.data = data;
+    data = await this.processData(data, isForSecondaryVis);
+    if (isForSecondaryVis) {
+      this.secondaryVisData = data;
+    } else {
+      this.data = data;
+    }
   }
 
-  private async queryData() {
+  private async queryData(isForSecondaryVis?: boolean) {
     if (this.DB && this.selectedVariables?.length > 0) {
       const loading = await loadingController.create({
         message: `Qeurying data...`
@@ -405,7 +488,9 @@ export class AppWeatherVis implements ComponentInterface {
       let sqlQueryString =
         `select substr(Date, 0, 8) as Date, Latitude, Longitude, ${this.selectedVariables.map(variable => `avg(${variable}) as ${variable}`).join(', ')} ` +
         `from ${this.databaseName}`;
-      if (this.mapRange) {
+      if (isForSecondaryVis && this.secondaryVisMapRange) {
+        sqlQueryString += ` where Latitude >= ${this.secondaryVisMapRange.minLatitude} and Latitude <= ${this.secondaryVisMapRange.maxLatitude} and Longitude >= ${this.secondaryVisMapRange.minLongitude} and Longitude <= ${this.secondaryVisMapRange.maxLongitude}`;
+      } else if (!isForSecondaryVis && this.mapRange) {
         sqlQueryString += ` where Latitude >= ${this.mapRange.minLatitude} and Latitude <= ${this.mapRange.maxLatitude} and Longitude >= ${this.mapRange.minLongitude} and Longitude <= ${this.mapRange.maxLongitude}`;
       }
       sqlQueryString += ` group by substr(Date, 0, 8), Latitude, Longitude`
@@ -419,7 +504,11 @@ export class AppWeatherVis implements ComponentInterface {
         return datum;
       });
 
-      this.mapViewHeatmapData = undefined;
+      if (isForSecondaryVis) {
+        this.secondaryVisMapViewHeatmapData = undefined;
+      } else {
+        this.mapViewHeatmapData = undefined;
+      }
 
       await loading.dismiss();
 
@@ -427,39 +516,70 @@ export class AppWeatherVis implements ComponentInterface {
     }
   }
 
-  private async processData(data: any[]) {
+  private async processData(data: any[], isForSecondaryVis?: boolean) {
     const loading = await loadingController.create({
       message: `Processing data...`
     });
     await loading.present();
 
     if (data) {
-      switch (this.categorizationMethod) {
-        case 'quantile':
-          const variableNameAndQuantileScaleDict: { [variableName: string]: d3.ScaleQuantile<number, never> } = {};
-          const variableNameAndCategorizedValuesDict: { [variableName: string]: string[] } = {};
-          this.selectedVariables.forEach(variableName => variableNameAndQuantileScaleDict[variableName] = d3.scaleQuantile().domain(data.map(d => d[variableName])).range([0, 1, 2, 3]));
-          this.selectedVariables.forEach(variableName => {
-            const quantiles = variableNameAndQuantileScaleDict[variableName].quantiles();
-            const variableValues = data.map(d => d[variableName]);
-            const variableMinValue = d3.min(variableValues);
-            const variableMaxValue = d3.max(variableValues);
-            variableNameAndCategorizedValuesDict[variableName] = [
-              `${variableMinValue.toFixed(2)} ~ ${(+quantiles[0]).toFixed(2)}`,
-              `${(+quantiles[0]).toFixed(2)} ~ ${(+quantiles[1]).toFixed(2)}`,
-              `${(+quantiles[1]).toFixed(2)} ~ ${(+quantiles[2]).toFixed(2)}`,
-              `${(+quantiles[2]).toFixed(2)} ~ ${variableMaxValue.toFixed(2)}`
-            ];
-          });
-          for (const dataRecord of data) {
-            for (const variableName of this.selectedVariables) {
-              const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
-              dataRecord[`_${variableName}`] = variableNameAndCategorizedValuesDict[variableName][quantileValue];
+      if (isForSecondaryVis) {
+        switch (this.categorizationMethod) {
+          // TODO modify this
+          case 'quantile':
+            const variableNameAndQuantileScaleDict: { [variableName: string]: d3.ScaleQuantile<number, never> } = {};
+            const variableNameAndCategorizedValuesDict: { [variableName: string]: string[] } = {};
+            this.selectedVariables.forEach(variableName => variableNameAndQuantileScaleDict[variableName] = d3.scaleQuantile().domain(data.map(d => d[variableName])).range([0, 1, 2, 3]));
+            this.selectedVariables.forEach(variableName => {
+              const quantiles = variableNameAndQuantileScaleDict[variableName].quantiles();
+              const variableValues = data.map(d => d[variableName]);
+              const variableMinValue = d3.min(variableValues);
+              const variableMaxValue = d3.max(variableValues);
+              variableNameAndCategorizedValuesDict[variableName] = [
+                `${variableMinValue.toFixed(2)} ~ ${(+quantiles[0]).toFixed(2)}`,
+                `${(+quantiles[0]).toFixed(2)} ~ ${(+quantiles[1]).toFixed(2)}`,
+                `${(+quantiles[1]).toFixed(2)} ~ ${(+quantiles[2]).toFixed(2)}`,
+                `${(+quantiles[2]).toFixed(2)} ~ ${variableMaxValue.toFixed(2)}`
+              ];
+            });
+            for (const dataRecord of data) {
+              for (const variableName of this.selectedVariables) {
+                const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
+                dataRecord[`_${variableName}`] = variableNameAndCategorizedValuesDict[variableName][quantileValue];
+              }
             }
-          }
-          break;
-        case 'value':
-          break;
+            break;
+          case 'value':
+            break;
+        }
+      } else {
+        switch (this.categorizationMethod) {
+          case 'quantile':
+            const variableNameAndQuantileScaleDict: { [variableName: string]: d3.ScaleQuantile<number, never> } = {};
+            const variableNameAndCategorizedValuesDict: { [variableName: string]: string[] } = {};
+            this.selectedVariables.forEach(variableName => variableNameAndQuantileScaleDict[variableName] = d3.scaleQuantile().domain(data.map(d => d[variableName])).range([0, 1, 2, 3]));
+            this.selectedVariables.forEach(variableName => {
+              const quantiles = variableNameAndQuantileScaleDict[variableName].quantiles();
+              const variableValues = data.map(d => d[variableName]);
+              const variableMinValue = d3.min(variableValues);
+              const variableMaxValue = d3.max(variableValues);
+              variableNameAndCategorizedValuesDict[variableName] = [
+                `${variableMinValue.toFixed(2)} ~ ${(+quantiles[0]).toFixed(2)}`,
+                `${(+quantiles[0]).toFixed(2)} ~ ${(+quantiles[1]).toFixed(2)}`,
+                `${(+quantiles[1]).toFixed(2)} ~ ${(+quantiles[2]).toFixed(2)}`,
+                `${(+quantiles[2]).toFixed(2)} ~ ${variableMaxValue.toFixed(2)}`
+              ];
+            });
+            for (const dataRecord of data) {
+              for (const variableName of this.selectedVariables) {
+                const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
+                dataRecord[`_${variableName}`] = variableNameAndCategorizedValuesDict[variableName][quantileValue];
+              }
+            }
+            break;
+          case 'value':
+            break;
+        }
       }
     }
 
@@ -524,6 +644,11 @@ export class AppWeatherVis implements ComponentInterface {
     this.file = undefined;
     this.DB = undefined;
     this.data = undefined;
+    this.secondaryVisData = undefined;
+    this.mapRange = undefined;
+    this.secondaryVisMapRange = undefined;
+    this.mapViewHeatmapData = undefined;
+    this.secondaryVisMapViewHeatmapData = undefined;
     this.categorizationMethod = 'quantile';
     this.selectedVariables = undefined;
     this.datasetInfo = undefined;
