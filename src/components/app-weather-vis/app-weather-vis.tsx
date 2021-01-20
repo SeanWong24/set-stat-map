@@ -249,13 +249,13 @@ export class AppWeatherVis implements ComponentInterface {
                 </ion-range>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
-                <ion-label class="control-panel-item-label">Categorization Method</ion-label>
+                <ion-label class="control-panel-item-label">Category</ion-label>
                 <ion-select
                   value={this.categorizationMethod}
                   onIonChange={({ detail }) => this.categorizationMethod = detail.value}
                 >
-                  <ion-select-option value="quantile">By Quantile</ion-select-option>
-                  <ion-select-option value="value">By Value</ion-select-option>
+                  <ion-select-option value="quantile">Quantile</ion-select-option>
+                  <ion-select-option value="value">Unique</ion-select-option>
                 </ion-select>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
@@ -291,7 +291,7 @@ export class AppWeatherVis implements ComponentInterface {
                 </ion-reorder-group>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
-                <ion-label class="control-panel-item-label">Enable Secondary Vis</ion-label>
+                <ion-label class="control-panel-item-label">Compare Another Region</ion-label>
                 <ion-toggle
                   checked={this.isSecondaryVisEnabled}
                   onIonChange={({ detail }) => {
