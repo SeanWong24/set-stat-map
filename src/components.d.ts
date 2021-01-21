@@ -15,6 +15,12 @@ export namespace Components {
     }
     interface AppMapView {
         "centerPoint": [number, number];
+        "datasetRange": {
+    minLatitude: number,
+    maxLatitude: number,
+    minLongitude: number,
+    maxLongitude: number
+  };
         "header": string;
         "headerTextColor": string;
         "headerTextSize": number;
@@ -228,6 +234,12 @@ declare namespace LocalJSX {
     }
     interface AppMapView {
         "centerPoint"?: [number, number];
+        "datasetRange"?: {
+    minLatitude: number,
+    maxLatitude: number,
+    minLongitude: number,
+    maxLongitude: number
+  };
         "header"?: string;
         "headerTextColor"?: string;
         "headerTextSize"?: number;

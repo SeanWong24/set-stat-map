@@ -384,6 +384,7 @@ export class AppWeatherVis implements ComponentInterface {
           (this.datasetInfo.maxLatitude + this.datasetInfo.minLatitude) / 2,
           (this.datasetInfo.maxLongitude + this.datasetInfo.minLongitude) / 2
         ]}
+        datasetRange={this.datasetInfo}
         zoom={5.5}
         header={
           isSecondaryVis ?

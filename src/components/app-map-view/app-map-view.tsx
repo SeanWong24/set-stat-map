@@ -23,12 +23,19 @@ export class AppMapView implements ComponentInterface {
   private mouseDrawStart: [number, number];
   private mouseDrawEnd: [number, number];
   private mouseDrawRectLayer: leaflet.Layer;
+  private datasetRangeIndicatorLayer: leaflet.Layer;
 
 
   @Element() hostElement: HTMLElement;
 
   @Prop() centerPoint: [number, number] = [0, 0];
   @Prop() zoom: number = 1;
+  @Prop() datasetRange: {
+    minLatitude: number,
+    maxLatitude: number,
+    minLongitude: number,
+    maxLongitude: number
+  };
   @Prop() heatmapData: {
     legendInnerHTML: string,
     primaryValueTitle: string,
@@ -98,6 +105,7 @@ export class AppMapView implements ComponentInterface {
       .tileLayer(this.mapTileUrlTemplate, { attribution: this.mapTileAttribution })
       .addTo(this.map);
 
+    this.drawDatasetRangeIndicator();
     this.drawHeatmap();
     this.drawLegend();
     this.addMouseDrawEvents();
@@ -107,6 +115,20 @@ export class AppMapView implements ComponentInterface {
     });
   }
 
+
+  private drawDatasetRangeIndicator() {
+    if (this.datasetRangeIndicatorLayer) {
+      this.map.removeLayer(this.datasetRangeIndicatorLayer);
+    }
+    if (this.datasetRange) {
+      const { minLatitude, maxLatitude, minLongitude, maxLongitude } = this.datasetRange;
+      this.mouseDrawRectLayer = leaflet.rectangle(
+        [[minLatitude, minLongitude], [maxLatitude, maxLongitude]],
+        { color: "black", fillColor: 'transparent', weight: 1, dashArray: '10, 10' }
+      )
+        .addTo(this.map);
+    }
+  }
 
   private addMouseDrawEvents() {
     this.map.addEventListener('contextmenu', event => (event as any).originalEvent.preventDefault());
