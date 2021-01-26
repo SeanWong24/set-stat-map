@@ -78,6 +78,7 @@ export class AppWeatherVis implements ComponentInterface {
   private secondaryVisSetStatElement: HTMLSSetStatElement;
   private variableNameAndCategorizedValuesDict: { [variableName: string]: string[] };
   private secondaryVisVariableNameAndCategorizedValuesDict: { [variableName: string]: string[] };
+
   private get secondaryVisColorScheme() {
     if (this.secondaryVisVariableNameAndCategorizedValuesDict) {
       const colorScheme: string[] = [];
@@ -95,6 +96,34 @@ export class AppWeatherVis implements ComponentInterface {
       return colorScheme;
     } else {
       return this.colorScheme;
+    }
+  }
+  private get defineTexturesHandler() {
+    return this.categorizationMethod === 'quantile' ? this.defineTexturesHandlerForFour : this.defineTexturesHandlerForEight;
+  }
+  private get secondaryVisDefineTexturesHandler() {
+    if (this.secondaryVisVariableNameAndCategorizedValuesDict) {
+      const defineTexturesHandler = ((textureGenerator: any) => {
+        const handlers: (() => any)[] = [];
+        const firstVisCategorizedValuesForSecondDimension = this.variableNameAndCategorizedValuesDict[this.selectedVariables[1]];
+        const secondaryVisCategorizedValuesForSecondDimension = this.secondaryVisVariableNameAndCategorizedValuesDict[this.selectedVariables[1]];
+        for (let i = 0; i < secondaryVisCategorizedValuesForSecondDimension.length; i++) {
+          if (i === 0 && secondaryVisCategorizedValuesForSecondDimension[0] !== firstVisCategorizedValuesForSecondDimension[0]) {
+            handlers.push(() => textureGenerator.paths().d("waves").lighter());
+          } else if (i === (secondaryVisCategorizedValuesForSecondDimension.length - 1) && secondaryVisCategorizedValuesForSecondDimension[secondaryVisCategorizedValuesForSecondDimension.length - 1] !== firstVisCategorizedValuesForSecondDimension[firstVisCategorizedValuesForSecondDimension.length - 1]) {
+            handlers.push(() => textureGenerator.paths().d("waves").thicker());
+          } else {
+            handlers.push(
+              this.defineTexturesHandler(textureGenerator)[firstVisCategorizedValuesForSecondDimension.indexOf(secondaryVisCategorizedValuesForSecondDimension[i])] ||
+              (() => textureGenerator.lines().stroke('transparent'))
+            );
+          }
+        }
+        return handlers;
+      });
+      return defineTexturesHandler;
+    } else {
+      return this.defineTexturesHandler;
     }
   }
 
@@ -364,7 +393,11 @@ export class AppWeatherVis implements ComponentInterface {
             this.secondaryVisColorScheme :
             this.colorScheme
         }
-        defineTexturesHandler={this.categorizationMethod === 'quantile' ? this.defineTexturesHandlerForFour : this.defineTexturesHandlerForEight}
+        defineTexturesHandler={
+          isSecondaryVis ?
+            this.secondaryVisDefineTexturesHandler :
+            this.defineTexturesHandler
+        }
         statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
           dimensionName: variableName,
           visType: 'box'
