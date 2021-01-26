@@ -122,7 +122,7 @@ export class AppMapView implements ComponentInterface {
     }
     if (this.datasetRange) {
       const { minLatitude, maxLatitude, minLongitude, maxLongitude } = this.datasetRange;
-      this.mouseDrawRectLayer = leaflet.rectangle(
+      this.datasetRangeIndicatorLayer = leaflet.rectangle(
         [[minLatitude, minLongitude], [maxLatitude, maxLongitude]],
         { color: "black", fillColor: 'transparent', weight: 1, dashArray: '10, 10' }
       )
