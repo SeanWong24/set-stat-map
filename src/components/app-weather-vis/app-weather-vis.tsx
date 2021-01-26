@@ -160,7 +160,7 @@ export class AppWeatherVis implements ComponentInterface {
     }[]
   };
   @State() parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler } = {
-    '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
+    '': (a, b) => +a.toString().split(' - ')[0] - +b.toString().split(' - ')[0],
     'Date': undefined
   };
   @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
@@ -559,23 +559,23 @@ export class AppWeatherVis implements ComponentInterface {
           const variableValues = data.map(d => +d[variableName]);
           const variableMinValue = d3.min(variableValues);
           const variableMaxValue = d3.max(variableValues);
-          const firstVisCategorizedValues = this.variableNameAndCategorizedValuesDict?.[variableName]?.sort((a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0]);
-          const firstVisVariableMinValue = +firstVisCategorizedValues?.[0]?.split(' ~ ')?.[0];
-          const firstVisVariableMaxValue = +firstVisCategorizedValues?.[firstVisCategorizedValues.length - 1]?.split(' ~ ')?.[1];
+          const firstVisCategorizedValues = this.variableNameAndCategorizedValuesDict?.[variableName]?.sort((a, b) => +a.toString().split(' - ')[0] - +b.toString().split(' - ')[0]);
+          const firstVisVariableMinValue = +firstVisCategorizedValues?.[0]?.split(' - ')?.[0];
+          const firstVisVariableMaxValue = +firstVisCategorizedValues?.[firstVisCategorizedValues.length - 1]?.split(' - ')?.[1];
           if (variableMinValue < firstVisVariableMinValue) {
-            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [`${variableMinValue} ~ ${firstVisVariableMinValue}`, ...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName]];
+            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [`${variableMinValue} - ${firstVisVariableMinValue}`, ...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName]];
           }
           if (variableMaxValue > firstVisVariableMaxValue) {
-            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName], `${firstVisVariableMaxValue} ~ ${variableMaxValue}`];
+            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName], `${firstVisVariableMaxValue} - ${variableMaxValue}`];
           }
           for (const dataRecord of data) {
             const variableValue = +dataRecord[variableName];
             dataRecord[`_${variableName}`] = this.secondaryVisVariableNameAndCategorizedValuesDict?.[variableName]
               ?.find((valueRange, index) => {
-                const [minValue, maxValue] = valueRange.split(' ~ ');
+                const [minValue, maxValue] = valueRange.split(' - ');
                 return (variableValue >= +minValue && variableValue < +maxValue) || (index === this.secondaryVisVariableNameAndCategorizedValuesDict[variableName].length - 1 && variableValue === +maxValue);
               })
-              ?.split(' ~ ').map(value => (+value).toFixed(2)).join(' ~ ');
+              ?.split(' -').map(value => (+value).toFixed(2)).join(' - ');
           }
         }
       } else {
@@ -590,16 +590,16 @@ export class AppWeatherVis implements ComponentInterface {
               const variableMinValue = d3.min(variableValues);
               const variableMaxValue = d3.max(variableValues);
               this.variableNameAndCategorizedValuesDict[variableName] = [
-                `${variableMinValue} ~ ${+quantiles[0]}`,
-                `${+quantiles[0]} ~ ${+quantiles[1]}`,
-                `${+quantiles[1]} ~ ${+quantiles[2]}`,
-                `${+quantiles[2]} ~ ${variableMaxValue}`
+                `${variableMinValue} - ${+quantiles[0]}`,
+                `${+quantiles[0]} - ${+quantiles[1]}`,
+                `${+quantiles[1]} - ${+quantiles[2]}`,
+                `${+quantiles[2]} - ${variableMaxValue}`
               ];
             });
             for (const dataRecord of data) {
               for (const variableName of this.selectedVariables) {
                 const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
-                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(' ~ ').map(value => (+value).toFixed(2)).join(' ~ ');
+                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(' - ').map(value => (+value).toFixed(2)).join(' - ');
               }
             }
             break;
