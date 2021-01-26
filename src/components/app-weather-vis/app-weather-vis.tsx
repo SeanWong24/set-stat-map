@@ -575,7 +575,7 @@ export class AppWeatherVis implements ComponentInterface {
                 const [minValue, maxValue] = valueRange.split(' - ');
                 return (variableValue >= +minValue && variableValue < +maxValue) || (index === this.secondaryVisVariableNameAndCategorizedValuesDict[variableName].length - 1 && variableValue === +maxValue);
               })
-              ?.split(' -').map(value => (+value).toFixed(2)).join(' - ');
+              ?.split(' - ').map(value => (+value).toFixed(2)).join(' - ');
           }
         }
       } else {
