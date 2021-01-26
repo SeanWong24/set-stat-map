@@ -13,6 +13,10 @@ export class SParallelSets implements ComponentInterface {
   private textureContainerElement: SVGElement;
   private textureDict: { [valueAndBackgroundColor: string]: any } = {};
 
+  private get axisTextFontSize() {
+    return this.axisBoxWidth * .8;
+  }
+
   @Element() hostElement: HTMLElement;
 
   @Prop() data: ParallelSetsDataRecord[] = [];
@@ -84,7 +88,7 @@ export class SParallelSets implements ComponentInterface {
   }
 
   componentWillRender() {
-    this.hostElement.style.setProperty("--axis-text-font-size", this.axisBoxWidth * .8 + 'px');
+    this.hostElement.style.setProperty("--axis-text-font-size", this.axisTextFontSize + 'px');
     this.hostElement.style.setProperty('--ribbon-highlight-opacity', this.ribbonHighlightOpacity.toString());
   }
 
@@ -431,6 +435,8 @@ export class SParallelSets implements ComponentInterface {
       currentSegmentValue
     } = params;
 
+    const maxTextHeight = (currentSegmentPosition[1] - currentSegmentPosition[0]) * height;
+    const maxCharactorCount = Math.floor(maxTextHeight / this.axisTextFontSize) * 2;
     return (
       <text
         class="axis-segment-text"
@@ -439,7 +445,7 @@ export class SParallelSets implements ComponentInterface {
         text-anchor="start"
         writing-mode="tb"
         fill={this.axisSegmentTextColor}
-      >{(currentSegmentPosition[1] - currentSegmentPosition[0] >= this.minimumRatioToShowAxisText) ? currentSegmentValue : ''}</text>
+      >{(currentSegmentPosition[1] - currentSegmentPosition[0] >= this.minimumRatioToShowAxisText) ? currentSegmentValue.substring(0, maxCharactorCount) : ''}</text>
     );
   }
 
