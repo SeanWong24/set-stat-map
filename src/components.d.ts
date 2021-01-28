@@ -67,6 +67,10 @@ export namespace Components {
         "autoMergedAxisSegmentName": string | { [dimensionName: string]: string | number };
         "axisBoxFill": string;
         "axisBoxWidth": number;
+        "axisFooter": string | { [dimensionName: string]: string };
+        "axisFooterTextColor": string | { [dimensionName: string]: string };
+        "axisFooterTextSize": number;
+        "axisFooterTextWeight": string | { [dimensionName: string]: string };
         "axisHeaderTextColor": string | { [dimensionName: string]: string };
         "axisHeaderTextSize": number;
         "axisHeaderTextWeight": string | { [dimensionName: string]: string };
@@ -293,6 +297,10 @@ declare namespace LocalJSX {
         "autoMergedAxisSegmentName"?: string | { [dimensionName: string]: string | number };
         "axisBoxFill"?: string;
         "axisBoxWidth"?: number;
+        "axisFooter"?: string | { [dimensionName: string]: string };
+        "axisFooterTextColor"?: string | { [dimensionName: string]: string };
+        "axisFooterTextSize"?: number;
+        "axisFooterTextWeight"?: string | { [dimensionName: string]: string };
         "axisHeaderTextColor"?: string | { [dimensionName: string]: string };
         "axisHeaderTextSize"?: number;
         "axisHeaderTextWeight"?: string | { [dimensionName: string]: string };

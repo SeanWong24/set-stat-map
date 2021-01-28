@@ -17,6 +17,10 @@ export class SParallelSets implements ComponentInterface {
     return this.axisBoxWidth * .8;
   }
 
+  private get axisFooterTextActualSize() {
+    return this.axisFooter ? this.axisFooterTextSize : 0;
+  }
+
   @Element() hostElement: HTMLElement;
 
   @Prop() data: ParallelSetsDataRecord[] = [];
@@ -41,6 +45,10 @@ export class SParallelSets implements ComponentInterface {
   @Prop() axisHeaderTextSize: number = 16;
   @Prop() axisHeaderTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() axisHeaderTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() axisFooter: string | { [dimensionName: string]: string };
+  @Prop() axisFooterTextSize: number = 16;
+  @Prop() axisFooterTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() axisFooterTextWeight: string | { [dimensionName: string]: string } = 'bold';
   @Prop() axisStrokeWidth: number = 3;
   @Prop() axisBoxWidth: number = 15;
   @Prop() axisBoxFill: string = 'rgb(100,100,100)';
@@ -128,6 +136,7 @@ export class SParallelSets implements ComponentInterface {
                 dimensionAndDataNodesDict,
                 dimensionAndValuesDict
               })}
+              {this.axisFooter && this.renderAxisFooters(width)}
             </div>
           );
         } else {
@@ -170,7 +179,7 @@ export class SParallelSets implements ComponentInterface {
       dimensionAndValuesDict
     } = params;
 
-    const svgHeight = height - this.axisHeaderTextSize;
+    const svgHeight = height - this.axisHeaderTextSize - this.axisFooterTextActualSize;
     return (
       <svg id="main-svg" width={width} height={svgHeight}>
         {
@@ -562,6 +571,33 @@ export class SParallelSets implements ComponentInterface {
                 onMouseOver={() => this.axisHeaderMouseOver.emit(eventData)}
                 onMouseOut={() => this.axisHeaderMouseOut.emit(eventData)}
               >{this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}</text>
+            );
+          })
+        }
+      </div>
+    );
+  }
+
+  private renderAxisFooters(width: number) {
+    return (
+      <div id="axis-footer-container" style={{ height: this.axisFooterTextSize + 'px' }}>
+        {
+          this.dimensions.map((dimensionName, dimensionIndex) => {
+            const footer = this.axisFooter?.[dimensionName] || this.axisFooter?.[''] || this.axisFooter;
+            const color = this.axisFooterTextColor?.[footer] || this.axisFooterTextColor?.[''] || this.axisFooterTextColor;
+            const fontWeight = this.axisFooterTextWeight?.[footer] || this.axisFooterTextWeight?.[''] || this.axisFooterTextWeight;
+            return (
+              <text
+                class="axis-footer-text"
+                style={{
+                  position: 'absolute',
+                  color,
+                  fontSize: this.axisFooterTextSize + 'px',
+                  fontWeight,
+                  left: this.obtainAxisPosition(width, this.sideMargin, dimensionIndex) + 'px',
+                  transform: this.obtainAxisHeaderTransform(dimensionIndex)
+                }}
+              >{footer}</text>
             );
           })
         }

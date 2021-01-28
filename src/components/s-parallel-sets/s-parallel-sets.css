@@ -23,6 +23,15 @@
   cursor: pointer;
 }
 
+#axis-footer-container {
+  position: absolute;
+  bottom: 0;
+}
+
+.axis-footer-text {
+  cursor: default;
+}
+
 .axis-segment-box {
   cursor: pointer;
   opacity: 0;
