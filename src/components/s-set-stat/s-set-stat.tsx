@@ -106,6 +106,7 @@ export class SSetStat implements ComponentInterface {
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
+          axisFooter={' '}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
           onAxisSegmentClick={({ detail }) => this.parallelSetsAxisSegmentClick.emit(detail)}
