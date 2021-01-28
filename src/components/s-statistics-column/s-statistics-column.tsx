@@ -31,6 +31,7 @@ export class SStatisticsColumn implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
+  @Prop() footerAxisHeight: number = 16;
 
   @Event() headerClick: EventEmitter<string>;
 
@@ -41,6 +42,8 @@ export class SStatisticsColumn implements ComponentInterface {
 
   render() {
     const allDataRecords = Object.values(this.data).flat();
+    const scaleMinValue = d3.min(allDataRecords);
+    const scaleMaxValue = d3.max(allDataRecords);
     return (
       <Host>
         {
@@ -63,7 +66,7 @@ export class SStatisticsColumn implements ComponentInterface {
             <div
               id="statistics-row-container"
               style={{
-                height: `calc(100% - ${this.headerTextSize}px)`,
+                height: `calc(100% - ${this.headerTextSize}px - ${this.footerAxisHeight}px)`,
                 top: `${this.headerTextSize}px`
               }}
             >
@@ -89,8 +92,8 @@ export class SStatisticsColumn implements ComponentInterface {
                       <s-box-plot-item
                         class="plot-item"
                         values={this.data[rowValue]}
-                        scaleMinValue={d3.min(allDataRecords)}
-                        scaleMaxValue={d3.max(allDataRecords)}
+                        scaleMinValue={scaleMinValue}
+                        scaleMaxValue={scaleMaxValue}
                         enableTooltip={false}
                         onItemLoad={({ detail }) => {
                           this.statisticsRowElementDict[rowValue].title =
@@ -107,6 +110,12 @@ export class SStatisticsColumn implements ComponentInterface {
                 })
               }
             </div>
+            <text
+              id="footer-text"
+              style={{
+                fontSize: `${this.footerAxisHeight}px`
+              }}
+            >{`${scaleMinValue.toFixed(2)} - ${scaleMaxValue.toFixed(2)}`}</text>
           </div>
         }
       </Host>

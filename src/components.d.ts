@@ -113,6 +113,7 @@ export namespace Components {
     }
     interface SStatisticsColumn {
         "data": { [rowValue: string]: number[] };
+        "footerAxisHeight": number;
         "header": string;
         "headerTextColor": string;
         "headerTextSize": number;
@@ -135,6 +136,7 @@ export namespace Components {
     interface SStatisticsColumns {
         "data": any[];
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
+        "footerAxisHeight": number;
         "headerTextColor": string | { [dimensionName: string]: string };
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
@@ -359,6 +361,7 @@ declare namespace LocalJSX {
     }
     interface SStatisticsColumn {
         "data"?: { [rowValue: string]: number[] };
+        "footerAxisHeight"?: number;
         "header"?: string;
         "headerTextColor"?: string;
         "headerTextSize"?: number;
@@ -382,6 +385,7 @@ declare namespace LocalJSX {
     interface SStatisticsColumns {
         "data"?: any[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
+        "footerAxisHeight"?: number;
         "headerTextColor"?: string | { [dimensionName: string]: string };
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
