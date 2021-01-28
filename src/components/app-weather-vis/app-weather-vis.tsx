@@ -22,7 +22,17 @@ export class AppWeatherVis implements ComponentInterface {
     'RelativeHumidity': 'RelHumi',
     'Solar': 'Solar',
     'Date': 'Month'
-  }
+  };
+  private readonly variableUnitDict: { [variableName: string]: string } = {
+    '_Elevation': 'm',
+    '_MaxTemperature': '°C',
+    '_MinTemperature': '°C',
+    '_Precipitation': 'mm',
+    '_Wind': 'm/s',
+    '_RelativeHumidity': '%',
+    '_Solar': 'MJ/m^2',
+    'Date': ' '
+  };
   private readonly variableOptions: string[] = [
     'Elevation',
     'MaxTemperature',
@@ -408,6 +418,7 @@ export class AppWeatherVis implements ComponentInterface {
           ['Date', this.variableDisplayNameDict['Date']]
         ])}
         parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
+        parallelSetsFooter={this.variableUnitDict}
         headerTextColor={this.headerTextColor}
         onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes, isSecondaryVis)}
         onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}

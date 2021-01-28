@@ -102,6 +102,7 @@ export namespace Components {
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
         "parallelSetsDimensionValueSortingMethods": ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions": string[];
+        "parallelSetsFooter": string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
@@ -351,6 +352,7 @@ declare namespace LocalJSX {
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
         "parallelSetsDimensionValueSortingMethods"?: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions"?: string[];
+        "parallelSetsFooter"?: string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;
         "parallelSetsWidth"?: string;

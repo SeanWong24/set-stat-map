@@ -28,6 +28,7 @@ export class SSetStat implements ComponentInterface {
   @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
   @Prop() parallelSetsRibbonTension: number;
+  @Prop() parallelSetsFooter: string | { [dimensionName: string]: string } = ' ';
   @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType }[] = [
     { dimensionName: 'D1', visType: 'box' },
     { dimensionName: 'D2', visType: 'box' },
@@ -106,7 +107,7 @@ export class SSetStat implements ComponentInterface {
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
-          axisFooter={' '}
+          axisFooter={this.parallelSetsFooter}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
           onAxisSegmentClick={({ detail }) => this.parallelSetsAxisSegmentClick.emit(detail)}
