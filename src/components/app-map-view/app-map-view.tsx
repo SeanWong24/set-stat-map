@@ -9,10 +9,11 @@ import leaflet from 'leaflet';
 })
 export class AppMapView implements ComponentInterface {
 
-  private readonly mapTileUrlTemplate = 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  private readonly mapTileAttribution =
-    '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' +
-    ', Tiles courtesy of <a href="https://geo6.be/">GEO-6</a>';
+  private readonly mapTileUrlTemplate = 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+  // TODO finish tile attribution string
+  // private readonly mapTileAttribution =
+  //   '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' +
+  //   ', Tiles courtesy of <a href="https://geo6.be/">GEO-6</a>';
 
   private map: leaflet.Map;
   private heatmapLayerGroup: leaflet.LayerGroup;
@@ -102,7 +103,7 @@ export class AppMapView implements ComponentInterface {
       this.map = leaflet.map(mapContainerElement, { center: this.centerPoint, zoom: this.zoom, drawControl: true } as any);
     }
     leaflet
-      .tileLayer(this.mapTileUrlTemplate, { attribution: this.mapTileAttribution })
+      .tileLayer(this.mapTileUrlTemplate, { /*attribution: this.mapTileAttribution,*/ subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] })
       .addTo(this.map);
 
     this.drawDatasetRangeIndicator();
