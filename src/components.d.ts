@@ -113,6 +113,7 @@ export namespace Components {
         "statisticsColumnsWidth": string;
     }
     interface SStatisticsColumn {
+        "axisMargin": number;
         "data": { [rowValue: string]: number[] };
         "footerAxisHeight": number;
         "header": string;
@@ -362,6 +363,7 @@ declare namespace LocalJSX {
         "statisticsColumnsWidth"?: string;
     }
     interface SStatisticsColumn {
+        "axisMargin"?: number;
         "data"?: { [rowValue: string]: number[] };
         "footerAxisHeight"?: number;
         "header"?: string;

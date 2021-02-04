@@ -4,7 +4,7 @@
   width: 100%;
   height: 100%;
 
-  --plot-item-margin: 10px;
+  --axis-margin: unset;
   --row-opacity: unset;
   --row-highlight-opacity: unset;
 }
@@ -21,7 +21,7 @@
   transform: translate(-50%);
 }
 
-#footer-text {
+#footer-axis {
   cursor: default;
   position: absolute;
   bottom: 0;
@@ -50,8 +50,9 @@
 .plot-item {
   position: absolute;
   top: 50%;
-  transform: translate(var(--plot-item-margin), -100%);
-  width: calc(100% - var(--plot-item-margin) * 2);
+  transform: translate(0, -100%);
+  left: var(--axis-margin);
+  width: calc(100% - var(--axis-margin) * 2);
   height: 10px;
   pointer-events: none;
 }

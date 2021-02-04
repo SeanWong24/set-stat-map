@@ -9,6 +9,7 @@ import * as d3 from 'd3';
 export class SStatisticsColumn implements ComponentInterface {
 
   private statisticsRowElementDict: { [rowValue: string]: HTMLElement } = {};
+  private footerElement: SVGElement;
 
   @Element() hostElement: HTMLElement;
 
@@ -32,12 +33,25 @@ export class SStatisticsColumn implements ComponentInterface {
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
   @Prop() footerAxisHeight: number = 16;
+  @Prop() axisMargin: number = 10;
 
   @Event() headerClick: EventEmitter<string>;
 
   componentWillRender() {
     this.hostElement.style.setProperty('--row-opacity', this.rowOpacity.toString());
     this.hostElement.style.setProperty('--row-highlight-opacity', this.rowHighlightOpacity.toString());
+    this.hostElement.style.setProperty('--axis-margin', this.axisMargin + 'px');
+  }
+
+  componentDidRender() {
+    const allDataRecords = Object.values(this.data).flat();
+    const scaleMinValue = d3.min(allDataRecords);
+    const scaleMaxValue = d3.max(allDataRecords);
+    const svgWidth = this.footerElement.getBoundingClientRect().width - this.axisMargin * 2;
+    const scale = d3.scaleLinear()
+      .domain([scaleMinValue, scaleMaxValue])
+      .range([0 + this.axisMargin, svgWidth + this.axisMargin]);
+    d3.select(this.footerElement).call(d3.axisBottom(scale).ticks(3));
   }
 
   render() {
@@ -110,12 +124,12 @@ export class SStatisticsColumn implements ComponentInterface {
                 })
               }
             </div>
-            <text
-              id="footer-text"
-              style={{
-                fontSize: `${this.footerAxisHeight}px`
-              }}
-            >{`${scaleMinValue.toFixed(2)} - ${scaleMaxValue.toFixed(2)}`}</text>
+            <svg
+              id="footer-axis"
+              width="100%"
+              height={this.footerAxisHeight}
+              ref={el => this.footerElement = el}
+            ></svg>
           </div>
         }
       </Host>
