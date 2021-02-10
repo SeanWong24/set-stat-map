@@ -9,7 +9,7 @@ import leaflet from 'leaflet';
 })
 export class AppMapView implements ComponentInterface {
 
-  private readonly mapTileUrlTemplate = 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+  private readonly mapTileUrlTemplate = 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
   // TODO finish tile attribution string
   // private readonly mapTileAttribution =
   //   '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' +
