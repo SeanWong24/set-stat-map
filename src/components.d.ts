@@ -9,7 +9,7 @@ import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsDimensionValu
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
     interface AppDataProcess {
-        "datasetType": string;
+        "visType": string;
     }
     interface AppHome {
     }
@@ -46,6 +46,8 @@ export namespace Components {
         "zoom": number;
     }
     interface AppRoot {
+    }
+    interface AppWeatherDataProcess {
     }
     interface AppWeatherVis {
     }
@@ -185,6 +187,12 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLAppWeatherDataProcessElement extends Components.AppWeatherDataProcess, HTMLStencilElement {
+    }
+    var HTMLAppWeatherDataProcessElement: {
+        prototype: HTMLAppWeatherDataProcessElement;
+        new (): HTMLAppWeatherDataProcessElement;
+    };
     interface HTMLAppWeatherVisElement extends Components.AppWeatherVis, HTMLStencilElement {
     }
     var HTMLAppWeatherVisElement: {
@@ -226,6 +234,7 @@ declare global {
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
         "app-root": HTMLAppRootElement;
+        "app-weather-data-process": HTMLAppWeatherDataProcessElement;
         "app-weather-vis": HTMLAppWeatherVisElement;
         "s-box-plot-item": HTMLSBoxPlotItemElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
@@ -236,7 +245,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AppDataProcess {
-        "datasetType"?: string;
+        "visType"?: string;
     }
     interface AppHome {
     }
@@ -279,6 +288,8 @@ declare namespace LocalJSX {
         "zoom"?: number;
     }
     interface AppRoot {
+    }
+    interface AppWeatherDataProcess {
     }
     interface AppWeatherVis {
     }
@@ -416,6 +427,7 @@ declare namespace LocalJSX {
         "app-home": AppHome;
         "app-map-view": AppMapView;
         "app-root": AppRoot;
+        "app-weather-data-process": AppWeatherDataProcess;
         "app-weather-vis": AppWeatherVis;
         "s-box-plot-item": SBoxPlotItem;
         "s-parallel-sets": SParallelSets;
@@ -432,6 +444,7 @@ declare module "@stencil/core" {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "app-weather-data-process": LocalJSX.AppWeatherDataProcess & JSXBase.HTMLAttributes<HTMLAppWeatherDataProcessElement>;
             "app-weather-vis": LocalJSX.AppWeatherVis & JSXBase.HTMLAttributes<HTMLAppWeatherVisElement>;
             "s-box-plot-item": LocalJSX.SBoxPlotItem & JSXBase.HTMLAttributes<HTMLSBoxPlotItemElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
