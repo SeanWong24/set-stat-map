@@ -42,12 +42,26 @@ export class AppWeatherVis implements ComponentInterface {
     'RelativeHumidity',
     'Solar'
   ];
-  private readonly colorScheme = [
-    '#4575b4',
-    '#abd9e9',
-    '#fee090',
-    '#f46d43'
-  ];
+  private readonly variableNameAndColorSchemeDict = {
+    'MaxTemperature': [
+      'rgb(33,102,172)',
+      'rgb(209,229,240)',
+      'rgb(244,165,130)',
+      'rgb(103,10,31)'
+    ],
+    'MinTemperature': [
+      'rgb(33,102,172)',
+      'rgb(209,229,240)',
+      'rgb(244,165,130)',
+      'rgb(103,10,31)'
+    ],
+    'Precipitation': [
+      'rgb(84,48,4)',
+      'rgb(223,194,125)',
+      'rgb(109,234,229)',
+      'rgb(0,102,93)'
+    ]
+  };
   private readonly monthNumberAndNameDict = {
     '01': 'Jan',
     '02': 'Feb',
@@ -89,6 +103,15 @@ export class AppWeatherVis implements ComponentInterface {
   private variableNameAndCategorizedValuesDict: { [variableName: string]: string[] };
   private secondaryVisVariableNameAndCategorizedValuesDict: { [variableName: string]: string[] };
 
+
+  private get colorScheme() {
+    return this.variableNameAndColorSchemeDict[this.selectedVariables?.[0]] || [
+      '#4575b4',
+      '#abd9e9',
+      '#fee090',
+      '#f46d43'
+    ];
+  };
   private get secondaryVisColorScheme() {
     if (this.secondaryVisVariableNameAndCategorizedValuesDict) {
       const colorScheme: string[] = [];
