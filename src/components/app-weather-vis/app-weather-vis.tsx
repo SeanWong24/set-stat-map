@@ -317,7 +317,7 @@ export class AppWeatherVis implements ComponentInterface {
                   onIonChange={({ detail }) => this.categorizationMethod = detail.value}
                 >
                   <ion-select-option value="quantile">Quantile</ion-select-option>
-                  <ion-select-option value="value">Unique</ion-select-option>
+                  <ion-select-option value="value">Uniform</ion-select-option>
                 </ion-select>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
