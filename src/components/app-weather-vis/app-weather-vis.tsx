@@ -162,7 +162,7 @@ export class AppWeatherVis implements ComponentInterface {
 
   @State() file: File;
   @State() DB: SqlJs.Database;
-  @State() categorizationMethod: 'quantile' | 'value' = 'quantile';
+  @State() categorizationMethod: 'quantile' | 'uniform' = 'quantile';
   @State() selectedVariables: string[];
   @State() data: any[];
   @State() secondaryVisData: any[];
@@ -317,7 +317,7 @@ export class AppWeatherVis implements ComponentInterface {
                   onIonChange={({ detail }) => this.categorizationMethod = detail.value}
                 >
                   <ion-select-option value="quantile">Quantile</ion-select-option>
-                  <ion-select-option value="value">Uniform</ion-select-option>
+                  <ion-select-option value="uniform">Uniform</ion-select-option>
                 </ion-select>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
@@ -670,7 +670,27 @@ export class AppWeatherVis implements ComponentInterface {
               }
             }
             break;
-          case 'value':
+          case 'uniform':
+            const valueScaleDict = {};
+            const valueThresholdDict = {};
+            this.selectedVariables.forEach(variableName => {
+              const values = data.map(d => d[variableName]);
+              const minValue = d3.min(values);
+              const maxValue = d3.max(values);
+              const thresholds = [minValue, minValue + (maxValue - minValue) * .25, minValue + (maxValue - minValue) * .5, minValue + (maxValue - minValue) * .75, maxValue];
+              valueThresholdDict[variableName] = thresholds.map(d => d.toFixed(2));
+              valueScaleDict[variableName] = d3.scaleThreshold().domain(thresholds).range([0, 1, 2, 3]);
+              this.variableNameAndCategorizedValuesDict[variableName] = [
+                `${thresholds[0].toFixed(2)} ~ ${thresholds[1].toFixed(2)}`,
+                `${thresholds[1].toFixed(2)} ~ ${thresholds[2].toFixed(2)}`,
+                `${thresholds[2].toFixed(2)} ~ ${thresholds[3].toFixed(2)}`,
+                `${thresholds[3].toFixed(2)} ~ ${thresholds[4].toFixed(2)}`
+              ];
+            });
+            data.forEach(d => this.selectedVariables.forEach(variableName => d[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][valueScaleDict[variableName](d[variableName])]));
+            this.selectedVariables.forEach(variableName => {
+              this.variableNameAndCategorizedValuesDict[variableName] = this.variableNameAndCategorizedValuesDict[variableName].filter(v => data.filter(d => d[`_${variableName}`] === v).length > 0);
+            });
             break;
         }
       }
