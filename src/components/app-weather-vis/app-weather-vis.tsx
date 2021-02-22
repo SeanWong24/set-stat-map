@@ -763,7 +763,7 @@ export class AppWeatherVis implements ComponentInterface {
     this.secondaryVisMapRange = undefined;
     this.mapViewHeatmapData = undefined;
     this.secondaryVisMapViewHeatmapData = undefined;
-    this.categorizationMethod = 'quantile';
+    this.categorizationMethod = 'uniform';
     this.selectedVariables = undefined;
     this.datasetInfo = undefined;
   }
