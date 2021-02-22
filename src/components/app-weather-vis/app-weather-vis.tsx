@@ -162,7 +162,7 @@ export class AppWeatherVis implements ComponentInterface {
 
   @State() file: File;
   @State() DB: SqlJs.Database;
-  @State() categorizationMethod: 'quantile' | 'uniform' = 'quantile';
+  @State() categorizationMethod: 'quantile' | 'uniform' = 'uniform';
   @State() selectedVariables: string[];
   @State() data: any[];
   @State() secondaryVisData: any[];
