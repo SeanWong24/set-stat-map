@@ -679,12 +679,12 @@ export class AppWeatherVis implements ComponentInterface {
               const maxValue = d3.max(values);
               const thresholds = [minValue, minValue + (maxValue - minValue) * .25, minValue + (maxValue - minValue) * .5, minValue + (maxValue - minValue) * .75, maxValue];
               valueThresholdDict[variableName] = thresholds.map(d => d.toFixed(2));
-              valueScaleDict[variableName] = d3.scaleThreshold().domain(thresholds).range([0, 1, 2, 3]);
+              valueScaleDict[variableName] = d3.scaleThreshold().domain(thresholds).range([-1, 0, 1, 2, 3]);
               this.variableNameAndCategorizedValuesDict[variableName] = [
-                `${thresholds[0].toFixed(2)} ~ ${thresholds[1].toFixed(2)}`,
-                `${thresholds[1].toFixed(2)} ~ ${thresholds[2].toFixed(2)}`,
-                `${thresholds[2].toFixed(2)} ~ ${thresholds[3].toFixed(2)}`,
-                `${thresholds[3].toFixed(2)} ~ ${thresholds[4].toFixed(2)}`
+                `${thresholds[0].toFixed(2)} - ${thresholds[1].toFixed(2)}`,
+                `${thresholds[1].toFixed(2)} - ${thresholds[2].toFixed(2)}`,
+                `${thresholds[2].toFixed(2)} - ${thresholds[3].toFixed(2)}`,
+                `${thresholds[3].toFixed(2)} - ${thresholds[4].toFixed(2)}`
               ];
             });
             data.forEach(d => this.selectedVariables.forEach(variableName => d[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][valueScaleDict[variableName](d[variableName])]));
