@@ -132,7 +132,9 @@ export class AppWeatherVis implements ComponentInterface {
     }
   }
   private get defineTexturesHandler() {
-    return this.categorizationMethod === 'quantile' ? this.defineTexturesHandlerForFour : this.defineTexturesHandlerForEight;
+    // return this.categorizationMethod === 'quantile' ? this.defineTexturesHandlerForFour : this.defineTexturesHandlerForEight;
+    // TODO not yet handle textures for eight
+    return this.defineTexturesHandlerForFour;
   }
   private get secondaryVisDefineTexturesHandler() {
     if (this.secondaryVisVariableNameAndCategorizedValuesDict) {
