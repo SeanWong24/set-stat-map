@@ -583,14 +583,13 @@ export class AppWeatherVis implements ComponentInterface {
       await loading.present();
 
       let sqlQueryString =
-        `select substr(Date, 0, 8) as Date, Latitude, Longitude, ${this.selectedVariables.map(variable => variable === 'Precipitation' ? `sum(${variable}) as ${variable}` : `avg(${variable}) as ${variable}`).join(', ')} ` +
+        `select Date, Latitude, Longitude, ${this.selectedVariables.join(', ')} ` +
         `from ${this.databaseName}`;
       if (isForSecondaryVis && this.secondaryVisMapRange) {
         sqlQueryString += ` where Latitude >= ${this.secondaryVisMapRange.minLatitude} and Latitude <= ${this.secondaryVisMapRange.maxLatitude} and Longitude >= ${this.secondaryVisMapRange.minLongitude} and Longitude <= ${this.secondaryVisMapRange.maxLongitude}`;
       } else if (!isForSecondaryVis && this.mapRange) {
         sqlQueryString += ` where Latitude >= ${this.mapRange.minLatitude} and Latitude <= ${this.mapRange.maxLatitude} and Longitude >= ${this.mapRange.minLongitude} and Longitude <= ${this.mapRange.maxLongitude}`;
       }
-      sqlQueryString += ` group by substr(Date, 0, 8), Latitude, Longitude`
       const result = this.DB.exec(sqlQueryString)?.[0];
 
       const data = result?.values.map(value => {

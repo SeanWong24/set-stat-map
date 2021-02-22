@@ -140,7 +140,7 @@ export class AppDataProcess implements ComponentInterface {
 
                   const DB = new this.SQL.Database();
                   DB.run(
-                    `CREATE TABLE IF NOT EXISTS ${databaseName} (` +
+                    `CREATE TEMPORARY TABLE IF NOT EXISTS ${databaseName}_temp (` +
                     variables.map(variable => `${variable.replace(/\s/g, '')} ${variable === 'Date' ? 'VARCHAR' : 'FLOAT'},`).join(' ') + ' ' +
                     'PRIMARY KEY(Date, Latitude, Longitude)' +
                     ')'
@@ -161,7 +161,7 @@ export class AppDataProcess implements ComponentInterface {
                       const data = d3.csvParse(fileContent);
                       for (const datum of data) {
                         DB.run(
-                          `INSERT INTO ${databaseName} VALUES (${variables.map(() => '?').join(', ')})`,
+                          `INSERT INTO ${databaseName}_temp VALUES (${variables.map(() => '?').join(', ')})`,
                           variables.map(variable => variable === 'Date' ? new Date(datum[variable]).toISOString().slice(0, 10) : datum[variable])
                         );
                       }
@@ -169,6 +169,20 @@ export class AppDataProcess implements ComponentInterface {
 
                     this.processedFileCount++;
                   }
+                  
+                  DB.run(
+                    `CREATE TABLE IF NOT EXISTS ${databaseName} (` +
+                    variables.map(variable => `${variable.replace(/\s/g, '')} ${variable === 'Date' ? 'VARCHAR' : 'FLOAT'},`).join(' ') + ' ' +
+                    'PRIMARY KEY(Date, Latitude, Longitude)' +
+                    ')'
+                  );
+                  DB.run(
+                    `INSERT INTO ${databaseName} ` +
+                    `SELECT SUBSTR(Date, 0, 8) AS Date, ${variables.filter(variable => variable !== 'Date').map(variable => variable === 'Precipitation' ? `SUM(${variable}) AS ${variable}` : `AVG(${variable.replace(/\s/g, '')}) AS ${variable.replace(/\s/g, '')}`).join(', ')} ` +
+                    `FROM ${databaseName}_temp ` +
+                    `GROUP BY SUBSTR(Date, 0, 8), Latitude, Longitude`
+                    );
+                  
                   const outputFileWritableStream = await this.outputFileHandle.createWritable();
                   const DBData = DB.export();
                   await outputFileWritableStream.write(DBData);
