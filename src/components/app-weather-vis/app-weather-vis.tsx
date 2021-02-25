@@ -82,16 +82,16 @@ export class AppWeatherVis implements ComponentInterface {
     () => textureGenerator.lines().orientation('8/8').size(10),
     () => textureGenerator.lines().orientation('6/8').size(10),
   ];
-  private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
-    () => textureGenerator.lines().stroke('transparent'),
-    () => textureGenerator.circles().radius(2),
-    () => textureGenerator.lines().orientation('2/8').size(10),
-    () => textureGenerator.lines().orientation('2/8').size(10).heavier(),
-    () => textureGenerator.lines().orientation('8/8').size(10),
-    () => textureGenerator.lines().orientation('8/8').size(10).heavier(),
-    () => textureGenerator.lines().orientation('6/8').size(10),
-    () => textureGenerator.lines().orientation('6/8').size(10).heavier()
-  ];
+  // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
+  //   () => textureGenerator.lines().stroke('transparent'),
+  //   () => textureGenerator.circles().radius(2),
+  //   () => textureGenerator.lines().orientation('2/8').size(10),
+  //   () => textureGenerator.lines().orientation('2/8').size(10).heavier(),
+  //   () => textureGenerator.lines().orientation('8/8').size(10),
+  //   () => textureGenerator.lines().orientation('8/8').size(10).heavier(),
+  //   () => textureGenerator.lines().orientation('6/8').size(10),
+  //   () => textureGenerator.lines().orientation('6/8').size(10).heavier()
+  // ];
 
   private SQL: SqlJs.SqlJsStatic;
   private visRenderLoadingElement: HTMLIonLoadingElement;
