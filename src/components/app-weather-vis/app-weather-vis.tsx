@@ -77,12 +77,8 @@ export class AppWeatherVis implements ComponentInterface {
     '11': 'Nov',
     '12': 'Dec'
   };
-  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
-    () => textureGenerator.lines().stroke('transparent'),
-    () => textureGenerator.lines().orientation('2/8').size(10),
-    () => textureGenerator.lines().orientation('8/8').size(10),
-    () => textureGenerator.lines().orientation('6/8').size(10),
-  ];
+  private readonly textureOpacities = [.25, .5, .75, 1];
+  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.textureOpacities.map(opacity => () => textureGenerator.circles().thicker().fill(`rgba(0,0,0,${opacity})`));
   // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
   //   () => textureGenerator.lines().stroke('transparent'),
   //   () => textureGenerator.circles().radius(2),
@@ -145,9 +141,9 @@ export class AppWeatherVis implements ComponentInterface {
         const secondaryVisCategorizedValuesForSecondDimension = this.secondaryVisVariableNameAndCategorizedValuesDict[this.selectedVariables[1]];
         for (let i = 0; i < secondaryVisCategorizedValuesForSecondDimension.length; i++) {
           if (i === 0 && secondaryVisCategorizedValuesForSecondDimension[0] !== firstVisCategorizedValuesForSecondDimension[0]) {
-            handlers.push(() => textureGenerator.paths().d("waves").lighter());
+            handlers.push(() => textureGenerator.circles().thicker().fill('transparent').strokeWidth(1).stroke("black"));
           } else if (i === (secondaryVisCategorizedValuesForSecondDimension.length - 1) && secondaryVisCategorizedValuesForSecondDimension[secondaryVisCategorizedValuesForSecondDimension.length - 1] !== firstVisCategorizedValuesForSecondDimension[firstVisCategorizedValuesForSecondDimension.length - 1]) {
-            handlers.push(() => textureGenerator.paths().d("waves").thicker());
+            handlers.push(() => textureGenerator.circles().thicker().fill('transparent').strokeWidth(3).stroke("black"));
           } else {
             handlers.push(
               this.defineTexturesHandler(textureGenerator)[firstVisCategorizedValuesForSecondDimension.indexOf(secondaryVisCategorizedValuesForSecondDimension[i])] ||
@@ -193,7 +189,10 @@ export class AppWeatherVis implements ComponentInterface {
     longitudeCount: number
   };
   @State() mapViewHeatmapData: {
-    legendInnerHTML: string,
+    colorLegendTitle: string;
+    colorLegendDefinitions: { value: string, color: string }[];
+    textureLegendTitle: string;
+    textureLegendDefinitions: { value: string, textureGenerator: any }[];
     primaryValueTitle: string,
     secondaryValueHeader: string,
     isTooltipEnabled: boolean,
@@ -209,7 +208,10 @@ export class AppWeatherVis implements ComponentInterface {
     }[]
   };
   @State() secondaryVisMapViewHeatmapData: {
-    legendInnerHTML: string,
+    colorLegendTitle: string;
+    colorLegendDefinitions: { value: string, color: string }[];
+    textureLegendTitle: string;
+    textureLegendDefinitions: { value: string, textureGenerator: any }[];
     primaryValueTitle: string,
     secondaryValueHeader: string,
     isTooltipEnabled: boolean,
@@ -539,11 +541,13 @@ export class AppWeatherVis implements ComponentInterface {
         rectHeight: .312
       };
     });
-    const legendInnerHTML = `<h4>${this.variableDisplayNameDict[this.selectedVariables[0]]}</h4>${Object.entries(colorDict).map(([value, color]) => `<i style="background: ${color}"></i><span>${value}</span><br/>`).join('')}`;
     const mapViewHeader = `${this.variableDisplayNameDict[dimensionName.replace(/^_/, '')]} - ${dimensionValue}`;
     const mapViewHeatmapData = {
       dataPoints,
-      legendInnerHTML,
+      colorLegendTitle: this.variableDisplayNameDict[this.selectedVariables[0]],
+      colorLegendDefinitions: Object.entries(colorDict).map(([value, color]) => ({ value, color })),
+      textureLegendTitle: this.variableDisplayNameDict[this.selectedVariables[1]],
+      textureLegendDefinitions: Object.entries(textureGeneratorDict).map(([value, textureGenerator]) => ({ value, textureGenerator })),
       primaryValueTitle: this.selectedVariables[0],
       secondaryValueHeader: this.selectedVariables[1],
       isTooltipEnabled: dimensionName === 'Date'

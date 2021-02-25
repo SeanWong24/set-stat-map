@@ -18,7 +18,7 @@
   height: 100%;
 }
 
-#texture-container {
+#texture-container, #legend-texture-container {
   position: absolute;
   width: 0;
   height: 0;
@@ -54,7 +54,7 @@
   bottom: 3px;
 }
 
-.legend i {
+.legend i, .legend svg {
   width: 18px;
   height: 18px;
   float: left;

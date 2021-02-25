@@ -26,7 +26,10 @@ export namespace Components {
         "headerTextSize": number;
         "headerTextWeight": string;
         "heatmapData": {
-    legendInnerHTML: string,
+    colorLegendTitle: string;
+    colorLegendDefinitions: { value: string, color: string }[];
+    textureLegendTitle: string;
+    textureLegendDefinitions: { value: string, textureGenerator: any }[];
     primaryValueTitle: string,
     secondaryValueHeader: string,
     isTooltipEnabled: boolean,
@@ -253,7 +256,10 @@ declare namespace LocalJSX {
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
         "heatmapData"?: {
-    legendInnerHTML: string,
+    colorLegendTitle: string;
+    colorLegendDefinitions: { value: string, color: string }[];
+    textureLegendTitle: string;
+    textureLegendDefinitions: { value: string, textureGenerator: any }[];
     primaryValueTitle: string,
     secondaryValueHeader: string,
     isTooltipEnabled: boolean,

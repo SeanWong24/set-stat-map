@@ -19,6 +19,7 @@ export class AppMapView implements ComponentInterface {
   private heatmapLayerGroup: leaflet.LayerGroup;
   private legendControl: leaflet.Control;
   private textureContainerElement: SVGElement;
+  private legendTextureContainerElement: SVGElement;
   private textureUrlDict: { [valueAndBackgroundColor: string]: string } = {};
   private isMouseDrawing: boolean = false;
   private mouseDrawStart: [number, number];
@@ -38,7 +39,10 @@ export class AppMapView implements ComponentInterface {
     maxLongitude: number
   };
   @Prop() heatmapData: {
-    legendInnerHTML: string,
+    colorLegendTitle: string;
+    colorLegendDefinitions: { value: string, color: string }[];
+    textureLegendTitle: string;
+    textureLegendDefinitions: { value: string, textureGenerator: any }[];
     primaryValueTitle: string,
     secondaryValueHeader: string,
     isTooltipEnabled: boolean,
@@ -93,6 +97,10 @@ export class AppMapView implements ComponentInterface {
         <svg
           id="texture-container"
           ref={el => this.textureContainerElement = el}
+        ></svg>
+        <svg
+          id="legend-texture-container"
+          ref={el => this.legendTextureContainerElement = el}
         ></svg>
       </Host>
     );
@@ -187,7 +195,17 @@ export class AppMapView implements ComponentInterface {
       this.legendControl = (leaflet as any).control({ position: "bottomleft" });
       this.legendControl.onAdd = () => {
         const div = leaflet.DomUtil.create('div', 'legend');
-        div.innerHTML = this.heatmapData.legendInnerHTML;
+        div.innerHTML = `<div><h4>${this.heatmapData.colorLegendTitle}</h4>${this.heatmapData.colorLegendDefinitions.map(definition => `<i style="background: ${definition.color}"></i><span>${definition.value}</span><br/>`).join('')}</div>`;
+
+        this.legendTextureContainerElement.innerHTML = '';
+        div.innerHTML += '<tr/>';
+        div.innerHTML += `<div><h4>${this.heatmapData.textureLegendTitle}</h4>${this.heatmapData.textureLegendDefinitions.map(definition => {
+          const legendTextureSvg = d3.select(this.legendTextureContainerElement);
+          const texture = definition.textureGenerator();
+          legendTextureSvg.call(texture);
+          return `<svg><rect width="100%" height="100%" fill="${texture.url()}"></rect></svg><span>${definition.value}</span><br/>`;
+        }).join('')}</div>`;
+
         return div;
       };
       this.legendControl.addTo(this.map);
