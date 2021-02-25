@@ -643,7 +643,7 @@ export class AppWeatherVis implements ComponentInterface {
                 const [minValue, maxValue] = valueRange.split(' - ');
                 return (variableValue >= +minValue && variableValue < +maxValue) || (index === this.secondaryVisVariableNameAndCategorizedValuesDict[variableName].length - 1 && variableValue === +maxValue);
               })
-              ?.split(' - ').map(value => (+value).toFixed(2)).join(' - ');
+              ?.split(' - ').map(value => (+value).toFixed(0)).join(' - ');
           }
         }
       } else {
@@ -667,7 +667,7 @@ export class AppWeatherVis implements ComponentInterface {
             for (const dataRecord of data) {
               for (const variableName of this.selectedVariables) {
                 const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
-                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(' - ').map(value => (+value).toFixed(2)).join(' - ');
+                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(' - ').map(value => (+value).toFixed(0)).join(' - ');
               }
             }
             break;
@@ -679,18 +679,23 @@ export class AppWeatherVis implements ComponentInterface {
               const minValue = d3.min(values);
               const maxValue = d3.max(values);
               const thresholds = [minValue, minValue + (maxValue - minValue) * .25, minValue + (maxValue - minValue) * .5, minValue + (maxValue - minValue) * .75, maxValue];
-              valueThresholdDict[variableName] = thresholds.map(d => d.toFixed(2));
+              valueThresholdDict[variableName] = thresholds;
               valueScaleDict[variableName] = d3.scaleThreshold().domain(thresholds).range([-1, 0, 1, 2, 3]);
               this.variableNameAndCategorizedValuesDict[variableName] = [
-                `${thresholds[0].toFixed(2)} - ${thresholds[1].toFixed(2)}`,
-                `${thresholds[1].toFixed(2)} - ${thresholds[2].toFixed(2)}`,
-                `${thresholds[2].toFixed(2)} - ${thresholds[3].toFixed(2)}`,
-                `${thresholds[3].toFixed(2)} - ${thresholds[4].toFixed(2)}`
+                `${thresholds[0]} - ${thresholds[1]}`,
+                `${thresholds[1]} - ${thresholds[2]}`,
+                `${thresholds[2]} - ${thresholds[3]}`,
+                `${thresholds[3]} - ${thresholds[4]}`
               ];
             });
-            data.forEach(d => this.selectedVariables.forEach(variableName => d[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][valueScaleDict[variableName](d[variableName])]));
+            for (const dataRecord of data) {
+              for (const variableName of this.selectedVariables) {
+                const thresholdValue = valueScaleDict[variableName](dataRecord[variableName]);
+                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][thresholdValue].split(' - ').map(value => (+value).toFixed(0)).join(' - ');
+              }
+            }
             this.selectedVariables.forEach(variableName => {
-              this.variableNameAndCategorizedValuesDict[variableName] = this.variableNameAndCategorizedValuesDict[variableName].filter(v => data.filter(d => d[`_${variableName}`] === v).length > 0);
+              this.variableNameAndCategorizedValuesDict[variableName] = this.variableNameAndCategorizedValuesDict[variableName].filter(v => data.filter(d => d[`_${variableName}`] === v.split(' - ').map(value => (+value).toFixed(0)).join(' - ')).length > 0);
             });
             break;
         }
