@@ -12,6 +12,7 @@ import { ParallelSetsDataNode, ParallelSetsOnLoadDetail, ParallelSetsDimensionVa
 })
 export class AppWeatherVis implements ComponentInterface {
 
+  private readonly variableValueMinMaxSeperator = ', ';
   private readonly databaseName = 'weather';
   private readonly variableDisplayNameDict: { [variableName: string]: string } = {
     'Elevation': 'Elevation',
@@ -224,7 +225,7 @@ export class AppWeatherVis implements ComponentInterface {
     }[]
   };
   @State() parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler } = {
-    '': (a, b) => +a.toString().split(' - ')[0] - +b.toString().split(' - ')[0],
+    '': (a, b) => +a.toString().split(this.variableValueMinMaxSeperator)[0] - +b.toString().split(this.variableValueMinMaxSeperator)[0],
     'Date': undefined
   };
   @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
@@ -585,7 +586,7 @@ export class AppWeatherVis implements ComponentInterface {
       await loading.present();
 
       let sqlQueryString =
-        `select Date, Latitude, Longitude, ${this.selectedVariables.join(', ')} ` +
+        `select Date, Latitude, Longitude, ${this.selectedVariables.join(this.variableValueMinMaxSeperator)} ` +
         `from ${this.databaseName}`;
       if (isForSecondaryVis && this.secondaryVisMapRange) {
         sqlQueryString += ` where Latitude >= ${this.secondaryVisMapRange.minLatitude} and Latitude <= ${this.secondaryVisMapRange.maxLatitude} and Longitude >= ${this.secondaryVisMapRange.minLongitude} and Longitude <= ${this.secondaryVisMapRange.maxLongitude}`;
@@ -627,23 +628,23 @@ export class AppWeatherVis implements ComponentInterface {
           const variableValues = data.map(d => +d[variableName]);
           const variableMinValue = d3.min(variableValues);
           const variableMaxValue = d3.max(variableValues);
-          const firstVisCategorizedValues = this.variableNameAndCategorizedValuesDict?.[variableName]?.sort((a, b) => +a.toString().split(' - ')[0] - +b.toString().split(' - ')[0]);
-          const firstVisVariableMinValue = +firstVisCategorizedValues?.[0]?.split(' - ')?.[0];
-          const firstVisVariableMaxValue = +firstVisCategorizedValues?.[firstVisCategorizedValues.length - 1]?.split(' - ')?.[1];
+          const firstVisCategorizedValues = this.variableNameAndCategorizedValuesDict?.[variableName]?.sort((a, b) => +a.toString().split(this.variableValueMinMaxSeperator)[0] - +b.toString().split(this.variableValueMinMaxSeperator)[0]);
+          const firstVisVariableMinValue = +firstVisCategorizedValues?.[0]?.split(this.variableValueMinMaxSeperator)?.[0];
+          const firstVisVariableMaxValue = +firstVisCategorizedValues?.[firstVisCategorizedValues.length - 1]?.split(this.variableValueMinMaxSeperator)?.[1];
           if (variableMinValue < firstVisVariableMinValue) {
-            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [`${variableMinValue} - ${firstVisVariableMinValue}`, ...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName]];
+            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [`${variableMinValue}${this.variableValueMinMaxSeperator}${firstVisVariableMinValue}`, ...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName]];
           }
           if (variableMaxValue > firstVisVariableMaxValue) {
-            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName], `${firstVisVariableMaxValue} - ${variableMaxValue}`];
+            this.secondaryVisVariableNameAndCategorizedValuesDict[variableName] = [...this.secondaryVisVariableNameAndCategorizedValuesDict[variableName], `${firstVisVariableMaxValue}${this.variableValueMinMaxSeperator}${variableMaxValue}`];
           }
           for (const dataRecord of data) {
             const variableValue = +dataRecord[variableName];
             dataRecord[`_${variableName}`] = this.secondaryVisVariableNameAndCategorizedValuesDict?.[variableName]
               ?.find((valueRange, index) => {
-                const [minValue, maxValue] = valueRange.split(' - ');
+                const [minValue, maxValue] = valueRange.split(this.variableValueMinMaxSeperator);
                 return (variableValue >= +minValue && variableValue < +maxValue) || (index === this.secondaryVisVariableNameAndCategorizedValuesDict[variableName].length - 1 && variableValue === +maxValue);
               })
-              ?.split(' - ').map(value => (+value).toFixed(0)).join(' - ');
+              ?.split(this.variableValueMinMaxSeperator).map(value => (+value).toFixed(0)).join(this.variableValueMinMaxSeperator);
           }
         }
       } else {
@@ -658,16 +659,16 @@ export class AppWeatherVis implements ComponentInterface {
               const variableMinValue = d3.min(variableValues);
               const variableMaxValue = d3.max(variableValues);
               this.variableNameAndCategorizedValuesDict[variableName] = [
-                `${variableMinValue} - ${+quantiles[0]}`,
-                `${+quantiles[0]} - ${+quantiles[1]}`,
-                `${+quantiles[1]} - ${+quantiles[2]}`,
-                `${+quantiles[2]} - ${variableMaxValue}`
+                `${variableMinValue}${this.variableValueMinMaxSeperator}${+quantiles[0]}`,
+                `${+quantiles[0]}${this.variableValueMinMaxSeperator}${+quantiles[1]}`,
+                `${+quantiles[1]}${this.variableValueMinMaxSeperator}${+quantiles[2]}`,
+                `${+quantiles[2]}${this.variableValueMinMaxSeperator}${variableMaxValue}`
               ];
             });
             for (const dataRecord of data) {
               for (const variableName of this.selectedVariables) {
                 const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
-                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(' - ').map(value => (+value).toFixed(0)).join(' - ');
+                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue].split(this.variableValueMinMaxSeperator).map(value => (+value).toFixed(0)).join(this.variableValueMinMaxSeperator);
               }
             }
             break;
@@ -682,20 +683,20 @@ export class AppWeatherVis implements ComponentInterface {
               valueThresholdDict[variableName] = thresholds;
               valueScaleDict[variableName] = d3.scaleThreshold().domain(thresholds).range([-1, 0, 1, 2, 3]);
               this.variableNameAndCategorizedValuesDict[variableName] = [
-                `${thresholds[0]} - ${thresholds[1]}`,
-                `${thresholds[1]} - ${thresholds[2]}`,
-                `${thresholds[2]} - ${thresholds[3]}`,
-                `${thresholds[3]} - ${thresholds[4]}`
+                `${thresholds[0]}${this.variableValueMinMaxSeperator}${thresholds[1]}`,
+                `${thresholds[1]}${this.variableValueMinMaxSeperator}${thresholds[2]}`,
+                `${thresholds[2]}${this.variableValueMinMaxSeperator}${thresholds[3]}`,
+                `${thresholds[3]}${this.variableValueMinMaxSeperator}${thresholds[4]}`
               ];
             });
             for (const dataRecord of data) {
               for (const variableName of this.selectedVariables) {
                 const thresholdValue = valueScaleDict[variableName](dataRecord[variableName]);
-                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][thresholdValue].split(' - ').map(value => (+value).toFixed(0)).join(' - ');
+                dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][thresholdValue].split(this.variableValueMinMaxSeperator).map(value => (+value).toFixed(0)).join(this.variableValueMinMaxSeperator);
               }
             }
             this.selectedVariables.forEach(variableName => {
-              this.variableNameAndCategorizedValuesDict[variableName] = this.variableNameAndCategorizedValuesDict[variableName].filter(v => data.filter(d => d[`_${variableName}`] === v.split(' - ').map(value => (+value).toFixed(0)).join(' - ')).length > 0);
+              this.variableNameAndCategorizedValuesDict[variableName] = this.variableNameAndCategorizedValuesDict[variableName].filter(v => data.filter(d => d[`_${variableName}`] === v.split(this.variableValueMinMaxSeperator).map(value => (+value).toFixed(0)).join(this.variableValueMinMaxSeperator)).length > 0);
             });
             break;
         }
