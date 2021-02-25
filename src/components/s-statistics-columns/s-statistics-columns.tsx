@@ -11,7 +11,7 @@ export class SStatisticsColumns implements ComponentInterface {
   @Element() hostElement: HTMLElement;
 
   @Prop() data: any[];
-  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType }[];
+  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
   @Prop() rowValueDimensionName: string;
   @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() rowValueAndPositionDict: {
@@ -55,6 +55,7 @@ export class SStatisticsColumns implements ComponentInterface {
                 return (
                   <s-statistics-column
                     data={dataForColumn}
+                    scaleMinMax={statisticsColumnDefinition.scaleMinMax}
                     header={this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}
                     rowValueAndPositionDict={this.rowValueAndPositionDict}
                     rowValueAndBackgroundDict={this.rowValueAndBackgroundDict}

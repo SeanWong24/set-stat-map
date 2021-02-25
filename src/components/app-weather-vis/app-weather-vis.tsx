@@ -436,10 +436,23 @@ export class AppWeatherVis implements ComponentInterface {
             this.secondaryVisDefineTexturesHandler :
             this.defineTexturesHandler
         }
-        statisticsColumnDefinitions={this.selectedVariables.map(variableName => ({
-          dimensionName: variableName,
-          visType: 'box'
-        }))}
+        statisticsColumnDefinitions={this.selectedVariables.map(variableName => {
+          let scaleMinMax: [number, number];
+          if (variableName === 'MaxTemperature' || variableName === 'MinTemperature') {
+            const data = (isSecondaryVis ? this.secondaryVisData : this.data);
+            if (data) {
+              const maxTemperatureValues = data.map(dataRecord => dataRecord['MaxTemperature']);
+              const minTemperatureValues = data.map(dataRecord => dataRecord['MinTemperature']);
+              const temperatureValues = [...maxTemperatureValues, ...minTemperatureValues];
+              scaleMinMax = [d3.min(temperatureValues), d3.max(temperatureValues)];
+            }
+          }
+          return {
+            dimensionName: variableName,
+            visType: 'box',
+            scaleMinMax
+          };
+        })}
         dimensionDisplyedNameDict={Object.fromEntries([
           ...this.selectedVariables.map(variableName => [`_${variableName}`, this.variableDisplayNameDict[variableName]]),
           ...this.selectedVariables.map(variableName => [variableName, this.variableDisplayNameDict[variableName]]),

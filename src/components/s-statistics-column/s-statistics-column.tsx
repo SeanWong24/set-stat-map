@@ -15,6 +15,7 @@ export class SStatisticsColumn implements ComponentInterface {
 
   @Prop() header: string;
   @Prop() data: { [rowValue: string]: number[] };
+  @Prop() scaleMinMax: [number, number];
   @Prop() rowValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
@@ -45,8 +46,7 @@ export class SStatisticsColumn implements ComponentInterface {
 
   componentDidRender() {
     const allDataRecords = Object.values(this.data).flat();
-    const scaleMinValue = d3.min(allDataRecords);
-    const scaleMaxValue = d3.max(allDataRecords);
+    const [scaleMinValue, scaleMaxValue] = this.scaleMinMax || [d3.min(allDataRecords), d3.max(allDataRecords)];
     const svgWidth = this.footerElement.getBoundingClientRect().width - this.axisMargin * 2;
     const scale = d3.scaleLinear()
       .domain([scaleMinValue, scaleMaxValue])
@@ -56,8 +56,7 @@ export class SStatisticsColumn implements ComponentInterface {
 
   render() {
     const allDataRecords = Object.values(this.data).flat();
-    const scaleMinValue = d3.min(allDataRecords);
-    const scaleMaxValue = d3.max(allDataRecords);
+    const [scaleMinValue, scaleMaxValue] = this.scaleMinMax || [d3.min(allDataRecords), d3.max(allDataRecords)];
     return (
       <Host>
         {

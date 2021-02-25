@@ -29,7 +29,7 @@ export class SSetStat implements ComponentInterface {
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
   @Prop() parallelSetsRibbonTension: number;
   @Prop() parallelSetsFooter: string | { [dimensionName: string]: string } = ' ';
-  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType }[] = [
+  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[] = [
     { dimensionName: 'D1', visType: 'box' },
     { dimensionName: 'D2', visType: 'box' },
     { dimensionName: 'D3', visType: 'box' }

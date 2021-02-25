@@ -112,7 +112,7 @@ export namespace Components {
         "reorderParallelSetsLastAxisByDimension": (dimensionName?: string, orderBy?: 'ascending' | 'descending') => Promise<ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler; }>;
         "ribbonAndRowHighlightOpacity": number;
         "ribbonAndRowOpacity": number;
-        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
+        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
         "statisticsColumnsWidth": string;
     }
     interface SStatisticsColumn {
@@ -137,6 +137,7 @@ export namespace Components {
       maxSegmentPosition: number;
     }
   };
+        "scaleMinMax": [number, number];
     }
     interface SStatisticsColumns {
         "data": any[];
@@ -160,7 +161,7 @@ export namespace Components {
     }
   };
         "rowValueDimensionName": string;
-        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType }[];
+        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
     }
 }
 declare global {
@@ -365,7 +366,7 @@ declare namespace LocalJSX {
         "parallelSetsWidth"?: string;
         "ribbonAndRowHighlightOpacity"?: number;
         "ribbonAndRowOpacity"?: number;
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
+        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
         "statisticsColumnsWidth"?: string;
     }
     interface SStatisticsColumn {
@@ -391,6 +392,7 @@ declare namespace LocalJSX {
       maxSegmentPosition: number;
     }
   };
+        "scaleMinMax"?: [number, number];
     }
     interface SStatisticsColumns {
         "data"?: any[];
@@ -415,7 +417,7 @@ declare namespace LocalJSX {
     }
   };
         "rowValueDimensionName"?: string;
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
+        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
     }
     interface IntrinsicElements {
         "app-data-process": AppDataProcess;
