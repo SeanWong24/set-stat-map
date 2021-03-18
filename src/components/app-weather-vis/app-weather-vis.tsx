@@ -45,22 +45,22 @@ export class AppWeatherVis implements ComponentInterface {
   ];
   private readonly variableNameAndColorSchemeDict = {
     'MaxTemperature': [
-      'rgb(65,47,136)',
-      'rgb(114,43,106)',
-      'rgb(162,38,75)',
-      'rgb(211,33,45)'
+      'rgb(33,102,172)',
+      'rgb(209,229,240)',
+      'rgb(244,165,130)',
+      'rgb(103,10,31)'
     ],
     'MinTemperature': [
-      'rgb(65,47,136)',
-      'rgb(114,43,106)',
-      'rgb(162,38,75)',
-      'rgb(211,33,45)'
+      'rgb(33,102,172)',
+      'rgb(209,229,240)',
+      'rgb(244,165,130)',
+      'rgb(103,10,31)'
     ],
     'Precipitation': [
-      'rgb(0,229,75)',
-      'rgb(0,212,216)',
-      'rgb(0,183,216)',
-      'rgb(24,138,240)'
+      'rgb(84,48,4)',
+      'rgb(223,194,125)',
+      'rgb(109,234,229)',
+      'rgb(0,102,93)'
     ]
   };
   private readonly monthNumberAndNameDict = {
@@ -77,7 +77,8 @@ export class AppWeatherVis implements ComponentInterface {
     '11': 'Nov',
     '12': 'Dec'
   };
-  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.colorSchmeForTextures.map(color => () => textureGenerator.circles().radius(2).size(7).fill(color));
+  private readonly textureOpacities = [.25, .5, .75, 1];
+  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.textureOpacities.map(opacity => () => textureGenerator.circles().thicker().fill(`rgba(0,0,0,${opacity})`));
   // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
   //   () => textureGenerator.lines().stroke('transparent'),
   //   () => textureGenerator.circles().radius(2),
@@ -108,14 +109,6 @@ export class AppWeatherVis implements ComponentInterface {
       '#f46d43'
     ];
   };
-  private get colorSchmeForTextures() {
-    return this.variableNameAndColorSchemeDict[this.selectedVariables?.[1]] || [
-      '#4575b4',
-      '#abd9e9',
-      '#fee090',
-      '#f46d43'
-    ];
-  }
   private get secondaryVisColorScheme() {
     if (this.secondaryVisVariableNameAndCategorizedValuesDict) {
       const colorScheme: string[] = [];
