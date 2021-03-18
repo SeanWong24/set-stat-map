@@ -44,18 +44,6 @@ export class AppWeatherVis implements ComponentInterface {
     'Solar'
   ];
   private readonly variableNameAndColorSchemeDict = {
-    'MaxTemperature': [
-      'rgb(33,102,172)',
-      'rgb(209,229,240)',
-      'rgb(244,165,130)',
-      'rgb(103,10,31)'
-    ],
-    'MinTemperature': [
-      'rgb(33,102,172)',
-      'rgb(209,229,240)',
-      'rgb(244,165,130)',
-      'rgb(103,10,31)'
-    ],
     'Precipitation': [
       'rgb(84,48,4)',
       'rgb(223,194,125)',
@@ -77,8 +65,13 @@ export class AppWeatherVis implements ComponentInterface {
     '11': 'Nov',
     '12': 'Dec'
   };
-  private readonly textureOpacities = [.25, .5, .75, 1];
-  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.textureOpacities.map(opacity => () => textureGenerator.circles().thicker().fill(`rgba(0,0,0,${opacity})`));
+  // private readonly textureStrokeWidths = [1, 2, 3, 4];
+  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => ([
+    () => textureGenerator.paths().d("hexagons"),
+    () => textureGenerator.paths().d("crosses"),
+    () => textureGenerator.paths().d("woven"),
+    () => textureGenerator.paths().d("waves")
+  ]);
   // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
   //   () => textureGenerator.lines().stroke('transparent'),
   //   () => textureGenerator.circles().radius(2),
