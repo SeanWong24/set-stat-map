@@ -44,18 +44,6 @@ export class AppWeatherVis implements ComponentInterface {
     'Solar'
   ];
   private readonly variableNameAndColorSchemeDict = {
-    'MaxTemperature': [
-      'rgb(33,102,172)',
-      'rgb(209,229,240)',
-      'rgb(244,165,130)',
-      'rgb(103,10,31)'
-    ],
-    'MinTemperature': [
-      'rgb(33,102,172)',
-      'rgb(209,229,240)',
-      'rgb(244,165,130)',
-      'rgb(103,10,31)'
-    ],
     'Precipitation': [
       'rgb(84,48,4)',
       'rgb(223,194,125)',
