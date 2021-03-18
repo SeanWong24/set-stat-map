@@ -67,10 +67,10 @@ export class AppWeatherVis implements ComponentInterface {
   };
   // private readonly textureStrokeWidths = [1, 2, 3, 4];
   private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => ([
-    () => textureGenerator.paths().d("hexagons"),
+    () => textureGenerator.paths().d("squares"),
+    () => textureGenerator.circles().radius(4).fill("transparent").strokeWidth(2),
     () => textureGenerator.paths().d("crosses"),
-    () => textureGenerator.paths().d("woven"),
-    () => textureGenerator.paths().d("waves")
+    () => textureGenerator.paths().d(s => `M ${s * 1 / 4},${s * 3 / 4} L ${s / 2},${s * 1 / 4} L ${s * 3 / 4},${s * 3 / 4} L ${s * 1 / 4},${s * 3 / 4} Z`)
   ]);
   // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
   //   () => textureGenerator.lines().stroke('transparent'),
