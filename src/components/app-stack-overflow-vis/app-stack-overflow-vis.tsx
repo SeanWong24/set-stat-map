@@ -22,6 +22,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
     dimensionName: string,
     visType: StatisticsColumnsVisType
   }[] = [];
+  @State() orderedTechs: string[];
 
   @State() selectedTechs: string[] = [];
   @Watch('selectedTechs')
@@ -64,7 +65,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
               parallelSetsRibbonTension={.5}
               statisticsColumnDefinitions={this.statisticsColumnDefinitions}
               parallelSetsDimensionValueSortingMethods={{
-                'Tech': (a, b) => a > b ? 1 : -1,
+                'Tech': (a, b) => this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()),
                 'Year': (a, b) => +a - +b,
                 'ActiveYears': (a, b) => +b - +a
               }}
@@ -85,11 +86,33 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             onIonChange={({ detail }) => this.selectedTechs = detail.value}
           >
             {
-              this.datasetInfo?.techs?.map(tech => (
+              this.orderedTechs?.map(tech => (
                 <ion-select-option value={tech}>{tech}</ion-select-option>
               ))
             }
           </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label class="control-panel-item-label">Order By</ion-label>
+          <ion-content style={{ height: '300px' }}>
+            <ion-reorder-group
+              disabled={false}
+              onIonItemReorder={({ detail }) => {
+                const orderedTechs = [...this.orderedTechs];
+                detail.complete(orderedTechs);
+                this.orderedTechs = orderedTechs;
+              }}
+            >
+              {
+                this.orderedTechs?.map(tech => (
+                  <ion-item>
+                    <ion-label>{tech}</ion-label>
+                    <ion-reorder slot="start"></ion-reorder>
+                  </ion-item>
+                ))
+              }
+            </ion-reorder-group>
+          </ion-content>
         </ion-item>
       </ion-list>
     );
@@ -105,6 +128,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       if (DB) {
         this.DB = DB;
         this.datasetInfo = await this.obtainDatasetInfo();
+        this.orderedTechs = [...this.datasetInfo.techs];
         this.queryData();
       } else {
         this.alertInvalidDatabase();
