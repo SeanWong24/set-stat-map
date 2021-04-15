@@ -33,6 +33,8 @@ export class AppDataProcess implements ComponentInterface {
     switch (this.visType) {
       case 'weather':
         return <app-weather-data-process></app-weather-data-process>;
+      case 'stack-overflow':
+        return <app-stack-overflow-data-process></app-stack-overflow-data-process>;
       default:
         return <ion-content class="ion-padding">Nothing yet</ion-content>;
     }

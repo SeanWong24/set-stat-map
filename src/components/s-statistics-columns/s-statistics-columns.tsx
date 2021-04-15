@@ -54,6 +54,7 @@ export class SStatisticsColumns implements ComponentInterface {
                 }
                 return (
                   <s-statistics-column
+                    visType={statisticsColumnDefinition.visType}
                     data={dataForColumn}
                     header={this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}
                     rowValueAndPositionDict={this.rowValueAndPositionDict}

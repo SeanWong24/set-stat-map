@@ -1,5 +1,6 @@
 import { Component, Host, h, Prop, ComponentInterface, Element, Event, EventEmitter } from '@stencil/core';
 import * as d3 from 'd3';
+import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
 
 @Component({
   tag: 's-statistics-column',
@@ -15,6 +16,7 @@ export class SStatisticsColumn implements ComponentInterface {
 
   @Prop() header: string;
   @Prop() data: { [rowValue: string]: number[] };
+  @Prop() visType: StatisticsColumnsVisType;
   @Prop() rowValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
@@ -44,9 +46,19 @@ export class SStatisticsColumn implements ComponentInterface {
   }
 
   componentDidRender() {
-    const allDataRecords = Object.values(this.data).flat();
-    const scaleMinValue = d3.min(allDataRecords);
-    const scaleMaxValue = d3.max(allDataRecords);
+    let scaleMinValue;
+    let scaleMaxValue;
+    switch (this.visType) {
+      case 'box':
+        const allDataRecords = Object.values(this.data).flat();
+        scaleMinValue = d3.min(allDataRecords);
+        scaleMaxValue = d3.max(allDataRecords);
+        break;
+      case 'bar':
+        scaleMinValue = 0;
+        scaleMaxValue = d3.max(Object.values(this.data).map(d => d3.sum(d)));
+        break;
+    }
     const svgWidth = this.footerElement.getBoundingClientRect().width - this.axisMargin * 2;
     const scale = d3.scaleLinear()
       .domain([scaleMinValue, scaleMaxValue])
@@ -55,9 +67,6 @@ export class SStatisticsColumn implements ComponentInterface {
   }
 
   render() {
-    const allDataRecords = Object.values(this.data).flat();
-    const scaleMinValue = d3.min(allDataRecords);
-    const scaleMaxValue = d3.max(allDataRecords);
     return (
       <Host>
         {
@@ -103,22 +112,9 @@ export class SStatisticsColumn implements ComponentInterface {
                           backgroundImage: rowValueAndBackground.backgroundImage,
                         }}
                       ></div>
-                      <s-box-plot-item
-                        class="plot-item"
-                        values={this.data[rowValue]}
-                        scaleMinValue={scaleMinValue}
-                        scaleMaxValue={scaleMaxValue}
-                        enableTooltip={false}
-                        onItemLoad={({ detail }) => {
-                          this.statisticsRowElementDict[rowValue].title =
-                            `${rowValue}\n` +
-                            `min: ${detail.min}\n` +
-                            `25%: ${detail.q1}\n` +
-                            `median: ${detail.median}\n` +
-                            `75%: ${detail.q3}\n` +
-                            `max: ${detail.max}`
-                        }}
-                      ></s-box-plot-item>
+                      {
+                        this.renderPlotItem(rowValue)
+                      }
                     </div>
                   );
                 })
@@ -134,6 +130,48 @@ export class SStatisticsColumn implements ComponentInterface {
         }
       </Host>
     );
+  }
+
+  private renderPlotItem(rowValue: string) {
+    switch (this.visType) {
+      case 'box':
+        const allDataRecords = Object.values(this.data).flat();
+        const scaleMinValue = d3.min(allDataRecords);
+        const scaleMaxValue = d3.max(allDataRecords);
+        return (
+          <s-box-plot-item
+            class="plot-item"
+            values={this.data[rowValue]}
+            scaleMinValue={scaleMinValue}
+            scaleMaxValue={scaleMaxValue}
+            enableTooltip={false}
+            onItemLoad={({ detail }) => {
+              this.statisticsRowElementDict[rowValue].title =
+                `${rowValue}\n` +
+                `min: ${detail.min}\n` +
+                `25%: ${detail.q1}\n` +
+                `median: ${detail.median}\n` +
+                `75%: ${detail.q3}\n` +
+                `max: ${detail.max}`
+            }}
+          ></s-box-plot-item>
+        );
+      case 'bar':
+        const value = d3.sum(this.data[rowValue]);
+        return (
+          <s-bar-plot-item
+            class="plot-item"
+            value={value}
+            minValue={0}
+            maxValue={d3.max(Object.values(this.data).map(d => d3.sum(d)))}
+            onItemLoad={({ detail }) => {
+              this.statisticsRowElementDict[rowValue].title =
+                `${rowValue}\n` +
+                `value: ${detail.value}`
+            }}
+          ></s-bar-plot-item>
+        );
+    }
   }
 
 }

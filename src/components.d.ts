@@ -8,6 +8,9 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsDimensionValueSortingHandler, ParallelSetsOnLoadDetail } from "./components/s-parallel-sets/utils";
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
+    interface AppControlPanel {
+        "renderHandler": () => any;
+    }
     interface AppDataProcess {
         "visType": string;
     }
@@ -47,9 +50,29 @@ export namespace Components {
     }
     interface AppRoot {
     }
+    interface AppStackOverflowDataProcess {
+    }
+    interface AppStackOverflowVis {
+        "file": File;
+    }
+    interface AppVis {
+        "visType": string;
+    }
     interface AppWeatherDataProcess {
     }
     interface AppWeatherVis {
+    }
+    interface SBarPlotItem {
+        "exceedMaxLineStroke": string;
+        "fill": string;
+        "maxValue": number;
+        "minValue": number;
+        "orientation": 'horizontal' | 'vertical';
+        "secondLevelFill": string;
+        "secondLevelMaxValue": number;
+        "thirdLevelFill": string;
+        "thirdLevelMaxValue": number;
+        "value": number;
     }
     interface SBoxPlotItem {
         "boxFill": string;
@@ -136,6 +159,7 @@ export namespace Components {
       maxSegmentPosition: number;
     }
   };
+        "visType": StatisticsColumnsVisType;
     }
     interface SStatisticsColumns {
         "data": any[];
@@ -163,6 +187,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLAppControlPanelElement extends Components.AppControlPanel, HTMLStencilElement {
+    }
+    var HTMLAppControlPanelElement: {
+        prototype: HTMLAppControlPanelElement;
+        new (): HTMLAppControlPanelElement;
+    };
     interface HTMLAppDataProcessElement extends Components.AppDataProcess, HTMLStencilElement {
     }
     var HTMLAppDataProcessElement: {
@@ -187,6 +217,24 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLAppStackOverflowDataProcessElement extends Components.AppStackOverflowDataProcess, HTMLStencilElement {
+    }
+    var HTMLAppStackOverflowDataProcessElement: {
+        prototype: HTMLAppStackOverflowDataProcessElement;
+        new (): HTMLAppStackOverflowDataProcessElement;
+    };
+    interface HTMLAppStackOverflowVisElement extends Components.AppStackOverflowVis, HTMLStencilElement {
+    }
+    var HTMLAppStackOverflowVisElement: {
+        prototype: HTMLAppStackOverflowVisElement;
+        new (): HTMLAppStackOverflowVisElement;
+    };
+    interface HTMLAppVisElement extends Components.AppVis, HTMLStencilElement {
+    }
+    var HTMLAppVisElement: {
+        prototype: HTMLAppVisElement;
+        new (): HTMLAppVisElement;
+    };
     interface HTMLAppWeatherDataProcessElement extends Components.AppWeatherDataProcess, HTMLStencilElement {
     }
     var HTMLAppWeatherDataProcessElement: {
@@ -198,6 +246,12 @@ declare global {
     var HTMLAppWeatherVisElement: {
         prototype: HTMLAppWeatherVisElement;
         new (): HTMLAppWeatherVisElement;
+    };
+    interface HTMLSBarPlotItemElement extends Components.SBarPlotItem, HTMLStencilElement {
+    }
+    var HTMLSBarPlotItemElement: {
+        prototype: HTMLSBarPlotItemElement;
+        new (): HTMLSBarPlotItemElement;
     };
     interface HTMLSBoxPlotItemElement extends Components.SBoxPlotItem, HTMLStencilElement {
     }
@@ -230,12 +284,17 @@ declare global {
         new (): HTMLSStatisticsColumnsElement;
     };
     interface HTMLElementTagNameMap {
+        "app-control-panel": HTMLAppControlPanelElement;
         "app-data-process": HTMLAppDataProcessElement;
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
         "app-root": HTMLAppRootElement;
+        "app-stack-overflow-data-process": HTMLAppStackOverflowDataProcessElement;
+        "app-stack-overflow-vis": HTMLAppStackOverflowVisElement;
+        "app-vis": HTMLAppVisElement;
         "app-weather-data-process": HTMLAppWeatherDataProcessElement;
         "app-weather-vis": HTMLAppWeatherVisElement;
+        "s-bar-plot-item": HTMLSBarPlotItemElement;
         "s-box-plot-item": HTMLSBoxPlotItemElement;
         "s-parallel-sets": HTMLSParallelSetsElement;
         "s-set-stat": HTMLSSetStatElement;
@@ -244,6 +303,9 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface AppControlPanel {
+        "renderHandler"?: () => any;
+    }
     interface AppDataProcess {
         "visType"?: string;
     }
@@ -289,9 +351,31 @@ declare namespace LocalJSX {
     }
     interface AppRoot {
     }
+    interface AppStackOverflowDataProcess {
+    }
+    interface AppStackOverflowVis {
+        "file"?: File;
+        "onControlPanelRenderHandlerUpdated"?: (event: CustomEvent<() => any>) => void;
+    }
+    interface AppVis {
+        "visType"?: string;
+    }
     interface AppWeatherDataProcess {
     }
     interface AppWeatherVis {
+    }
+    interface SBarPlotItem {
+        "exceedMaxLineStroke"?: string;
+        "fill"?: string;
+        "maxValue"?: number;
+        "minValue"?: number;
+        "onItemLoad"?: (event: CustomEvent<{ value: number }>) => void;
+        "orientation"?: 'horizontal' | 'vertical';
+        "secondLevelFill"?: string;
+        "secondLevelMaxValue"?: number;
+        "thirdLevelFill"?: string;
+        "thirdLevelMaxValue"?: number;
+        "value"?: number;
     }
     interface SBoxPlotItem {
         "boxFill"?: string;
@@ -396,6 +480,7 @@ declare namespace LocalJSX {
       maxSegmentPosition: number;
     }
   };
+        "visType"?: StatisticsColumnsVisType;
     }
     interface SStatisticsColumns {
         "data"?: any[];
@@ -423,12 +508,17 @@ declare namespace LocalJSX {
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType }[];
     }
     interface IntrinsicElements {
+        "app-control-panel": AppControlPanel;
         "app-data-process": AppDataProcess;
         "app-home": AppHome;
         "app-map-view": AppMapView;
         "app-root": AppRoot;
+        "app-stack-overflow-data-process": AppStackOverflowDataProcess;
+        "app-stack-overflow-vis": AppStackOverflowVis;
+        "app-vis": AppVis;
         "app-weather-data-process": AppWeatherDataProcess;
         "app-weather-vis": AppWeatherVis;
+        "s-bar-plot-item": SBarPlotItem;
         "s-box-plot-item": SBoxPlotItem;
         "s-parallel-sets": SParallelSets;
         "s-set-stat": SSetStat;
@@ -440,12 +530,17 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "app-control-panel": LocalJSX.AppControlPanel & JSXBase.HTMLAttributes<HTMLAppControlPanelElement>;
             "app-data-process": LocalJSX.AppDataProcess & JSXBase.HTMLAttributes<HTMLAppDataProcessElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "app-stack-overflow-data-process": LocalJSX.AppStackOverflowDataProcess & JSXBase.HTMLAttributes<HTMLAppStackOverflowDataProcessElement>;
+            "app-stack-overflow-vis": LocalJSX.AppStackOverflowVis & JSXBase.HTMLAttributes<HTMLAppStackOverflowVisElement>;
+            "app-vis": LocalJSX.AppVis & JSXBase.HTMLAttributes<HTMLAppVisElement>;
             "app-weather-data-process": LocalJSX.AppWeatherDataProcess & JSXBase.HTMLAttributes<HTMLAppWeatherDataProcessElement>;
             "app-weather-vis": LocalJSX.AppWeatherVis & JSXBase.HTMLAttributes<HTMLAppWeatherVisElement>;
+            "s-bar-plot-item": LocalJSX.SBarPlotItem & JSXBase.HTMLAttributes<HTMLSBarPlotItemElement>;
             "s-box-plot-item": LocalJSX.SBoxPlotItem & JSXBase.HTMLAttributes<HTMLSBoxPlotItemElement>;
             "s-parallel-sets": LocalJSX.SParallelSets & JSXBase.HTMLAttributes<HTMLSParallelSetsElement>;
             "s-set-stat": LocalJSX.SSetStat & JSXBase.HTMLAttributes<HTMLSSetStatElement>;
