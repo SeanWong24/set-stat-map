@@ -1,1 +1,1 @@
-export declare type StatisticsColumnsVisType = 'box';
+export declare type StatisticsColumnsVisType = 'box' | 'bar';

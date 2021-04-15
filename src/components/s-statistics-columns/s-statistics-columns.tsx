@@ -49,11 +49,12 @@ export class SStatisticsColumns implements ComponentInterface {
                 const dataForColumn: { [rowValue: string]: number[] } = {};
                 for (const rowValue of Object.keys(this.rowValueAndPositionDict)) {
                   dataForColumn[rowValue] = this.data
-                    .filter(dataRecord => dataRecord[this.rowValueDimensionName] === rowValue)
+                    .filter(dataRecord => dataRecord[this.rowValueDimensionName].toString() === rowValue)
                     .map(dataRecord => dataRecord[statisticsColumnDefinition.dimensionName]);
                 }
                 return (
                   <s-statistics-column
+                    visType={statisticsColumnDefinition.visType}
                     data={dataForColumn}
                     scaleMinMax={statisticsColumnDefinition.scaleMinMax}
                     header={this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}

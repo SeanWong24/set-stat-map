@@ -21,6 +21,7 @@ export class AppHome implements ComponentInterface {
           </ion-card>
           <ion-list>
             <ion-item button href="/weather">Weather</ion-item>
+            <ion-item button href="/stack-overflow">StackOverflow</ion-item>
           </ion-list>
         </ion-content>
       </Host>
