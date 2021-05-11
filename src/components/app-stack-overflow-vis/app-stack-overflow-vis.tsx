@@ -15,9 +15,9 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private SQL: SqlJs.SqlJsStatic;
   private DB: SqlJs.Database;
   private loadingElement: HTMLIonLoadingElement;
-  private datasetInfo: { techs: string[] };
 
   @State() data: any[];
+  @State() datasetInfo: { techs: string[] };
   @State() statisticsColumnDefinitions: {
     dimensionName: string,
     visType: StatisticsColumnsVisType
@@ -28,6 +28,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   @Watch('selectedTechs')
   async selectedTechsWatchHandler(selectedTechs: string[]) {
     await this.queryData();
+    this.orderedTechs = [...selectedTechs];
     this.statisticsColumnDefinitions = selectedTechs.map(selectedTech => ({
       dimensionName: selectedTech,
       visType: 'bar'
@@ -86,7 +87,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             onIonChange={({ detail }) => this.selectedTechs = detail.value}
           >
             {
-              this.orderedTechs?.map(tech => (
+              this.datasetInfo?.techs?.map(tech => (
                 <ion-select-option value={tech}>{tech}</ion-select-option>
               ))
             }
@@ -94,7 +95,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
         </ion-item>
         <ion-item>
           <ion-label class="control-panel-item-label">Order By</ion-label>
-          <ion-content style={{ height: '300px' }}>
+          <ion-content style={{ height: '150px' }}>
             <ion-reorder-group
               disabled={false}
               onIonItemReorder={({ detail }) => {
@@ -128,8 +129,6 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       if (DB) {
         this.DB = DB;
         this.datasetInfo = await this.obtainDatasetInfo();
-        this.orderedTechs = [...this.datasetInfo.techs];
-        this.queryData();
       } else {
         this.alertInvalidDatabase();
       }
@@ -170,7 +169,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       });
       await loading.present();
 
-      const sqlQueryString = 'select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId';
+      const sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
       const result = this.DB.exec(sqlQueryString)?.[0];
 
       const data = result?.values.map(value => {
