@@ -16,6 +16,14 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private DB: SqlJs.Database;
   private loadingElement: HTMLIonLoadingElement;
 
+  private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
+    () => textureGenerator.lines().orientation('0/8').size(10),
+    () => textureGenerator.lines().orientation('2/8').size(10),
+    () => textureGenerator.lines().orientation('6/8').size(10),
+    () => textureGenerator.lines().orientation('8/8').size(10),
+    () => textureGenerator.lines().stroke('transparent')
+  ];
+
   @State() data: any[];
   @State() datasetInfo: { techs: string[] };
   @State() statisticsColumnDefinitions: {
@@ -61,6 +69,11 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           <ion-card class="vis-container">
             <s-set-stat
               data={this.data}
+              parallelSetsMaxAxisSegmentCount={{
+                '': 8,
+                'Tech': 5
+              }}
+              defineTexturesHandler={this.defineTexturesHandler}
               parallelSetsDimensions={['ActiveYears', 'Tech', 'Year']}
               parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
               parallelSetsRibbonTension={.5}
