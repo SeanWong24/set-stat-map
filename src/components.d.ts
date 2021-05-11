@@ -14,6 +14,15 @@ export namespace Components {
     interface AppDataProcess {
         "visType": string;
     }
+    interface AppHeatmapView {
+        "data": number[][];
+        "header": string;
+        "headerTextColor": string;
+        "headerTextSize": number;
+        "headerTextWeight": string;
+        "xLabels": string[];
+        "yLabels": string[];
+    }
     interface AppHome {
     }
     interface AppMapView {
@@ -203,6 +212,12 @@ declare global {
         prototype: HTMLAppDataProcessElement;
         new (): HTMLAppDataProcessElement;
     };
+    interface HTMLAppHeatmapViewElement extends Components.AppHeatmapView, HTMLStencilElement {
+    }
+    var HTMLAppHeatmapViewElement: {
+        prototype: HTMLAppHeatmapViewElement;
+        new (): HTMLAppHeatmapViewElement;
+    };
     interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
     }
     var HTMLAppHomeElement: {
@@ -290,6 +305,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-control-panel": HTMLAppControlPanelElement;
         "app-data-process": HTMLAppDataProcessElement;
+        "app-heatmap-view": HTMLAppHeatmapViewElement;
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
         "app-root": HTMLAppRootElement;
@@ -312,6 +328,15 @@ declare namespace LocalJSX {
     }
     interface AppDataProcess {
         "visType"?: string;
+    }
+    interface AppHeatmapView {
+        "data"?: number[][];
+        "header"?: string;
+        "headerTextColor"?: string;
+        "headerTextSize"?: number;
+        "headerTextWeight"?: string;
+        "xLabels"?: string[];
+        "yLabels"?: string[];
     }
     interface AppHome {
     }
@@ -518,6 +543,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "app-control-panel": AppControlPanel;
         "app-data-process": AppDataProcess;
+        "app-heatmap-view": AppHeatmapView;
         "app-home": AppHome;
         "app-map-view": AppMapView;
         "app-root": AppRoot;
@@ -540,6 +566,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-control-panel": LocalJSX.AppControlPanel & JSXBase.HTMLAttributes<HTMLAppControlPanelElement>;
             "app-data-process": LocalJSX.AppDataProcess & JSXBase.HTMLAttributes<HTMLAppDataProcessElement>;
+            "app-heatmap-view": LocalJSX.AppHeatmapView & JSXBase.HTMLAttributes<HTMLAppHeatmapViewElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;

@@ -13,3 +13,11 @@ s-set-stat {
   display: inline-block;
   vertical-align: top;
 }
+
+
+app-heatmap-view {
+  width: 35%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}

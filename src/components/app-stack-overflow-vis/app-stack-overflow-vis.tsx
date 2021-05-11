@@ -2,6 +2,7 @@ import { alertController, loadingController } from '@ionic/core';
 import { Component, Host, h, ComponentInterface, Prop, Watch, State, Event, EventEmitter } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
+import * as d3 from 'd3';
 import { AppVisComponent } from '../../global/utilts';
 import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
 
@@ -62,30 +63,35 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }
 
   render() {
+    const heatmapData = this.generateHeatmapData();
+
     return (
       <Host>
-        {
-          this.data &&
-          <ion-card class="vis-container">
-            <s-set-stat
-              data={this.data}
-              parallelSetsMaxAxisSegmentCount={{
-                '': 8,
-                'Tech': 5
-              }}
-              defineTexturesHandler={this.defineTexturesHandler}
-              parallelSetsDimensions={['ActiveYears', 'Tech', 'Year']}
-              parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
-              parallelSetsRibbonTension={.5}
-              statisticsColumnDefinitions={this.statisticsColumnDefinitions}
-              parallelSetsDimensionValueSortingMethods={{
-                'Tech': (a, b) => this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()),
-                'Year': (a, b) => +a - +b,
-                'ActiveYears': (a, b) => +b - +a
-              }}
-            ></s-set-stat>
-          </ion-card>
-        }
+        <ion-card class="vis-container">
+          <s-set-stat
+            data={this.data}
+            parallelSetsMaxAxisSegmentCount={{
+              '': 8,
+              'Tech': 5
+            }}
+            defineTexturesHandler={this.defineTexturesHandler}
+            parallelSetsDimensions={['ActiveYears', 'Tech', 'Year']}
+            parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
+            parallelSetsRibbonTension={.5}
+            statisticsColumnDefinitions={this.statisticsColumnDefinitions}
+            parallelSetsDimensionValueSortingMethods={{
+              'Tech': (a, b) => this.orderedTechs ? this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()) : 0,
+              'Year': (a, b) => +a - +b,
+              'ActiveYears': (a, b) => +b - +a
+            }}
+          ></s-set-stat>
+          <app-heatmap-view
+            header='Year/Tech'
+            data={heatmapData?.data}
+            xLabels={heatmapData?.xLabels}
+            yLabels={heatmapData?.yLabels}
+          ></app-heatmap-view>
+        </ion-card>
       </Host>
     );
   }
@@ -205,6 +211,22 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       }
     }
     return data;
+  }
+
+  private generateHeatmapData() {
+    if (this.data && this.orderedTechs) {
+      const xLabels = this.data.filter((d, i) => this.data.findIndex(dd => dd.Year == d.Year) === i).map(d => d.Year).sort(d3.ascending);
+      const yLabels = this.orderedTechs;
+      const data = [];
+      for (const yLabel of yLabels) {
+        const rowData = [];
+        for (const xLabel of xLabels) {
+          rowData.push(this.data.filter(d => d.Year.toString() === xLabel.toString() && d.Tech.toString() === yLabel.toString()).length);
+        }
+        data.push(rowData);
+      }
+      return { data, xLabels, yLabels };
+    }
   }
 
   // private resetVisStates() {
