@@ -33,6 +33,12 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }[] = [];
   @State() orderedTechs: string[];
 
+  @State() isActiveYearsSegmentsEnabled: boolean = true;
+  @Watch('isActiveYearsSegmentsEnabled')
+  async isActiveYearsSegmentsEnabledWatchHandler() {
+    await this.queryData();
+  }
+
   @State() selectedTechs: string[] = [];
   @Watch('selectedTechs')
   async selectedTechsWatchHandler(selectedTechs: string[]) {
@@ -82,7 +88,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             parallelSetsDimensionValueSortingMethods={{
               'Tech': (a, b) => this.orderedTechs ? this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()) : 0,
               'Year': (a, b) => +a - +b,
-              'ActiveYears': (a, b) => +b - +a
+              'ActiveYears': (a, b) => +b.toString().split(', ')[0] - +a.toString().split(', ')[0]
             }}
           ></s-set-stat>
           <app-heatmap-view
@@ -99,6 +105,13 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private renderControlPanel() {
     return (
       <ion-list>
+        <ion-item>
+          <ion-label>Avtive Years Segments</ion-label>
+          <ion-toggle
+            checked={this.isActiveYearsSegmentsEnabled}
+            onIonChange={() => this.isActiveYearsSegmentsEnabled = !this.isActiveYearsSegmentsEnabled}
+          ></ion-toggle>
+        </ion-item>
         <ion-item disabled={!this.datasetInfo?.techs}>
           <ion-label>Techs</ion-label>
           <ion-select
@@ -210,6 +223,19 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
         datum[selectedTech] = datum['Tech'] === selectedTech ? 1 : 0;
       }
     }
+
+    if (this.isActiveYearsSegmentsEnabled) {
+      const allActiveYearsValues = new Set(data.map(d => +d['ActiveYears']));
+      const minValue = d3.min(allActiveYearsValues);
+      const maxValue = d3.max(allActiveYearsValues);
+      const thresholds = [minValue, minValue + (maxValue - minValue) * .25, minValue + (maxValue - minValue) * .5, minValue + (maxValue - minValue) * .75, maxValue];
+      const scale = d3.scaleThreshold().domain(thresholds).range([-1, 0, 1, 2, 3]);
+      for (const datum of data) {
+        const activeYearsIndex = scale(datum['ActiveYears']);
+        datum['ActiveYears'] = `${thresholds[activeYearsIndex]}, ${thresholds[activeYearsIndex + 1]}`;
+      }
+    }
+
     return data;
   }
 
