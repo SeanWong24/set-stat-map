@@ -106,7 +106,12 @@ export class AppWeatherDataProcess implements ComponentInterface {
                 this.totalLineCount = trimmedData.length;
 
                 for (const datum of trimmedData) {
-                  const location = await this.getCountryName(datum['location']);
+                  let location;
+                  try {
+                    location = await this.getCountryName(datum['location']);
+                  } catch (e) {
+                    console.error(e);
+                  }
                   for (const year of years) {
                     const techs = datum[year] && datum[year].split(' ');
                     if (techs) {
@@ -151,10 +156,10 @@ export class AppWeatherDataProcess implements ComponentInterface {
   }
 
   private async getCountryName(location: string) {
-    const apiKey = '8nOXyBt8c8NSxaqt0IAFMVyEPNJ0amSF';
-    const response = await fetch(`https://www.mapquestapi.com/geocoding/v1/address?key=${apiKey}&inFormat=kvp&outFormat=json&location=${location}&thumbMaps=false`);
+    const apiKey = 'bchzyf0CKYujfK7pmu1dhXsaZuYifBKU2HzxO35m850';
+    const response = await fetch(`https://geocode.search.hereapi.com/v1/geocode?q=${location}&apikey=${apiKey}`);
     const result = await response.json();
-    return result?.results?.[0]?.locations?.[0]?.adminArea1;
+    return result?.items?.[0]?.address?.countryName;
   }
 
 }
