@@ -46,7 +46,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
     this.orderedTechs = [...selectedTechs];
     this.statisticsColumnDefinitions = selectedTechs.map(selectedTech => ({
       dimensionName: selectedTech,
-      visType: 'bar'
+      visType: 'box'
     }));
   }
 
@@ -77,18 +77,18 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           <s-set-stat
             data={this.data}
             parallelSetsMaxAxisSegmentCount={{
-              '': 8,
+              'Location': 8,
               'Tech': 5
             }}
             defineTexturesHandler={this.defineTexturesHandler}
-            parallelSetsDimensions={['ActiveYears', 'Tech', 'Year']}
+            parallelSetsDimensions={['Location', 'Tech', 'Year']}
             parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
             parallelSetsRibbonTension={.5}
             statisticsColumnDefinitions={this.statisticsColumnDefinitions}
             parallelSetsDimensionValueSortingMethods={{
               'Tech': (a, b) => this.orderedTechs ? this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()) : 0,
               'Year': (a, b) => +a - +b,
-              'ActiveYears': (a, b) => +b.toString().split(', ')[0] - +a.toString().split(', ')[0]
+              'Location': (a, b) => this.data.filter(d => d['Location'] === b).length - this.data.filter(d => d['Location'] === a).length
             }}
           ></s-set-stat>
           <app-heatmap-view
@@ -202,12 +202,13 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       await loading.present();
 
       const sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+      // const sqlQueryString = `select stackoverflow.*, helper1.ActiveYears, helper2.TechCount from stackoverflow, (select count(distinct Year) as ActiveYears, UserId from stackoverflow group by UserId) as helper1, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper2 where stackoverflow.userId = helper1.userId and stackoverflow.userId = helper2.userId and stackoverflow.Year = helper2.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
       const result = this.DB.exec(sqlQueryString)?.[0];
 
       const data = result?.values.map(value => {
         const datum = {};
         for (let i = 0; i < value.length; i++) {
-          datum[result.columns[i]] = (result.columns[i] === 'Tech') ? value[i] : (value[i] ? +value[i] : 0);
+          datum[result.columns[i]] = (['Tech', 'UserId', 'Location'].indexOf(result.columns[i]) >= 0) ? value[i] : (value[i] ? +value[i] : 0);
         }
         return datum;
       });
@@ -220,7 +221,8 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private async processData(data: any[]) {
     for (const datum of data) {
       for (const selectedTech of this.selectedTechs) {
-        datum[selectedTech] = datum['Tech'] === selectedTech ? 1 : 0;
+        datum[selectedTech] = datum['ActiveYears'];
+        // datum[selectedTech] = datum['TechCount'];
       }
     }
 
