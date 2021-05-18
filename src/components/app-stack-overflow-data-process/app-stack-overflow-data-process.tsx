@@ -94,7 +94,7 @@ export class AppWeatherDataProcess implements ComponentInterface {
                 const DB = new this.SQL.Database();
                 DB.run(
                   `CREATE TABLE IF NOT EXISTS ${databaseName} (` +
-                  'UserId VARCHAR, Tech VARCHAR, Year INT(4)' +
+                  'UserId VARCHAR, Tech VARCHAR, Year INT(4), Location VARCHAR' +
                   ')'
                 );
 
@@ -102,20 +102,22 @@ export class AppWeatherDataProcess implements ComponentInterface {
                 const fileContent = await file.text();
                 const data = d3.csvParse(fileContent);
                 const years = data.columns.slice(4);
-                this.totalLineCount = data.length;
+                const trimmedData = data.filter(d => d['Id']);
+                this.totalLineCount = trimmedData.length;
 
-                for (const datum of data) {
+                for (const datum of trimmedData) {
+                  const location = await this.getCountryName(datum['location']);
                   for (const year of years) {
-                    debugger
                     const techs = datum[year] && datum[year].split(' ');
                     if (techs) {
                       for (const tech of techs) {
                         DB.run(
-                          `INSERT INTO ${databaseName} VALUES (?, ?, ?)`,
+                          `INSERT INTO ${databaseName} VALUES (?, ?, ?, ?)`,
                           [
                             datum['developerName'],
                             tech,
-                            year
+                            year,
+                            location || ''
                           ]
                         );
                       }
@@ -146,6 +148,13 @@ export class AppWeatherDataProcess implements ComponentInterface {
         </ion-card>
       </Host>
     );
+  }
+
+  private async getCountryName(location: string) {
+    const apiKey = '8nOXyBt8c8NSxaqt0IAFMVyEPNJ0amSF';
+    const response = await fetch(`https://www.mapquestapi.com/geocoding/v1/address?key=${apiKey}&inFormat=kvp&outFormat=json&location=${location}&thumbMaps=false`);
+    const result = await response.json();
+    return result?.results?.[0]?.locations?.[0]?.adminArea1;
   }
 
 }
