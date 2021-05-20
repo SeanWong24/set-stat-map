@@ -50,7 +50,7 @@ export class SStatisticsColumn implements ComponentInterface {
     let scaleMinValue, scaleMaxValue;
     switch (this.visType) {
       case 'box':
-        const allDataRecords = Object.values(this.data).flat();
+        const allDataRecords = Object.values(this.data).flat().filter(d => d !== undefined);
         [scaleMinValue, scaleMaxValue] = this.scaleMinMax || [d3.min(allDataRecords), d3.max(allDataRecords)];
         break;
       case 'bar':
@@ -138,7 +138,7 @@ export class SStatisticsColumn implements ComponentInterface {
         return (
           <s-box-plot-item
             class="plot-item"
-            values={this.data[rowValue]}
+            values={this.data[rowValue]?.filter(d => d !== undefined)}
             scaleMinValue={scaleMinValue}
             scaleMaxValue={scaleMaxValue}
             enableTooltip={false}

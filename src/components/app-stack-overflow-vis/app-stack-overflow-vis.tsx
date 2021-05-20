@@ -249,10 +249,10 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       for (const selectedTech of this.selectedTechs) {
         switch (this.statisticsColumnsOption) {
           case 'active-years':
-            datum[selectedTech] = datum['ActiveYears'];
+            datum[selectedTech] = datum['Tech'] === selectedTech ? datum['ActiveYears'] : undefined;
             break;
           case 'tech-count':
-            datum[selectedTech] = datum['TechCount'];
+            datum[selectedTech] = datum['Tech'] === selectedTech ? datum['TechCount'] : undefined;
             break;
         }
       }

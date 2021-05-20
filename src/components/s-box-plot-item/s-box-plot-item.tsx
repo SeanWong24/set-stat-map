@@ -27,8 +27,8 @@ export class SBoxPlotItem implements ComponentInterface {
     const q1 = d3.quantile(sortedData, .25);
     const median = d3.quantile(sortedData, .5);
     const q3 = d3.quantile(sortedData, .75);
-    const minValue = Math.min(...sortedData);
-    const maxValue = Math.max(...sortedData);
+    const minValue = d3.min(sortedData);
+    const maxValue = d3.max(sortedData);
 
     const scaleMinValue = (this.scaleMinValue === undefined) ? minValue : this.scaleMinValue;
     const scaleMaxValue = (this.scaleMaxValue === undefined) ? maxValue : this.scaleMaxValue;
