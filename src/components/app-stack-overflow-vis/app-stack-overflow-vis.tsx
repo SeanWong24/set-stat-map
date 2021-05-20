@@ -33,6 +33,12 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }[] = [];
   @State() orderedTechs: string[];
 
+  @State() statisticsColumnsOption: 'active-years' | 'tech-count' = 'active-years';
+  @Watch('statisticsColumnsOption')
+  async statisticsColumnsOptionWatchHandler() {
+    await this.queryData();
+  }
+
   @State() isActiveYearsSegmentsEnabled: boolean = true;
   @Watch('isActiveYearsSegmentsEnabled')
   async isActiveYearsSegmentsEnabledWatchHandler() {
@@ -125,6 +131,19 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             }
           </ion-select>
         </ion-item>
+        <ion-item disabled={!this.datasetInfo?.techs}>
+          <ion-label>Stat Columns Option</ion-label>
+          <ion-select
+            value={this.statisticsColumnsOption}
+            onIonChange={({ detail }) => this.statisticsColumnsOption = detail.value}
+          >
+            {
+              ['active-years', 'tech-count'].map(option => (
+                <ion-select-option value={option}>{option}</ion-select-option>
+              ))
+            }
+          </ion-select>
+        </ion-item>
         <ion-item>
           <ion-label class="control-panel-item-label">Order By</ion-label>
           <ion-content style={{ height: '150px' }}>
@@ -201,8 +220,15 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       });
       await loading.present();
 
-      const sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
-      // const sqlQueryString = `select stackoverflow.*, helper1.ActiveYears, helper2.TechCount from stackoverflow, (select count(distinct Year) as ActiveYears, UserId from stackoverflow group by UserId) as helper1, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper2 where stackoverflow.userId = helper1.userId and stackoverflow.userId = helper2.userId and stackoverflow.Year = helper2.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+      let sqlQueryString = '';
+      switch (this.statisticsColumnsOption) {
+        case 'active-years':
+          sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+          break;
+        case 'tech-count':
+          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+          break;
+      }
       const result = this.DB.exec(sqlQueryString)?.[0];
 
       const data = result?.values.map(value => {
@@ -221,8 +247,14 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private async processData(data: any[]) {
     for (const datum of data) {
       for (const selectedTech of this.selectedTechs) {
-        datum[selectedTech] = datum['ActiveYears'];
-        // datum[selectedTech] = datum['TechCount'];
+        switch (this.statisticsColumnsOption) {
+          case 'active-years':
+            datum[selectedTech] = datum['ActiveYears'];
+            break;
+          case 'tech-count':
+            datum[selectedTech] = datum['TechCount'];
+            break;
+        }
       }
     }
 
