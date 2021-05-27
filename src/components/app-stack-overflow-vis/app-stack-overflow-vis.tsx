@@ -26,7 +26,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   ];
 
   @State() data: any[];
-  @State() datasetInfo: { techs: string[] };
+  @State() datasetInfo: { techs: string[], locations: string[], years: string[] };
   @State() statisticsColumnDefinitions: {
     dimensionName: string,
     visType: StatisticsColumnsVisType
@@ -56,8 +56,19 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
     }));
   }
 
-  @Prop() file: File;
+  @State() selectedLocations: string[] = [];
+  @Watch('selectedLocations')
+  async selectedLocationsWatchHandler() {
+    await this.queryData();
+  }
 
+  @State() selectedYears: string[] = [];
+  @Watch('selectedYears')
+  async selectedYearsWatchHandler() {
+    await this.queryData();
+  }
+
+  @Prop() file: File;
   @Watch('file')
   async fileWatchHandler(file: File) {
     await this.loadDB(file);
@@ -122,11 +133,40 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           <ion-label>Techs</ion-label>
           <ion-select
             multiple
+            value={this.selectedTechs}
             onIonChange={({ detail }) => this.selectedTechs = detail.value}
           >
             {
               this.datasetInfo?.techs?.map(tech => (
                 <ion-select-option value={tech}>{tech}</ion-select-option>
+              ))
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item disabled={!this.datasetInfo?.locations}>
+          <ion-label>Locations</ion-label>
+          <ion-select
+            multiple
+            value={this.selectedLocations}
+            onIonChange={({ detail }) => this.selectedLocations = detail.value}
+          >
+            {
+              this.datasetInfo?.locations?.map(location => (
+                <ion-select-option value={location}>{location}</ion-select-option>
+              ))
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item disabled={!this.datasetInfo?.years}>
+          <ion-label>Years</ion-label>
+          <ion-select
+            multiple
+            value={this.selectedYears}
+            onIonChange={({ detail }) => this.selectedYears = detail.value}
+          >
+            {
+              this.datasetInfo?.years?.map(year => (
+                <ion-select-option value={year}>{year}</ion-select-option>
               ))
             }
           </ion-select>
@@ -202,10 +242,21 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       });
       await loading.present();
 
-      const sqlQueryString = 'select distinct Tech from stackoverflow';
-      const result = this.DB.exec(sqlQueryString)?.[0];
+      let sqlQueryString = 'select distinct Tech from stackoverflow';
+      let result = this.DB.exec(sqlQueryString)?.[0];
+      const techs = result.values.map((value => value.toString()));
 
-      const datasetInfo = { techs: result.values.map((value => value.toString())) };
+      sqlQueryString = 'select distinct Location from stackoverflow';
+      result = this.DB.exec(sqlQueryString)?.[0];
+      const locations = result.values.map((value => value.toString()));
+
+      sqlQueryString = 'select distinct Year from stackoverflow order by Year';
+      result = this.DB.exec(sqlQueryString)?.[0];
+      const years = result.values.map((value => value.toString()));
+
+      this.selectedLocations = locations;
+      this.selectedYears = years;
+      const datasetInfo = { techs, locations, years };
 
       await loading.dismiss();
 
@@ -214,7 +265,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }
 
   private async queryData() {
-    if (this.DB) {
+    if (this.DB && this.datasetInfo) {
       const loading = await loadingController.create({
         message: `Qeurying data...`
       });
@@ -223,10 +274,10 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       let sqlQueryString = '';
       switch (this.statisticsColumnsOption) {
         case 'active-years':
-          sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+          sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
           break;
         case 'tech-count':
-          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')})`;
+          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
           break;
       }
       const result = this.DB.exec(sqlQueryString)?.[0];
