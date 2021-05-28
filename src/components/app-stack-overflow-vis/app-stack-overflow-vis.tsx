@@ -1,4 +1,4 @@
-import { alertController, loadingController } from '@ionic/core';
+import { alertController, loadingController, modalController } from '@ionic/core';
 import { Component, Host, h, ComponentInterface, Prop, Watch, State, Event, EventEmitter } from '@stencil/core';
 import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
@@ -129,47 +129,71 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             onIonChange={() => this.isActiveYearsSegmentsEnabled = !this.isActiveYearsSegmentsEnabled}
           ></ion-toggle>
         </ion-item>
-        <ion-item disabled={!this.datasetInfo?.techs}>
-          <ion-label>Techs</ion-label>
-          <ion-select
-            multiple
-            value={this.selectedTechs}
-            onIonChange={({ detail }) => this.selectedTechs = detail.value}
-          >
-            {
-              this.datasetInfo?.techs?.map(tech => (
-                <ion-select-option value={tech}>{tech}</ion-select-option>
-              ))
-            }
-          </ion-select>
+        <ion-item
+          button
+          disabled={!this.datasetInfo?.techs}
+          onClick={async () => {
+            const modal = await modalController.create({
+              component: 'app-multiple-select',
+              componentProps: {
+                options: this.datasetInfo?.techs,
+                value: this.selectedTechs,
+                valueChangeHandler: async value => {
+                  this.selectedTechs = value;
+                  await modal.dismiss();
+                },
+                cancelHandler: async () => await modal.dismiss()
+              }
+            });
+            await modal.present();
+          }}
+        >
+          <ion-label>Select Techs</ion-label>
+          <ion-badge>{this.selectedTechs?.length || 0}</ion-badge>
         </ion-item>
-        <ion-item disabled={!this.datasetInfo?.locations}>
-          <ion-label>Locations</ion-label>
-          <ion-select
-            multiple
-            value={this.selectedLocations}
-            onIonChange={({ detail }) => this.selectedLocations = detail.value}
-          >
-            {
-              this.datasetInfo?.locations?.map(location => (
-                <ion-select-option value={location}>{location}</ion-select-option>
-              ))
-            }
-          </ion-select>
+        <ion-item
+          button
+          disabled={!this.datasetInfo?.locations}
+          onClick={async () => {
+            const modal = await modalController.create({
+              component: 'app-multiple-select',
+              componentProps: {
+                options: this.datasetInfo?.locations,
+                value: this.selectedLocations,
+                valueChangeHandler: async value => {
+                  this.selectedLocations = value;
+                  await modal.dismiss();
+                },
+                cancelHandler: async () => await modal.dismiss()
+              }
+            });
+            await modal.present();
+          }}
+        >
+          <ion-label>Select Countries</ion-label>
+          <ion-badge>{this.selectedLocations?.length || 0}</ion-badge>
         </ion-item>
-        <ion-item disabled={!this.datasetInfo?.years}>
-          <ion-label>Years</ion-label>
-          <ion-select
-            multiple
-            value={this.selectedYears}
-            onIonChange={({ detail }) => this.selectedYears = detail.value}
-          >
-            {
-              this.datasetInfo?.years?.map(year => (
-                <ion-select-option value={year}>{year}</ion-select-option>
-              ))
-            }
-          </ion-select>
+        <ion-item
+          button
+          disabled={!this.datasetInfo?.years}
+          onClick={async () => {
+            const modal = await modalController.create({
+              component: 'app-multiple-select',
+              componentProps: {
+                options: this.datasetInfo?.years,
+                value: this.selectedYears,
+                valueChangeHandler: async value => {
+                  this.selectedYears = value;
+                  await modal.dismiss();
+                },
+                cancelHandler: async () => await modal.dismiss()
+              }
+            });
+            await modal.present();
+          }}
+        >
+          <ion-label>Select Years</ion-label>
+          <ion-badge>{this.selectedYears?.length || 0}</ion-badge>
         </ion-item>
         <ion-item disabled={!this.datasetInfo?.techs}>
           <ion-label>Stat Columns Option</ion-label>
@@ -265,7 +289,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }
 
   private async queryData() {
-    if (this.DB && this.datasetInfo) {
+    if (this.DB && this.datasetInfo && this.selectedTechs.length > 0) {
       const loading = await loadingController.create({
         message: `Qeurying data...`
       });

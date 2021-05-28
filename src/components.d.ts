@@ -60,6 +60,12 @@ export namespace Components {
         "heatmapOpacity": number;
         "zoom": number;
     }
+    interface AppMultipleSelect {
+        "cancelHandler": () => void;
+        "options": string[];
+        "value": string[];
+        "valueChangeHandler": (value: string[]) => void;
+    }
     interface AppRoot {
     }
     interface AppStackOverflowDataProcess {
@@ -230,6 +236,12 @@ declare global {
         prototype: HTMLAppMapViewElement;
         new (): HTMLAppMapViewElement;
     };
+    interface HTMLAppMultipleSelectElement extends Components.AppMultipleSelect, HTMLStencilElement {
+    }
+    var HTMLAppMultipleSelectElement: {
+        prototype: HTMLAppMultipleSelectElement;
+        new (): HTMLAppMultipleSelectElement;
+    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
@@ -308,6 +320,7 @@ declare global {
         "app-heatmap-view": HTMLAppHeatmapViewElement;
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
+        "app-multiple-select": HTMLAppMultipleSelectElement;
         "app-root": HTMLAppRootElement;
         "app-stack-overflow-data-process": HTMLAppStackOverflowDataProcessElement;
         "app-stack-overflow-vis": HTMLAppStackOverflowVisElement;
@@ -380,6 +393,12 @@ declare namespace LocalJSX {
     maxLongitude: number
   }>) => void;
         "zoom"?: number;
+    }
+    interface AppMultipleSelect {
+        "cancelHandler"?: () => void;
+        "options"?: string[];
+        "value"?: string[];
+        "valueChangeHandler"?: (value: string[]) => void;
     }
     interface AppRoot {
     }
@@ -546,6 +565,7 @@ declare namespace LocalJSX {
         "app-heatmap-view": AppHeatmapView;
         "app-home": AppHome;
         "app-map-view": AppMapView;
+        "app-multiple-select": AppMultipleSelect;
         "app-root": AppRoot;
         "app-stack-overflow-data-process": AppStackOverflowDataProcess;
         "app-stack-overflow-vis": AppStackOverflowVis;
@@ -569,6 +589,7 @@ declare module "@stencil/core" {
             "app-heatmap-view": LocalJSX.AppHeatmapView & JSXBase.HTMLAttributes<HTMLAppHeatmapViewElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;
+            "app-multiple-select": LocalJSX.AppMultipleSelect & JSXBase.HTMLAttributes<HTMLAppMultipleSelectElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "app-stack-overflow-data-process": LocalJSX.AppStackOverflowDataProcess & JSXBase.HTMLAttributes<HTMLAppStackOverflowDataProcessElement>;
             "app-stack-overflow-vis": LocalJSX.AppStackOverflowVis & JSXBase.HTMLAttributes<HTMLAppStackOverflowVisElement>;

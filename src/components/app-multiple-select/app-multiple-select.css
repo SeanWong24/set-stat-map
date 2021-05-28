@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+ion-grid {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+#upper-row, #lower-row {
+  height: 50px;
+}
+
+#upper-row > ion-searchbar {
+  padding: 0;
+}
+
+#middle-row {
+  height: calc(100% - 100px);
+}
