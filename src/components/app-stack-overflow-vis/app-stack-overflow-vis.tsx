@@ -99,6 +99,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             }}
             defineTexturesHandler={this.defineTexturesHandler}
             parallelSetsDimensions={['Location', 'Tech', 'Year']}
+            colorScheme={['#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff', '#f7ede2', '#f5cac3', '#84a59d']}
             parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
             parallelSetsRibbonTension={.5}
             statisticsColumnDefinitions={this.statisticsColumnDefinitions}
