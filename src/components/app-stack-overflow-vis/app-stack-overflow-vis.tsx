@@ -230,6 +230,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             </ion-reorder-group>
           </ion-content>
         </ion-item>
+        <ion-button onClick={() => this.orderedTechs = [...this.orderedTechs.sort((a, b) => this.data.filter(d => d['Tech'] === b).length - this.data.filter(d => d['Tech'] === a).length)]}>Sort Tech by Popularity</ion-button>
       </ion-list>
     );
   }
