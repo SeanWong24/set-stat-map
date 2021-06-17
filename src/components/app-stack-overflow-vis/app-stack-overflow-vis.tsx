@@ -211,7 +211,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
         </ion-item>
         <ion-item>
           <ion-label class="control-panel-item-label">Order By</ion-label>
-          <ion-content style={{ height: '150px' }}>
+          <ion-content style={{ height: '150px', minWidth: '250px' }}>
             <ion-reorder-group
               disabled={false}
               onIonItemReorder={({ detail }) => {
