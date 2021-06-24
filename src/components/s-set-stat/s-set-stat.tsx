@@ -16,6 +16,7 @@ export class SSetStat implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() headerTextMaxLetterCount: number;
   @Prop() ribbonAndRowOpacity: number = .5;
   @Prop() ribbonAndRowHighlightOpacity: number = .8;
   // TODO also give default values for parallel sets props
@@ -107,6 +108,7 @@ export class SSetStat implements ComponentInterface {
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
+          axisHeaderTextMaxLetterCount={this.headerTextMaxLetterCount}
           axisFooter={this.parallelSetsFooter}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
@@ -123,6 +125,7 @@ export class SSetStat implements ComponentInterface {
           headerTextSize={this.headerTextSize}
           headerTextColor={this.headerTextColor}
           headerTextWeight={this.headerTextWeight}
+          headerTextMaxLetterCount={this.headerTextMaxLetterCount}
           rowOpacity={this.ribbonAndRowOpacity}
           rowHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           onColumnHeaderClick={({ detail }) => this.statisticsColumnsHeaderClick.emit(detail)}

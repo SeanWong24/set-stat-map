@@ -22,6 +22,7 @@ export class AppHeatmapView implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
+  @Prop() labelMaxLetterCount: number;
 
   connectedCallback() {
     const resizeObserver = new ResizeObserver(entryList => {
@@ -75,8 +76,16 @@ export class AppHeatmapView implements ComponentInterface {
                 ))
               )
             }
-            <g id="x-axis" transform={`translate(0, ${height - this.axisMargin})`} ref={el => d3.select(el).call(d3.axisBottom(scaleX))}></g>
-            <g id="y-axis" transform={`translate(${this.axisMargin}, 0)`} ref={el => d3.select(el).call(d3.axisLeft(scaleY))}></g>
+            <g
+              id="x-axis"
+              transform={`translate(0, ${height - this.axisMargin})`}
+              ref={el => d3.select(el).call(d3.axisBottom(scaleX).tickFormat(text => text?.toString().substring(0, (Number.isNaN(this.labelMaxLetterCount) ? undefined : this.labelMaxLetterCount))))}
+            ></g>
+            <g
+              id="y-axis"
+              transform={`translate(${this.axisMargin}, 0)`}
+              ref={el => d3.select(el).call(d3.axisLeft(scaleY).tickFormat(text => text?.toString().substring(0, (Number.isNaN(this.labelMaxLetterCount) ? undefined : this.labelMaxLetterCount))))}
+            ></g>
           </svg>
         </Host >
       );

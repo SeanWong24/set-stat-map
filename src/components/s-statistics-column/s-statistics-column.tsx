@@ -35,6 +35,7 @@ export class SStatisticsColumn implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
+  @Prop() headerTextMaxLetterCount: number;
   @Prop() footerAxisHeight: number = 16;
   @Prop() axisMargin: number = 10;
 
@@ -83,7 +84,7 @@ export class SStatisticsColumn implements ComponentInterface {
                 fontWeight: this.headerTextWeight
               }}
               onClick={() => this.headerClick.emit(this.header)}
-            >{this.header}</text>
+            >{this.header.substring(0, (Number.isNaN(this.headerTextMaxLetterCount) ? undefined : this.headerTextMaxLetterCount))}</text>
             <div
               id="statistics-row-container"
               style={{

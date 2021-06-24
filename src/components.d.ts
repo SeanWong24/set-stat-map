@@ -20,6 +20,7 @@ export namespace Components {
         "headerTextColor": string;
         "headerTextSize": number;
         "headerTextWeight": string;
+        "labelMaxLetterCount": number;
         "xLabels": string[];
         "yLabels": string[];
     }
@@ -115,6 +116,7 @@ export namespace Components {
         "axisFooterTextSize": number;
         "axisFooterTextWeight": string | { [dimensionName: string]: string };
         "axisHeaderTextColor": string | { [dimensionName: string]: string };
+        "axisHeaderTextMaxLetterCount": number;
         "axisHeaderTextSize": number;
         "axisHeaderTextWeight": string | { [dimensionName: string]: string };
         "axisSegmentTextColor": string;
@@ -139,6 +141,7 @@ export namespace Components {
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "headerTextColor": string | { [dimensionName: string]: string };
+        "headerTextMaxLetterCount": number;
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
@@ -161,6 +164,7 @@ export namespace Components {
         "footerAxisHeight": number;
         "header": string;
         "headerTextColor": string;
+        "headerTextMaxLetterCount": number;
         "headerTextSize": number;
         "headerTextWeight": string;
         "rowHighlightOpacity": number;
@@ -185,6 +189,7 @@ export namespace Components {
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "footerAxisHeight": number;
         "headerTextColor": string | { [dimensionName: string]: string };
+        "headerTextMaxLetterCount": number;
         "headerTextSize": number;
         "headerTextWeight": string | { [dimensionName: string]: string };
         "rowHighlightOpacity": number;
@@ -348,6 +353,7 @@ declare namespace LocalJSX {
         "headerTextColor"?: string;
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
+        "labelMaxLetterCount"?: number;
         "xLabels"?: string[];
         "yLabels"?: string[];
     }
@@ -452,6 +458,7 @@ declare namespace LocalJSX {
         "axisFooterTextSize"?: number;
         "axisFooterTextWeight"?: string | { [dimensionName: string]: string };
         "axisHeaderTextColor"?: string | { [dimensionName: string]: string };
+        "axisHeaderTextMaxLetterCount"?: number;
         "axisHeaderTextSize"?: number;
         "axisHeaderTextWeight"?: string | { [dimensionName: string]: string };
         "axisSegmentTextColor"?: string;
@@ -489,6 +496,7 @@ declare namespace LocalJSX {
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "headerTextColor"?: string | { [dimensionName: string]: string };
+        "headerTextMaxLetterCount"?: number;
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
@@ -514,6 +522,7 @@ declare namespace LocalJSX {
         "footerAxisHeight"?: number;
         "header"?: string;
         "headerTextColor"?: string;
+        "headerTextMaxLetterCount"?: number;
         "headerTextSize"?: number;
         "headerTextWeight"?: string;
         "onHeaderClick"?: (event: CustomEvent<string>) => void;
@@ -539,6 +548,7 @@ declare namespace LocalJSX {
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "footerAxisHeight"?: number;
         "headerTextColor"?: string | { [dimensionName: string]: string };
+        "headerTextMaxLetterCount"?: number;
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onColumnHeaderClick"?: (event: CustomEvent<string>) => void;

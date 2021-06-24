@@ -31,6 +31,7 @@ export class SStatisticsColumns implements ComponentInterface {
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() headerTextMaxLetterCount: number;
   @Prop() footerAxisHeight: number = 16;
 
   @Event() columnHeaderClick: EventEmitter<string>;
@@ -65,6 +66,7 @@ export class SStatisticsColumns implements ComponentInterface {
                     headerTextSize={this.headerTextSize}
                     headerTextColor={this.obtainHeaderTextColorForDimension(statisticsColumnDefinition.dimensionName)}
                     headerTextWeight={this.obtainHeaderTextWeightForDimension(statisticsColumnDefinition.dimensionName)}
+                    headerTextMaxLetterCount={this.headerTextMaxLetterCount}
                     footerAxisHeight={this.footerAxisHeight}
                     onHeaderClick={() => this.columnHeaderClick.emit(statisticsColumnDefinition.dimensionName)}
                   ></s-statistics-column>

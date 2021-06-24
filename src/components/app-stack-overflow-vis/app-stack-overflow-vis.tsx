@@ -32,6 +32,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
     visType: StatisticsColumnsVisType
   }[] = [];
   @State() orderedTechs: string[];
+  @State() dimensionMaxTextLength: number = 10;
 
   @State() statisticsColumnsOption: 'active-years' | 'tech-count' | 'tech-count-all' = 'active-years';
   @Watch('statisticsColumnsOption')
@@ -108,12 +109,14 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
               'Year': (a, b) => +a - +b,
               'Location': (a, b) => this.data.filter(d => d['Location'] === b).length - this.data.filter(d => d['Location'] === a).length
             }}
+            headerTextMaxLetterCount={this.dimensionMaxTextLength}
           ></s-set-stat>
           <app-heatmap-view
             header='Year/Tech'
             data={heatmapData?.data}
             xLabels={heatmapData?.xLabels}
             yLabels={heatmapData?.yLabels}
+            labelMaxLetterCount={this.dimensionMaxTextLength}
           ></app-heatmap-view>
         </ion-card>
       </Host>
@@ -123,6 +126,14 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private renderControlPanel() {
     return (
       <ion-list>
+        <ion-item>
+          <ion-label>Max Header Text Length</ion-label>
+          <ion-input
+            type="number"
+            value={this.dimensionMaxTextLength}
+            onIonChange={({ detail }) => this.dimensionMaxTextLength = ((detail.value === '') ? undefined : +detail.value)}
+          ></ion-input>
+        </ion-item>
         <ion-item>
           <ion-label>Avtive Years Segments</ion-label>
           <ion-toggle

@@ -45,6 +45,7 @@ export class SParallelSets implements ComponentInterface {
   @Prop() axisHeaderTextSize: number = 16;
   @Prop() axisHeaderTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() axisHeaderTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() axisHeaderTextMaxLetterCount: number;
   @Prop() axisFooter: string | { [dimensionName: string]: string };
   @Prop() axisFooterTextSize: number = 16;
   @Prop() axisFooterTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
@@ -552,6 +553,8 @@ export class SParallelSets implements ComponentInterface {
 
             const color = this.axisHeaderTextColor?.[dimensionName] || this.axisHeaderTextColor?.[''] || this.axisHeaderTextColor;
             const fontWeight = this.axisHeaderTextWeight?.[dimensionName] || this.axisHeaderTextWeight?.[''] || this.axisHeaderTextWeight;
+
+            const displayedDimensionName = this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName;
             return (
               <text
                 class="axis-header-text"
@@ -570,7 +573,7 @@ export class SParallelSets implements ComponentInterface {
                 }}
                 onMouseOver={() => this.axisHeaderMouseOver.emit(eventData)}
                 onMouseOut={() => this.axisHeaderMouseOut.emit(eventData)}
-              >{this.dimensionDisplyedNameDict?.[dimensionName] || dimensionName}</text>
+              >{displayedDimensionName.substring(0, (Number.isNaN(this.axisHeaderTextMaxLetterCount) ? undefined : this.axisHeaderTextMaxLetterCount))}</text>
             );
           })
         }
