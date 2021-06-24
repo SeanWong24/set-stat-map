@@ -33,7 +33,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   }[] = [];
   @State() orderedTechs: string[];
 
-  @State() statisticsColumnsOption: 'active-years' | 'tech-count' = 'active-years';
+  @State() statisticsColumnsOption: 'active-years' | 'tech-count' | 'tech-count-all' = 'active-years';
   @Watch('statisticsColumnsOption')
   async statisticsColumnsOptionWatchHandler() {
     await this.queryData();
@@ -203,7 +203,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
             onIonChange={({ detail }) => this.statisticsColumnsOption = detail.value}
           >
             {
-              ['active-years', 'tech-count'].map(option => (
+              ['active-years', 'tech-count', 'tech-count-all'].map(option => (
                 <ion-select-option value={option}>{option}</ion-select-option>
               ))
             }
@@ -306,6 +306,9 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
           break;
         case 'tech-count':
+          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow where Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
+          break;
+        case 'tech-count-all':
           sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
           break;
       }
