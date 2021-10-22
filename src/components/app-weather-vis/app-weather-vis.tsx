@@ -65,8 +65,8 @@ export class AppWeatherVis implements ComponentInterface {
     '11': 'Nov',
     '12': 'Dec'
   };
-  private readonly textureStrokeWidths = [1, 2, 3, 4];
-  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.textureStrokeWidths.map(strokeWidth => () => textureGenerator.lines().size(10).strokeWidth(strokeWidth));
+  private readonly textureOpacities = [.25, .5, .75, 1];
+  private readonly defineTexturesHandlerForFour: (textureGenerator: any) => (() => any)[] = (textureGenerator) => this.textureOpacities.map(opacity => () => textureGenerator.circles().thicker().fill(`rgba(0,0,0,${opacity})`));
   // private readonly defineTexturesHandlerForEight: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
   //   () => textureGenerator.lines().stroke('transparent'),
   //   () => textureGenerator.circles().radius(2),
