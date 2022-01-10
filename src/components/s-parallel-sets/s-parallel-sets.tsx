@@ -280,7 +280,7 @@ export class SParallelSets implements ComponentInterface {
                         return false;
                       }
                     });
-                    highlightedRibbons.classed('dim', false).classed('hightlight', true);
+                    highlightedRibbons.classed('dim', false).classed('highlight', true);
                   }}
                   onMouseLeave={() => {
                     d3.select(this.hostElement.shadowRoot).selectAll('.ribbon').classed('dim', false).classed('highlight', false);
