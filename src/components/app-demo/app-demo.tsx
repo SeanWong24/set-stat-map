@@ -322,7 +322,7 @@ export class AppDemo implements ComponentInterface {
                   ))}
                 </ion-reorder-group>
               </ion-item>
-              <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
+              {/* <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
                 <ion-label class="control-panel-item-label">Compare Another Region</ion-label>
                 <ion-toggle
                   checked={this.isSecondaryVisEnabled}
@@ -335,7 +335,7 @@ export class AppDemo implements ComponentInterface {
                     }
                   }}
                 ></ion-toggle>
-              </ion-item>
+              </ion-item> */}
             </ion-list>
           </ion-menu>
 
