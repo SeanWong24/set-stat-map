@@ -249,9 +249,9 @@ export class AppDemo implements ComponentInterface {
       <Host>
         <ion-header>
           <ion-toolbar color="primary">
-            <ion-buttons slot="start">
+            {/* <ion-buttons slot="start">
               <ion-back-button defaultHref="/"></ion-back-button>
-            </ion-buttons>
+            </ion-buttons> */}
             <ion-title>Weather Vis</ion-title>
             <ion-buttons slot="end">
               {/* <ion-button title="Generate Database File" href="/weather/data-process">
