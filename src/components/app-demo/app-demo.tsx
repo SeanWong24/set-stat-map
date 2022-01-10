@@ -217,7 +217,10 @@ export class AppDemo implements ComponentInterface {
     this.visRenderLoadingElement = await loadingController.create({
       message: `Rendering vis...`,
     });
-    this.openFile();
+    await this.openFile();
+    setTimeout(() => {
+      this.selectedVariables = ['MaxTemperature', 'Precipitation', 'Wind'];
+    }, 0);
   }
 
   componentShouldUpdate(_newValue: any, _oldValue: any, propName: string) {
