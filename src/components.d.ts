@@ -14,6 +14,8 @@ export namespace Components {
     interface AppDataProcess {
         "visType": string;
     }
+    interface AppDemo {
+    }
     interface AppHeatmapView {
         "data": number[][];
         "header": string;
@@ -130,6 +132,7 @@ export namespace Components {
         "maxAxisSegmentCount": number | { [dimensionName: string]: number };
         "maxAxisSegmentMarginRatioAllowed": number;
         "minimumRatioToShowAxisText": number;
+        "ribbonDimOpacity": number;
         "ribbonHighlightOpacity": number;
         "ribbonOpacity": number;
         "ribbonTension": number;
@@ -146,16 +149,18 @@ export namespace Components {
         "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
-        "parallelSetsDimensionValueSortingMethods": ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
+        "parallelSetsDimensionValueSortingMethods": | ParallelSetsDimensionValueSortingHandler
+    | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions": string[];
         "parallelSetsFooter": string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
         "reorderParallelSetsLastAxisByDimension": (dimensionName?: string, orderBy?: 'ascending' | 'descending') => Promise<ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler; }>;
+        "ribbonAndRowDimOpacity": number;
         "ribbonAndRowHighlightOpacity": number;
         "ribbonAndRowOpacity": number;
-        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
+        "statisticsColumnDefinitions": { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
         "statisticsColumnsWidth": string;
     }
     interface SStatisticsColumn {
@@ -222,6 +227,12 @@ declare global {
     var HTMLAppDataProcessElement: {
         prototype: HTMLAppDataProcessElement;
         new (): HTMLAppDataProcessElement;
+    };
+    interface HTMLAppDemoElement extends Components.AppDemo, HTMLStencilElement {
+    }
+    var HTMLAppDemoElement: {
+        prototype: HTMLAppDemoElement;
+        new (): HTMLAppDemoElement;
     };
     interface HTMLAppHeatmapViewElement extends Components.AppHeatmapView, HTMLStencilElement {
     }
@@ -322,6 +333,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-control-panel": HTMLAppControlPanelElement;
         "app-data-process": HTMLAppDataProcessElement;
+        "app-demo": HTMLAppDemoElement;
         "app-heatmap-view": HTMLAppHeatmapViewElement;
         "app-home": HTMLAppHomeElement;
         "app-map-view": HTMLAppMapViewElement;
@@ -346,6 +358,8 @@ declare namespace LocalJSX {
     }
     interface AppDataProcess {
         "visType"?: string;
+    }
+    interface AppDemo {
     }
     interface AppHeatmapView {
         "data"?: number[][];
@@ -485,6 +499,7 @@ declare namespace LocalJSX {
         "onRibbonMouseOut"?: (event: CustomEvent<{ dimensions: string[]; valueHistory: (string | number)[]; count: number; proportion: number; dataNode: ParallelSetsDataNode }>) => void;
         "onRibbonMouseOver"?: (event: CustomEvent<{ dimensions: string[]; valueHistory: (string | number)[]; count: number; proportion: number; dataNode: ParallelSetsDataNode }>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
+        "ribbonDimOpacity"?: number;
         "ribbonHighlightOpacity"?: number;
         "ribbonOpacity"?: number;
         "ribbonTension"?: number;
@@ -499,21 +514,23 @@ declare namespace LocalJSX {
         "headerTextMaxLetterCount"?: number;
         "headerTextSize"?: number;
         "headerTextWeight"?: string | { [dimensionName: string]: string };
-        "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string; value: string | number; count: number; proportion: number; dataNodes: ParallelSetsDataNode[] }>) => void;
         "onStatisticsColumnsHeaderClick"?: (event: CustomEvent<string>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
         "onVisWillRender"?: (event: CustomEvent<any>) => void;
         "parallelSetsAutoMergedAxisSegmentMaxRatio"?: number;
         "parallelSetsAutoMergedAxisSegmentName"?: string | { [dimensionName: string]: string };
-        "parallelSetsDimensionValueSortingMethods"?: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
+        "parallelSetsDimensionValueSortingMethods"?: | ParallelSetsDimensionValueSortingHandler
+    | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions"?: string[];
         "parallelSetsFooter"?: string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;
         "parallelSetsWidth"?: string;
+        "ribbonAndRowDimOpacity"?: number;
         "ribbonAndRowHighlightOpacity"?: number;
         "ribbonAndRowOpacity"?: number;
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
+        "statisticsColumnDefinitions"?: { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
         "statisticsColumnsWidth"?: string;
     }
     interface SStatisticsColumn {
@@ -572,6 +589,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "app-control-panel": AppControlPanel;
         "app-data-process": AppDataProcess;
+        "app-demo": AppDemo;
         "app-heatmap-view": AppHeatmapView;
         "app-home": AppHome;
         "app-map-view": AppMapView;
@@ -596,6 +614,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-control-panel": LocalJSX.AppControlPanel & JSXBase.HTMLAttributes<HTMLAppControlPanelElement>;
             "app-data-process": LocalJSX.AppDataProcess & JSXBase.HTMLAttributes<HTMLAppDataProcessElement>;
+            "app-demo": LocalJSX.AppDemo & JSXBase.HTMLAttributes<HTMLAppDemoElement>;
             "app-heatmap-view": LocalJSX.AppHeatmapView & JSXBase.HTMLAttributes<HTMLAppHeatmapViewElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-map-view": LocalJSX.AppMapView & JSXBase.HTMLAttributes<HTMLAppMapViewElement>;

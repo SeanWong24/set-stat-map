@@ -53,3 +53,7 @@
 .ribbon.highlight {
   opacity: var(--ribbon-highlight-opacity);
 }
+
+.ribbon.dim {
+  opacity: var(--ribbon-dim-opacity);
+}

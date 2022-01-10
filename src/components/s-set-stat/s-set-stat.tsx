@@ -9,7 +9,6 @@ import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
   shadow: true,
 })
 export class SSetStat implements ComponentInterface {
-
   @Prop() data: any[] = [];
   @Prop() parallelSetsWidth: string = '60%';
   @Prop() statisticsColumnsWidth: string = '40%';
@@ -17,30 +16,33 @@ export class SSetStat implements ComponentInterface {
   @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
   @Prop() headerTextMaxLetterCount: number;
-  @Prop() ribbonAndRowOpacity: number = .5;
-  @Prop() ribbonAndRowHighlightOpacity: number = .8;
+  @Prop() ribbonAndRowOpacity: number = 0.5;
+  @Prop() ribbonAndRowHighlightOpacity: number = 0.8;
+  @Prop() ribbonAndRowDimOpacity: number = 0.2;
   // TODO also give default values for parallel sets props
   @Prop() colorScheme: string[] = ['#eddcd2', '#fff1e6', '#fde2e4', '#fad2e1', '#c5dedd', '#dbe7e4', '#f0efeb', '#d6e2e9', '#bcd4e6', '#99c1de'];
   @Prop() defineTexturesHandler: (textureGenerator: any) => (() => any)[];
   @Prop() dimensionDisplyedNameDict: { [dimensionName: string]: string };
   @Prop() parallelSetsDimensions: string[];
-  @Prop({ mutable: true }) parallelSetsDimensionValueSortingMethods: ParallelSetsDimensionValueSortingHandler | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
+  @Prop({ mutable: true }) parallelSetsDimensionValueSortingMethods:
+    | ParallelSetsDimensionValueSortingHandler
+    | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
   @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
   @Prop() parallelSetsRibbonTension: number;
   @Prop() parallelSetsFooter: string | { [dimensionName: string]: string } = ' ';
-  @Prop() statisticsColumnDefinitions: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[] = [
+  @Prop() statisticsColumnDefinitions: { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[] = [
     { dimensionName: 'D1', visType: 'box' },
     { dimensionName: 'D2', visType: 'box' },
-    { dimensionName: 'D3', visType: 'box' }
+    { dimensionName: 'D3', visType: 'box' },
   ];
 
   @State() lastAxisSegmentValueAndPositionDict: {
     [value: string]: {
       minSegmentPosition: number;
       maxSegmentPosition: number;
-    }
+    };
   };
   @State() lastAxisSegmentValueAndBackgroundDict: {
     [value: string]: {
@@ -51,7 +53,7 @@ export class SSetStat implements ComponentInterface {
 
   @Event() visWillRender: EventEmitter;
   @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
-  @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string, value: string | number, count: number, proportion: number, dataNodes: ParallelSetsDataNode[] }>;
+  @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string; value: string | number; count: number; proportion: number; dataNodes: ParallelSetsDataNode[] }>;
   @Event() statisticsColumnsHeaderClick: EventEmitter<string>;
 
   @Method()
@@ -77,7 +79,7 @@ export class SSetStat implements ComponentInterface {
     } else {
       this.parallelSetsDimensionValueSortingMethods = {
         '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-        'Date': parallelSetsLastAxisSortingMethod
+        'Date': parallelSetsLastAxisSortingMethod,
       };
     }
 
@@ -89,7 +91,6 @@ export class SSetStat implements ComponentInterface {
   }
 
   render() {
-
     return (
       <Host>
         <s-parallel-sets
@@ -105,6 +106,7 @@ export class SSetStat implements ComponentInterface {
           ribbonTension={this.parallelSetsRibbonTension}
           ribbonOpacity={this.ribbonAndRowOpacity}
           ribbonHighlightOpacity={this.ribbonAndRowHighlightOpacity}
+          ribbonDimOpacity={this.ribbonAndRowDimOpacity}
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisHeaderTextColor={this.headerTextColor}
           axisHeaderTextWeight={this.headerTextWeight}
@@ -135,45 +137,37 @@ export class SSetStat implements ComponentInterface {
   }
 
   private parallelSetsLoadHandler(eventDetail: ParallelSetsOnLoadDetail) {
-    const {
-      dimensions,
-      valuesDict,
-      dataNodesDict
-    } = eventDetail;
+    const { dimensions, valuesDict, dataNodesDict } = eventDetail;
     setTimeout(() => this.visLoad.emit(eventDetail));
 
     const lastDimensionIndex = dimensions.length - 1;
     const lastDimensionName = dimensions[lastDimensionIndex];
     const lastDimensionDataNodes = dataNodesDict[lastDimensionName];
     const lastDimensionValues = valuesDict[lastDimensionName];
-    const parallelSetsDimensionValueSortingMethod = this.parallelSetsDimensionValueSortingMethods?.[this.parallelSetsDimensions[0]] || this.parallelSetsDimensionValueSortingMethods?.[''] || this.parallelSetsDimensionValueSortingMethods;
-    const firstDimensionValues = valuesDict[this.parallelSetsDimensions[0]]
-      .sort(parallelSetsDimensionValueSortingMethod);
-    const colorScale = d3.scaleOrdinal(this.colorScheme)
-      .domain(firstDimensionValues.map(value => value.toString()));
+    const parallelSetsDimensionValueSortingMethod =
+      this.parallelSetsDimensionValueSortingMethods?.[this.parallelSetsDimensions[0]] ||
+      this.parallelSetsDimensionValueSortingMethods?.[''] ||
+      this.parallelSetsDimensionValueSortingMethods;
+    const firstDimensionValues = valuesDict[this.parallelSetsDimensions[0]].sort(parallelSetsDimensionValueSortingMethod);
+    const colorScale = d3.scaleOrdinal(this.colorScheme).domain(firstDimensionValues.map(value => value.toString()));
 
-    const lastAxisSegmentValueAndBackgroundDict = Object.fromEntries(
-      lastDimensionValues.map(value => [value.toString(), { backgroundColor: '', backgroundImage: '' }])
-    );
-    const lastAxisSegmentValueAndPositionDict = Object.fromEntries(
-      lastDimensionValues.map(value => [value.toString(), { minSegmentPosition: NaN, maxSegmentPosition: NaN }])
-    );
+    const lastAxisSegmentValueAndBackgroundDict = Object.fromEntries(lastDimensionValues.map(value => [value.toString(), { backgroundColor: '', backgroundImage: '' }]));
+    const lastAxisSegmentValueAndPositionDict = Object.fromEntries(lastDimensionValues.map(value => [value.toString(), { minSegmentPosition: NaN, maxSegmentPosition: NaN }]));
 
     for (const lastDimensionValue of lastDimensionValues) {
-      const dataNodesForTheValue = lastDimensionDataNodes
-        .filter(dataNode => dataNode.valueHistory[lastDimensionIndex] === lastDimensionValue);
+      const dataNodesForTheValue = lastDimensionDataNodes.filter(dataNode => dataNode.valueHistory[lastDimensionIndex] === lastDimensionValue);
 
       this.fillLastAxisSegmentValueAndPositionDictForSingleValue({
         lastAxisSegmentValueAndPositionDict,
         lastDimensionValue,
-        dataNodesForTheValue
+        dataNodesForTheValue,
       });
       this.fillLastAxisSegmentValueAndBackgroundDictForSingleValue({
         dataNodesForTheValue,
         firstDimensionValues,
         colorScale,
         lastAxisSegmentValueAndBackgroundDict,
-        lastDimensionValue
+        lastDimensionValue,
       });
     }
 
@@ -181,24 +175,17 @@ export class SSetStat implements ComponentInterface {
     this.lastAxisSegmentValueAndBackgroundDict = lastAxisSegmentValueAndBackgroundDict;
   }
 
-
   private fillLastAxisSegmentValueAndBackgroundDictForSingleValue(params: {
-    dataNodesForTheValue: ParallelSetsDataNode[],
-    firstDimensionValues: (string | number)[],
-    colorScale: d3.ScaleOrdinal<string, string, never>,
-    lastAxisSegmentValueAndBackgroundDict: { [value: string]: { backgroundColor: string; backgroundImage: string; }; },
-    lastDimensionValue: string | number
+    dataNodesForTheValue: ParallelSetsDataNode[];
+    firstDimensionValues: (string | number)[];
+    colorScale: d3.ScaleOrdinal<string, string, never>;
+    lastAxisSegmentValueAndBackgroundDict: { [value: string]: { backgroundColor: string; backgroundImage: string } };
+    lastDimensionValue: string | number;
   }) {
-    const {
-      dataNodesForTheValue,
-      firstDimensionValues,
-      colorScale,
-      lastAxisSegmentValueAndBackgroundDict,
-      lastDimensionValue
-    } = params;
+    const { dataNodesForTheValue, firstDimensionValues, colorScale, lastAxisSegmentValueAndBackgroundDict, lastDimensionValue } = params;
 
     const axisSegmentDataRecordCount = d3.sum(dataNodesForTheValue.map(dataNode => dataNode.dataRecords.length));
-    let valuesAndRatios: { value: string | number; ratio: number; startRatio: number; }[] = [];
+    let valuesAndRatios: { value: string | number; ratio: number; startRatio: number }[] = [];
     let previousRatio = 0;
     for (const firstDimensionValue of firstDimensionValues) {
       const dataNodesForTheFirstDimensionValueAndTheLastDimensionValue = dataNodesForTheValue.filter(dataNode => dataNode.valueHistory[0] === firstDimensionValue);
@@ -211,30 +198,27 @@ export class SSetStat implements ComponentInterface {
     const colorsAndRatiosForLinearGradient = valuesAndRatios
       .filter(({ ratio }) => ratio > 0)
       .sort((a, b) => a.startRatio - b.startRatio)
-      .map(({ value, ratio, startRatio }) => `${colorScale(value.toString())} ${(startRatio + ratio * .2) * 100}%, ${colorScale(value.toString())} ${(startRatio + ratio * .8) * 100}%`)
+      .map(
+        ({ value, ratio, startRatio }) =>
+          `${colorScale(value.toString())} ${(startRatio + ratio * 0.2) * 100}%, ${colorScale(value.toString())} ${(startRatio + ratio * 0.8) * 100}%`,
+      )
       .join(', ');
     lastAxisSegmentValueAndBackgroundDict[lastDimensionValue.toString()] = {
       backgroundColor: colorScale(largestRatioValue.toString()),
-      backgroundImage: valuesAndRatios.length > 1 ?
-        `linear-gradient(to right, ${colorsAndRatiosForLinearGradient})` :
-        'unset'
+      backgroundImage: valuesAndRatios.length > 1 ? `linear-gradient(to right, ${colorsAndRatiosForLinearGradient})` : 'unset',
     };
   }
 
   private fillLastAxisSegmentValueAndPositionDictForSingleValue(params: {
-    lastAxisSegmentValueAndPositionDict: { [value: string]: { minSegmentPosition: number; maxSegmentPosition: number; }; },
-    lastDimensionValue: string | number,
-    dataNodesForTheValue: ParallelSetsDataNode[]
+    lastAxisSegmentValueAndPositionDict: { [value: string]: { minSegmentPosition: number; maxSegmentPosition: number } };
+    lastDimensionValue: string | number;
+    dataNodesForTheValue: ParallelSetsDataNode[];
   }) {
-    const {
-      lastAxisSegmentValueAndPositionDict,
-      lastDimensionValue,
-      dataNodesForTheValue
-    } = params;
+    const { lastAxisSegmentValueAndPositionDict, lastDimensionValue, dataNodesForTheValue } = params;
 
     lastAxisSegmentValueAndPositionDict[lastDimensionValue.toString()] = {
       minSegmentPosition: d3.min(dataNodesForTheValue.map(dataNode => dataNode.adjustedAxisSegmentPosition[0])),
-      maxSegmentPosition: d3.max(dataNodesForTheValue.map(dataNode => dataNode.adjustedAxisSegmentPosition[1]))
+      maxSegmentPosition: d3.max(dataNodesForTheValue.map(dataNode => dataNode.adjustedAxisSegmentPosition[1])),
     };
   }
 }

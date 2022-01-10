@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+ion-split-pane {
+  top: 56px;
+  --side-width: 350px;
+}
+
+.vis-container {
+  height: calc(50% - 20px);
+}
+
+.control-panel-item-label {
+  min-width: 100px;
+}
+
+s-set-stat {
+  width: calc(100% - 35%);
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+app-map-view {
+  width: 35%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}

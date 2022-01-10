@@ -59,6 +59,7 @@ export class SParallelSets implements ComponentInterface {
   @Prop() minimumRatioToShowAxisText: number = 0;
   @Prop() ribbonOpacity: number = 0.5;
   @Prop() ribbonHighlightOpacity: number = 0.8;
+  @Prop() ribbonDimOpacity: number = 0.2;
   @Prop() ribbonTension: number = 1;
 
   @State() hostElementBoundingClientRect: DOMRect;
@@ -100,6 +101,7 @@ export class SParallelSets implements ComponentInterface {
   componentWillRender() {
     this.hostElement.style.setProperty('--axis-text-font-size', this.axisTextFontSize + 'px');
     this.hostElement.style.setProperty('--ribbon-highlight-opacity', this.ribbonHighlightOpacity.toString());
+    this.hostElement.style.setProperty('--ribbon-dim-opacity', this.ribbonDimOpacity.toString());
     this.startTime = new Date();
   }
 
@@ -268,19 +270,20 @@ export class SParallelSets implements ComponentInterface {
                   fill={texture ? texture.url() : backgroundColor}
                   opacity={this.ribbonOpacity}
                   onMouseEnter={() => {
-                    d3.select(this.hostElement.shadowRoot)
-                      .selectAll('.ribbon')
-                      .classed('highlight', (node: ParallelSetsDataNode) => {
-                        const minValueHistoryLenght = d3.min([node.valueHistory.length, childDataNode.valueHistory.length]);
-                        if (node.valueHistory.slice(0, minValueHistoryLenght).toString() === childDataNode.valueHistory.slice(0, minValueHistoryLenght).toString()) {
-                          return true;
-                        } else {
-                          return false;
-                        }
-                      });
+                    const ribbons = d3.select(this.hostElement.shadowRoot).selectAll('.ribbon');
+                    ribbons.classed('dim', true);
+                    const highlightedRibbons = ribbons.filter((node: ParallelSetsDataNode) => {
+                      const minValueHistoryLenght = d3.min([node.valueHistory.length, childDataNode.valueHistory.length]);
+                      if (node.valueHistory.slice(0, minValueHistoryLenght).toString() === childDataNode.valueHistory.slice(0, minValueHistoryLenght).toString()) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    });
+                    highlightedRibbons.classed('dim', false).classed('hightlight', true);
                   }}
                   onMouseLeave={() => {
-                    d3.select(this.hostElement.shadowRoot).selectAll('.ribbon').classed('highlight', false);
+                    d3.select(this.hostElement.shadowRoot).selectAll('.ribbon').classed('dim', false).classed('highlight', false);
                   }}
                   onClick={() => this.ribbonClick.emit(eventData)}
                   onContextMenu={event => {
@@ -443,20 +446,20 @@ export class SParallelSets implements ComponentInterface {
         onMouseEnter={() => {
           const ribbons = d3.select(this.hostElement.shadowRoot).selectAll('.ribbon');
           const dimensionIndex = this.dimensions.indexOf(dimensionName);
-          let highlightedRibbons = ribbons.filter((d: ParallelSetsDataNode) => d.valueHistory[dimensionIndex]?.toString() === currentSegmentValue.toString());
+          const highlightedRibbons = ribbons.filter((d: ParallelSetsDataNode) => d.valueHistory[dimensionIndex]?.toString() === currentSegmentValue.toString());
           const highlightedRibbonsValueHistories = highlightedRibbons.data().map((d: ParallelSetsDataNode) => d.valueHistory);
-          ribbons.classed('highlight', (node: ParallelSetsDataNode) => {
+          const allHighlightedRibbons = ribbons.filter((node: ParallelSetsDataNode) => {
             if (highlightedRibbonsValueHistories.find(d => d.slice(0, node.valueHistory.length).toString() === node.valueHistory.slice(0, node.valueHistory.length).toString())) {
               return true;
             } else {
               return false;
             }
           });
+          ribbons.classed('dim', true);
+          allHighlightedRibbons.classed('dim', false).classed('highlight', true);
         }}
         onMouseLeave={() => {
-          d3.select(this.hostElement.shadowRoot )
-            .selectAll('.ribbon')
-            .classed('highlight', false);
+          d3.select(this.hostElement.shadowRoot).selectAll('.ribbon').classed('dim', false).classed('highlight', false);
         }}
         onMouseOver={() => this.axisSegmentMouseOver.emit(eventData)}
         onMouseOut={() => this.axisSegmentMouseOut.emit(eventData)}
