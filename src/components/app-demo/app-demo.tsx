@@ -639,7 +639,7 @@ export class AppDemo implements ComponentInterface {
                 const quantileValue = variableNameAndQuantileScaleDict[variableName](dataRecord[variableName]);
                 dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][quantileValue]
                   .split(this.variableValueMinMaxSeperator)
-                  .map(value => (+value).toFixed(0))
+                  .map(value => (+value).toFixed(2))
                   .join(this.variableValueMinMaxSeperator);
               }
             }
@@ -666,7 +666,7 @@ export class AppDemo implements ComponentInterface {
                 const thresholdValue = valueScaleDict[variableName](dataRecord[variableName]);
                 dataRecord[`_${variableName}`] = this.variableNameAndCategorizedValuesDict[variableName][thresholdValue]
                   .split(this.variableValueMinMaxSeperator)
-                  .map(value => (+value).toFixed(0))
+                  .map(value => (+value).toFixed(2))
                   .join(this.variableValueMinMaxSeperator);
               }
             }
