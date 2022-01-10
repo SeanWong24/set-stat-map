@@ -154,6 +154,7 @@ export class AppWeatherVis implements ComponentInterface {
   @State() data: any[];
   @State() secondaryVisData: any[];
   @State() visFillOpacity: number = .5;
+  @State() visFillDimOpacity: number = 0.2;
   @State() visFillHighlightOpacity: number = .8;
   @State() isSecondaryVisEnabled: boolean = false;
   @State() mapRange: {
@@ -298,6 +299,19 @@ export class AppWeatherVis implements ComponentInterface {
                   step={.01}
                   value={this.visFillHighlightOpacity}
                   onIonChange={({ detail }) => this.visFillHighlightOpacity = +detail.value}
+                >
+                  <ion-label slot="start">0</ion-label>
+                  <ion-label slot="end">1</ion-label>
+                </ion-range>
+              </ion-item>
+              <ion-item class="control-panel-item">
+                <ion-label class="control-panel-item-label">Dim Opacity</ion-label>
+                <ion-range
+                  min={0}
+                  max={1}
+                  step={.01}
+                  value={this.visFillDimOpacity}
+                  onIonChange={({ detail }) => this.visFillDimOpacity = +detail.value}
                 >
                   <ion-label slot="start">0</ion-label>
                   <ion-label slot="end">1</ion-label>
