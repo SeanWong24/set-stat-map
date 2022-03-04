@@ -54,8 +54,11 @@ export class AppWeatherVis implements ComponentInterface {
   private readonly defineTexturesHandlerForFourNoShape: (textureGenerator: any) => (() => any)[] = textureGenerator =>
     [1, 2, 3, 4].map(() => () => textureGenerator.circles().fill('transparent'));
   private readonly textureOpacities = [0.25, 0.5, 0.75, 1];
-  private readonly defineTexturesHandlerForFourDotShape: (textureGenerator: any) => (() => any)[] = textureGenerator =>
+  private readonly defineTexturesHandlerForFourDotShapeOpacity: (textureGenerator: any) => (() => any)[] = textureGenerator =>
     this.textureOpacities.map(opacity => () => textureGenerator.circles().thicker().fill(`rgba(0,0,0,${opacity})`));
+  private readonly textureRadius = [1, 1.5, 2, 2.5];
+  private readonly defineTexturesHandlerForFourDotShapeRadius: (textureGenerator: any) => (() => any)[] = textureGenerator =>
+    this.textureRadius.map(radius => () => textureGenerator.circles().thicker().fill(`rgb(0,0,0)`).radius(radius));
   private readonly textureStrokeWidths = [1, 2, 3, 4];
   private readonly defineTexturesHandlerForFourLineShape: (textureGenerator: any) => (() => any)[] = textureGenerator =>
     this.textureStrokeWidths.map(strokeWidth => () => textureGenerator.lines().size(10).strokeWidth(strokeWidth));
@@ -112,8 +115,10 @@ export class AppWeatherVis implements ComponentInterface {
     switch (this.textureType) {
       case 'line':
         return this.defineTexturesHandlerForFourLineShape;
-      case 'dot':
-        return this.defineTexturesHandlerForFourDotShape;
+      case 'dot-opacity':
+        return this.defineTexturesHandlerForFourDotShapeOpacity;
+      case 'dot-radius':
+        return this.defineTexturesHandlerForFourDotShapeRadius;
       default:
         return this.defineTexturesHandlerForFourNoShape;
     }
@@ -144,7 +149,8 @@ export class AppWeatherVis implements ComponentInterface {
             }
             return handlers;
           };
-        case 'dot':
+        case 'dot-opacity':
+        case 'dot-radius':
           return (textureGenerator: any) => {
             const handlers: (() => any)[] = [];
             const firstVisCategorizedValuesForSecondDimension = this.variableNameAndCategorizedValuesDict[this.selectedVariables[1]];
@@ -250,7 +256,7 @@ export class AppWeatherVis implements ComponentInterface {
   @State() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
   @State() mapViewHeader: string = 'No Selected Subset';
   @State() secondaryVisMapViewHeader: string = 'No Selected Subset';
-  @State() textureType: 'line' | 'dot' | 'none' = 'dot';
+  @State() textureType: 'line' | 'dot-opacity' | 'dot-radius' | 'none' = 'dot-opacity';
 
   async connectedCallback() {
     this.SQL = await initSqlJs({ locateFile: fileName => `./assets/sql.js/${fileName}` });
@@ -333,7 +339,8 @@ export class AppWeatherVis implements ComponentInterface {
                 <ion-select value={this.textureType} onIonChange={({ detail }) => (this.textureType = detail.value)}>
                   <ion-select-option value="none">None</ion-select-option>
                   <ion-select-option value="line">Lines</ion-select-option>
-                  <ion-select-option value="dot">Dots</ion-select-option>
+                  <ion-select-option value="dot-opacity">Dots (Opacity)</ion-select-option>
+                  <ion-select-option value="dot-radius">Dots (Radius)</ion-select-option>
                 </ion-select>
               </ion-item>
               <ion-item class="control-panel-item" disabled={!this.datasetInfo}>
