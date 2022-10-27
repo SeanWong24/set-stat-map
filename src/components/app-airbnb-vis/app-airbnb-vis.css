@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.vis-container {
+  height: calc(50% - 20px);
+}
+
+s-set-stat {
+  width: calc(100% - 35%);
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+app-map-view {
+  width: 35%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}

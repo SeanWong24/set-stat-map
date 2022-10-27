@@ -6,5 +6,6 @@ export interface AppVisComponent {
 
 export const visRouteAndDisplayNameDict = {
     'weather': 'Weather',
+    'airbnb': 'AirBnb',
     'stack-overflow': 'StackOverflow'
 };

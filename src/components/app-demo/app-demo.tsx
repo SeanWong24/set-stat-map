@@ -180,7 +180,7 @@ export class AppDemo implements ComponentInterface {
       primaryValue: string | number;
       color: string;
       secondaryValue: string | number;
-      textureDenerator: any;
+      textureGenerator: any;
       rectWidth: number;
       rectHeight: number;
     }[];
@@ -199,7 +199,7 @@ export class AppDemo implements ComponentInterface {
       primaryValue: string | number;
       color: string;
       secondaryValue: string | number;
-      textureDenerator: any;
+      textureGenerator: any;
       rectWidth: number;
       rectHeight: number;
     }[];
@@ -487,7 +487,7 @@ export class AppDemo implements ComponentInterface {
         primaryValue,
         color: colorDict[primaryValue],
         secondaryValue,
-        textureDenerator: textureGeneratorDict[secondaryValue],
+        textureGenerator: textureGeneratorDict[secondaryValue],
         rectWidth: 0.312,
         rectHeight: 0.312,
       };

@@ -8,7 +8,6 @@ import leaflet from 'leaflet';
   // shadow: true,
 })
 export class AppMapView implements ComponentInterface {
-
   private readonly mapTileUrlTemplate = 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
   // TODO finish tile attribution string
   // private readonly mapTileAttribution =
@@ -27,48 +26,48 @@ export class AppMapView implements ComponentInterface {
   private mouseDrawRectLayer: leaflet.Layer;
   private datasetRangeIndicatorLayer: leaflet.Layer;
 
-
   @Element() hostElement: HTMLElement;
 
   @Prop() centerPoint: [number, number] = [0, 0];
   @Prop() zoom: number = 1;
   @Prop() datasetRange: {
-    minLatitude: number,
-    maxLatitude: number,
-    minLongitude: number,
-    maxLongitude: number
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
   };
   @Prop() heatmapData: {
     colorLegendTitle: string;
-    colorLegendDefinitions: { value: string, color: string }[];
+    colorLegendDefinitions: { value: string; color: string }[];
     textureLegendTitle: string;
-    textureLegendDefinitions: { value: string, textureGenerator: any }[];
-    primaryValueTitle: string,
-    secondaryValueHeader: string,
-    isTooltipEnabled: boolean,
+    textureLegendDefinitions: { value: string; textureGenerator: any }[];
+    primaryValueTitle: string;
+    secondaryValueHeader: string;
+    isTooltipEnabled: boolean;
     dataPoints: {
-      latitude: number,
-      longitude: number,
-      primaryValue: string | number,
-      color: string,
-      secondaryValue: string | number,
-      textureDenerator: any,
-      rectWidth: number,
-      rectHeight: number
-    }[]
+      latitude: number;
+      longitude: number;
+      primaryValue: string | number;
+      color: string;
+      secondaryValue: string | number;
+      textureGenerator: any;
+      rectWidth?: number;
+      rectHeight?: number;
+      radius?: number;
+    }[];
   };
-  @Prop() heatmapOpacity: number = .5;
-  @Prop() heatmapHighlightOpacity: number = .5;
+  @Prop() heatmapOpacity: number = 0.5;
+  @Prop() heatmapHighlightOpacity: number = 0.5;
   @Prop() header: string;
   @Prop() headerTextSize: number = 16;
   @Prop() headerTextColor: string = 'rgb(0,0,0)';
   @Prop() headerTextWeight: string = 'bold';
 
   @Event() mouseDraw: EventEmitter<{
-    minLatitude: number,
-    maxLatitude: number,
-    minLongitude: number,
-    maxLongitude: number
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
   }>;
 
   componentWillRender() {
@@ -84,24 +83,20 @@ export class AppMapView implements ComponentInterface {
           style={{
             fontSize: `${this.headerTextSize}px`,
             color: this.headerTextColor,
-            fontWeight: this.headerTextWeight
+            fontWeight: this.headerTextWeight,
           }}
-        >{this.header}</text>
+        >
+          {this.header}
+        </text>
         <div
           id="map-container"
           ref={el => this.updateMap(el)}
           style={{
-            height: `calc(100% - ${this.headerTextSize}px)`
+            height: `calc(100% - ${this.headerTextSize}px)`,
           }}
         ></div>
-        <svg
-          id="texture-container"
-          ref={el => this.textureContainerElement = el}
-        ></svg>
-        <svg
-          id="legend-texture-container"
-          ref={el => this.legendTextureContainerElement = el}
-        ></svg>
+        <svg id="texture-container" ref={el => (this.textureContainerElement = el)}></svg>
+        <svg id="legend-texture-container" ref={el => (this.legendTextureContainerElement = el)}></svg>
       </Host>
     );
   }
@@ -110,9 +105,7 @@ export class AppMapView implements ComponentInterface {
     if (!this.map) {
       this.map = leaflet.map(mapContainerElement, { center: this.centerPoint, zoom: this.zoom, drawControl: true } as any);
     }
-    leaflet
-      .tileLayer(this.mapTileUrlTemplate, { /*attribution: this.mapTileAttribution,*/ subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] })
-      .addTo(this.map);
+    leaflet.tileLayer(this.mapTileUrlTemplate, { /*attribution: this.mapTileAttribution,*/ subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] }).addTo(this.map);
 
     this.drawDatasetRangeIndicator();
     this.drawHeatmap();
@@ -120,10 +113,9 @@ export class AppMapView implements ComponentInterface {
     this.addMouseDrawEvents();
 
     setTimeout(() => {
-      this.map.invalidateSize()
+      this.map.invalidateSize();
     });
   }
-
 
   private drawDatasetRangeIndicator() {
     if (this.datasetRangeIndicatorLayer) {
@@ -131,10 +123,14 @@ export class AppMapView implements ComponentInterface {
     }
     if (this.datasetRange) {
       const { minLatitude, maxLatitude, minLongitude, maxLongitude } = this.datasetRange;
-      this.datasetRangeIndicatorLayer = leaflet.rectangle(
-        [[minLatitude, minLongitude], [maxLatitude, maxLongitude]],
-        { color: "black", fillColor: 'transparent', weight: 1, dashArray: '10, 10' }
-      )
+      this.datasetRangeIndicatorLayer = leaflet
+        .rectangle(
+          [
+            [minLatitude, minLongitude],
+            [maxLatitude, maxLongitude],
+          ],
+          { color: 'black', fillColor: 'transparent', weight: 1, dashArray: '10, 10' },
+        )
         .addTo(this.map);
     }
   }
@@ -159,10 +155,14 @@ export class AppMapView implements ComponentInterface {
         if (this.mouseDrawRectLayer) {
           this.map.removeLayer(this.mouseDrawRectLayer);
         }
-        this.mouseDrawRectLayer = leaflet.rectangle(
-          [[minLatitude, minLongitude], [maxLatitude, maxLongitude]],
-          { color: "grey", fillColor: 'transparent', weight: 1 }
-        )
+        this.mouseDrawRectLayer = leaflet
+          .rectangle(
+            [
+              [minLatitude, minLongitude],
+              [maxLatitude, maxLongitude],
+            ],
+            { color: 'grey', fillColor: 'transparent', weight: 1 },
+          )
           .addTo(this.map);
       }
     });
@@ -180,7 +180,7 @@ export class AppMapView implements ComponentInterface {
           minLatitude,
           maxLatitude,
           minLongitude,
-          maxLongitude
+          maxLongitude,
         });
       }
     });
@@ -192,19 +192,23 @@ export class AppMapView implements ComponentInterface {
       this.legendControl = undefined;
     }
     if (this.heatmapData) {
-      this.legendControl = (leaflet as any).control({ position: "bottomleft" });
+      this.legendControl = (leaflet as any).control({ position: 'bottomleft' });
       this.legendControl.onAdd = () => {
         const div = leaflet.DomUtil.create('div', 'legend');
-        div.innerHTML = `<div><h4>${this.heatmapData.colorLegendTitle}</h4>${this.heatmapData.colorLegendDefinitions.map(definition => `<i style="background: ${definition.color}"></i><span>${definition.value}</span><br/>`).join('')}</div>`;
+        div.innerHTML = `<div><h4>${this.heatmapData.colorLegendTitle}</h4>${this.heatmapData.colorLegendDefinitions
+          .map(definition => `<i style="background: ${definition.color}"></i><span>${definition.value}</span><br/>`)
+          .join('')}</div>`;
 
         this.legendTextureContainerElement.innerHTML = '';
         div.innerHTML += '<tr/>';
-        div.innerHTML += `<div><h4>${this.heatmapData.textureLegendTitle}</h4>${this.heatmapData.textureLegendDefinitions.map(definition => {
-          const legendTextureSvg = d3.select(this.legendTextureContainerElement);
-          const texture = definition.textureGenerator();
-          legendTextureSvg.call(texture);
-          return `<svg><rect width="100%" height="100%" fill="${texture.url()}"></rect></svg><span>${definition.value}</span><br/>`;
-        }).join('')}</div>`;
+        div.innerHTML += `<div><h4>${this.heatmapData.textureLegendTitle}</h4>${this.heatmapData.textureLegendDefinitions
+          .map(definition => {
+            const legendTextureSvg = d3.select(this.legendTextureContainerElement);
+            const texture = definition.textureGenerator();
+            legendTextureSvg.call(texture);
+            return `<svg><rect width="100%" height="100%" fill="${texture.url()}"></rect></svg><span>${definition.value}</span><br/>`;
+          })
+          .join('')}</div>`;
 
         return div;
       };
@@ -224,37 +228,30 @@ export class AppMapView implements ComponentInterface {
         const textureDictKey = `${dataPoint.secondaryValue}\t${dataPoint.color}`;
         let textureUrl = this.textureUrlDict[textureDictKey];
         if (!textureUrl) {
-          const texture = dataPoint.textureDenerator().background(dataPoint.color);
+          const texture = dataPoint.textureGenerator().background(dataPoint.color);
           textureSvg.call(texture);
           textureUrl = texture.url();
           this.textureUrlDict[textureDictKey] = textureUrl;
         }
-        const cellLayer = leaflet
-          .rectangle(
-            [
+        const cellLayer = dataPoint.radius
+          ? leaflet.circleMarker([dataPoint.latitude, dataPoint.longitude], { fillColor: textureUrl, radius: dataPoint.radius, className: 'heatmap-cell' })
+          : leaflet.rectangle(
               [
-                dataPoint.latitude - dataPoint.rectHeight / 2,
-                dataPoint.longitude - dataPoint.rectWidth / 2
+                [dataPoint.latitude - dataPoint.rectHeight / 2, dataPoint.longitude - dataPoint.rectWidth / 2],
+                [dataPoint.latitude + dataPoint.rectHeight / 2, dataPoint.longitude + dataPoint.rectWidth / 2],
               ],
-              [
-                dataPoint.latitude + dataPoint.rectHeight / 2,
-                dataPoint.longitude + dataPoint.rectWidth / 2
-              ]
-            ],
-            { fillColor: textureUrl, className: 'heatmap-cell' },
-          );
+              { fillColor: textureUrl, className: 'heatmap-cell' },
+            );
         if (this.heatmapData.isTooltipEnabled) {
-          cellLayer
-            .bindTooltip(
-              `Latitude: ${dataPoint.latitude}<br/>` +
+          cellLayer.bindTooltip(
+            `Latitude: ${dataPoint.latitude}<br/>` +
               `Longitude: ${dataPoint.longitude}<br/>` +
               `${this.heatmapData.primaryValueTitle}: ${dataPoint.primaryValue}<br/>` +
-              `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`
-            );
+              `${this.heatmapData.secondaryValueHeader}: ${dataPoint.secondaryValue}`,
+          );
         }
         this.heatmapLayerGroup.addLayer(cellLayer);
       }
     }
   }
-
 }

@@ -7,7 +7,6 @@ import { visRouteAndDisplayNameDict } from '../../global/utilts';
   scoped: true,
 })
 export class AppVis implements ComponentInterface {
-
   private get visTypeDisplayName() {
     return visRouteAndDisplayNameDict[this.visType];
   }
@@ -28,9 +27,11 @@ export class AppVis implements ComponentInterface {
             </ion-buttons>
             <ion-title>{`${this.visTypeDisplayName} Vis - ${this.file?.name || 'No File Opened'}`}</ion-title>
             <ion-buttons slot="end">
-              <ion-button title="Generate Database File" href="/stack-overflow/data-process">
-                <ion-icon slot="icon-only" name="construct"></ion-icon>
-              </ion-button>
+              {this.visType === 'stack-overflow' && (
+                <ion-button title="Generate Database File" href="/stack-overflow/data-process">
+                  <ion-icon slot="icon-only" name="construct"></ion-icon>
+                </ion-button>
+              )}
               <ion-button title="Open Database File" onClick={() => this.openFile()}>
                 <ion-icon slot="icon-only" name="open"></ion-icon>
               </ion-button>
@@ -48,10 +49,7 @@ export class AppVis implements ComponentInterface {
             <app-control-panel renderHandler={this.visControlPanelRenderHandler}></app-control-panel>
           </ion-menu>
           <ion-content id="main-container" class="ion-padding" scrollY={false}>
-            <app-stack-overflow-vis
-              onControlPanelRenderHandlerUpdated={({ detail }) => this.visControlPanelRenderHandler = detail}
-              file={this.file}
-            ></app-stack-overflow-vis>
+            {this.renderVis()}
           </ion-content>
         </ion-split-pane>
       </Host>
@@ -60,8 +58,16 @@ export class AppVis implements ComponentInterface {
 
   private async openFile() {
     const [fileHandle] = await (window as any).showOpenFilePicker();
-    const file = await fileHandle.getFile() as File;
+    const file = (await fileHandle.getFile()) as File;
     this.file = file;
   }
 
+  private renderVis() {
+    switch (this.visType) {
+      case 'airbnb':
+        return <app-airbnb-vis onControlPanelRenderHandlerUpdated={({ detail }) => (this.visControlPanelRenderHandler = detail)} file={this.file}></app-airbnb-vis>;
+      case 'stack-overflow':
+        return <app-stack-overflow-vis onControlPanelRenderHandlerUpdated={({ detail }) => (this.visControlPanelRenderHandler = detail)} file={this.file}></app-stack-overflow-vis>;
+    }
+  }
 }

@@ -8,6 +8,9 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ParallelSetsDataNode, ParallelSetsDataRecord, ParallelSetsDimensionValueSortingHandler, ParallelSetsOnLoadDetail } from "./components/s-parallel-sets/utils";
 import { StatisticsColumnsVisType } from "./components/s-statistics-columns/utils";
 export namespace Components {
+    interface AppAirbnbVis {
+        "file": File;
+    }
     interface AppControlPanel {
         "renderHandler": () => any;
     }
@@ -31,10 +34,10 @@ export namespace Components {
     interface AppMapView {
         "centerPoint": [number, number];
         "datasetRange": {
-    minLatitude: number,
-    maxLatitude: number,
-    minLongitude: number,
-    maxLongitude: number
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
   };
         "header": string;
         "headerTextColor": string;
@@ -42,22 +45,23 @@ export namespace Components {
         "headerTextWeight": string;
         "heatmapData": {
     colorLegendTitle: string;
-    colorLegendDefinitions: { value: string, color: string }[];
+    colorLegendDefinitions: { value: string; color: string }[];
     textureLegendTitle: string;
-    textureLegendDefinitions: { value: string, textureGenerator: any }[];
-    primaryValueTitle: string,
-    secondaryValueHeader: string,
-    isTooltipEnabled: boolean,
+    textureLegendDefinitions: { value: string; textureGenerator: any }[];
+    primaryValueTitle: string;
+    secondaryValueHeader: string;
+    isTooltipEnabled: boolean;
     dataPoints: {
-      latitude: number,
-      longitude: number,
-      primaryValue: string | number,
-      color: string,
-      secondaryValue: string | number,
-      textureDenerator: any,
-      rectWidth: number,
-      rectHeight: number
-    }[]
+      latitude: number;
+      longitude: number;
+      primaryValue: string | number;
+      color: string;
+      secondaryValue: string | number;
+      textureGenerator: any;
+      rectWidth?: number;
+      rectHeight?: number;
+      radius?: number;
+    }[];
   };
         "heatmapHighlightOpacity": number;
         "heatmapOpacity": number;
@@ -216,6 +220,12 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLAppAirbnbVisElement extends Components.AppAirbnbVis, HTMLStencilElement {
+    }
+    var HTMLAppAirbnbVisElement: {
+        prototype: HTMLAppAirbnbVisElement;
+        new (): HTMLAppAirbnbVisElement;
+    };
     interface HTMLAppControlPanelElement extends Components.AppControlPanel, HTMLStencilElement {
     }
     var HTMLAppControlPanelElement: {
@@ -331,6 +341,7 @@ declare global {
         new (): HTMLSStatisticsColumnsElement;
     };
     interface HTMLElementTagNameMap {
+        "app-airbnb-vis": HTMLAppAirbnbVisElement;
         "app-control-panel": HTMLAppControlPanelElement;
         "app-data-process": HTMLAppDataProcessElement;
         "app-demo": HTMLAppDemoElement;
@@ -353,6 +364,10 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface AppAirbnbVis {
+        "file"?: File;
+        "onControlPanelRenderHandlerUpdated"?: (event: CustomEvent<() => any>) => void;
+    }
     interface AppControlPanel {
         "renderHandler"?: () => any;
     }
@@ -376,10 +391,10 @@ declare namespace LocalJSX {
     interface AppMapView {
         "centerPoint"?: [number, number];
         "datasetRange"?: {
-    minLatitude: number,
-    maxLatitude: number,
-    minLongitude: number,
-    maxLongitude: number
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
   };
         "header"?: string;
         "headerTextColor"?: string;
@@ -387,30 +402,31 @@ declare namespace LocalJSX {
         "headerTextWeight"?: string;
         "heatmapData"?: {
     colorLegendTitle: string;
-    colorLegendDefinitions: { value: string, color: string }[];
+    colorLegendDefinitions: { value: string; color: string }[];
     textureLegendTitle: string;
-    textureLegendDefinitions: { value: string, textureGenerator: any }[];
-    primaryValueTitle: string,
-    secondaryValueHeader: string,
-    isTooltipEnabled: boolean,
+    textureLegendDefinitions: { value: string; textureGenerator: any }[];
+    primaryValueTitle: string;
+    secondaryValueHeader: string;
+    isTooltipEnabled: boolean;
     dataPoints: {
-      latitude: number,
-      longitude: number,
-      primaryValue: string | number,
-      color: string,
-      secondaryValue: string | number,
-      textureDenerator: any,
-      rectWidth: number,
-      rectHeight: number
-    }[]
+      latitude: number;
+      longitude: number;
+      primaryValue: string | number;
+      color: string;
+      secondaryValue: string | number;
+      textureGenerator: any;
+      rectWidth?: number;
+      rectHeight?: number;
+      radius?: number;
+    }[];
   };
         "heatmapHighlightOpacity"?: number;
         "heatmapOpacity"?: number;
         "onMouseDraw"?: (event: CustomEvent<{
-    minLatitude: number,
-    maxLatitude: number,
-    minLongitude: number,
-    maxLongitude: number
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
   }>) => void;
         "zoom"?: number;
     }
@@ -587,6 +603,7 @@ declare namespace LocalJSX {
         "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
     }
     interface IntrinsicElements {
+        "app-airbnb-vis": AppAirbnbVis;
         "app-control-panel": AppControlPanel;
         "app-data-process": AppDataProcess;
         "app-demo": AppDemo;
@@ -612,6 +629,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "app-airbnb-vis": LocalJSX.AppAirbnbVis & JSXBase.HTMLAttributes<HTMLAppAirbnbVisElement>;
             "app-control-panel": LocalJSX.AppControlPanel & JSXBase.HTMLAttributes<HTMLAppControlPanelElement>;
             "app-data-process": LocalJSX.AppDataProcess & JSXBase.HTMLAttributes<HTMLAppDataProcessElement>;
             "app-demo": LocalJSX.AppDemo & JSXBase.HTMLAttributes<HTMLAppDemoElement>;
