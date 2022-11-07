@@ -194,6 +194,7 @@ export namespace Components {
         "visType": StatisticsColumnsVisType;
     }
     interface SStatisticsColumns {
+        "autoMergedAxisSegmentName": string;
         "data": any[];
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
         "footerAxisHeight": number;
@@ -207,16 +208,16 @@ export namespace Components {
     [value: string]: {
       backgroundColor: string;
       backgroundImage: string;
-    }
+    };
   };
         "rowValueAndPositionDict": {
     [value: string]: {
       minSegmentPosition: number;
       maxSegmentPosition: number;
-    }
+    };
   };
         "rowValueDimensionName": string;
-        "statisticsColumnDefinitions": { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
+        "statisticsColumnDefinitions": { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
     }
 }
 declare global {
@@ -577,6 +578,7 @@ declare namespace LocalJSX {
         "visType"?: StatisticsColumnsVisType;
     }
     interface SStatisticsColumns {
+        "autoMergedAxisSegmentName"?: string;
         "data"?: any[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "footerAxisHeight"?: number;
@@ -591,16 +593,16 @@ declare namespace LocalJSX {
     [value: string]: {
       backgroundColor: string;
       backgroundImage: string;
-    }
+    };
   };
         "rowValueAndPositionDict"?: {
     [value: string]: {
       minSegmentPosition: number;
       maxSegmentPosition: number;
-    }
+    };
   };
         "rowValueDimensionName"?: string;
-        "statisticsColumnDefinitions"?: { dimensionName: string, visType: StatisticsColumnsVisType, scaleMinMax?: [number, number] }[];
+        "statisticsColumnDefinitions"?: { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
     }
     interface IntrinsicElements {
         "app-airbnb-vis": AppAirbnbVis;

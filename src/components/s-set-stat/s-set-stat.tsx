@@ -9,6 +9,14 @@ import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
   shadow: true,
 })
 export class SSetStat implements ComponentInterface {
+  private get lastAxisAutoMergedAxisSegmentName() {
+    if (typeof this.parallelSetsAutoMergedAxisSegmentName === 'string') {
+      return this.parallelSetsAutoMergedAxisSegmentName;
+    } else {
+      return this.parallelSetsAutoMergedAxisSegmentName[this.parallelSetsDimensions[this.parallelSetsDimensions.length - 1]];
+    }
+  }
+
   @Prop() data: any[] = [];
   @Prop() parallelSetsWidth: string = '60%';
   @Prop() statisticsColumnsWidth: string = '40%';
@@ -28,7 +36,7 @@ export class SSetStat implements ComponentInterface {
     | ParallelSetsDimensionValueSortingHandler
     | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
   @Prop() parallelSetsMaxAxisSegmentCount: number | { [dimensionName: string]: number };
-  @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string };
+  @Prop() parallelSetsAutoMergedAxisSegmentName: string | { [dimensionName: string]: string } = '*Other*';
   @Prop() parallelSetsAutoMergedAxisSegmentMaxRatio: number;
   @Prop() parallelSetsRibbonTension: number;
   @Prop() parallelSetsFooter: string | { [dimensionName: string]: string } = ' ';
@@ -130,6 +138,7 @@ export class SSetStat implements ComponentInterface {
           headerTextMaxLetterCount={this.headerTextMaxLetterCount}
           rowOpacity={this.ribbonAndRowOpacity}
           rowHighlightOpacity={this.ribbonAndRowHighlightOpacity}
+          autoMergedAxisSegmentName={this.lastAxisAutoMergedAxisSegmentName}
           onColumnHeaderClick={({ detail }) => this.statisticsColumnsHeaderClick.emit(detail)}
         ></s-statistics-columns>
       </Host>

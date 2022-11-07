@@ -66,7 +66,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     await this.queryData();
   }
 
-  @State() categorizationMethod: 'quantile' | 'value' = 'value';
+  @State() categorizationMethod: 'quantile' | 'uniform' = 'uniform';
   @Watch('categorizationMethod')
   async categorizationMethodWatchHandler() {
     await this.queryData();
@@ -200,11 +200,6 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             <ion-select-option value="quantile">Quantile</ion-select-option>
             <ion-select-option value="uniform">Uniform</ion-select-option>
           </ion-select>
-          <ion-input
-            type="number"
-            value={this.dimensionMaxTextLength}
-            onIonChange={({ detail }) => (this.dimensionMaxTextLength = detail.value === '' ? undefined : +detail.value)}
-          ></ion-input>
         </ion-item>
         <ion-item
           button
@@ -402,7 +397,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             categorizedValueMap.get(variable).filter(v => data.filter(d => d[`_${variable}`] === v).length > 0),
           );
         });
-      } else if (this.categorizationMethod === 'value') {
+      } else if (this.categorizationMethod === 'uniform') {
         const valueScaleDict = {};
         const valueThresholdDict = {};
         variables.forEach(variable => {
