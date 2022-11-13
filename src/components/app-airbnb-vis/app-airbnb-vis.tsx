@@ -39,7 +39,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     () => textureGenerator.circles().size(5).fill(`rgba(0,0,0,.25)`),
     () => textureGenerator.circles().size(5).fill(`rgba(0,0,0,.5)`),
     () => textureGenerator.circles().size(5).fill(`rgba(0,0,0,.75)`),
-    () => textureGenerator.circles().size(5).fill(`rgba(0,0,0,.1)`),
+    () => textureGenerator.circles().size(5).fill(`rgba(0,0,0,1)`),
     () => textureGenerator.lines().stroke('transparent'),
   ];
 
