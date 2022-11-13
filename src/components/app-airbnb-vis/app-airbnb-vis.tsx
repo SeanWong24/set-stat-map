@@ -296,6 +296,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
         <ion-item>
           <ion-label>Oder By</ion-label>
           <ion-reorder-group
+            disabled={false}
             onIonItemReorder={({ detail }) => {
               const variables = [...this.selectedStatisticsColumnsVariables];
               detail.complete(variables);
