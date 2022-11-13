@@ -147,16 +147,16 @@ export namespace Components {
         "data": any[];
         "defineTexturesHandler": (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict": { [dimensionName: string]: string };
-        "headerTextColor": string | { [dimensionName: string]: string };
-        "headerTextMaxLetterCount": number;
-        "headerTextSize": number;
-        "headerTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsAutoMergedAxisSegmentMaxRatio": number;
         "parallelSetsAutoMergedAxisSegmentName": string | { [dimensionName: string]: string };
         "parallelSetsDimensionValueSortingMethods": | ParallelSetsDimensionValueSortingHandler
     | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions": string[];
         "parallelSetsFooter": string | { [dimensionName: string]: string };
+        "parallelSetsHeaderTextColor": string | { [dimensionName: string]: string };
+        "parallelSetsHeaderTextMaxLetterCount": number;
+        "parallelSetsHeaderTextSize": number;
+        "parallelSetsHeaderTextWeight": string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount": number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension": number;
         "parallelSetsWidth": string;
@@ -165,6 +165,10 @@ export namespace Components {
         "ribbonAndRowHighlightOpacity": number;
         "ribbonAndRowOpacity": number;
         "statisticsColumnDefinitions": { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
+        "statisticsColumnsHeaderTextColor": string | { [dimensionName: string]: string };
+        "statisticsColumnsHeaderTextMaxLetterCount": number;
+        "statisticsColumnsHeaderTextSize": number;
+        "statisticsColumnsHeaderTextWeight": string | { [dimensionName: string]: string };
         "statisticsColumnsWidth": string;
     }
     interface SStatisticsColumn {
@@ -527,10 +531,6 @@ declare namespace LocalJSX {
         "data"?: any[];
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
-        "headerTextColor"?: string | { [dimensionName: string]: string };
-        "headerTextMaxLetterCount"?: number;
-        "headerTextSize"?: number;
-        "headerTextWeight"?: string | { [dimensionName: string]: string };
         "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string; value: string | number; count: number; proportion: number; dataNodes: ParallelSetsDataNode[] }>) => void;
         "onStatisticsColumnsHeaderClick"?: (event: CustomEvent<string>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
@@ -541,6 +541,10 @@ declare namespace LocalJSX {
     | { [dimensionName: string]: ParallelSetsDimensionValueSortingHandler };
         "parallelSetsDimensions"?: string[];
         "parallelSetsFooter"?: string | { [dimensionName: string]: string };
+        "parallelSetsHeaderTextColor"?: string | { [dimensionName: string]: string };
+        "parallelSetsHeaderTextMaxLetterCount"?: number;
+        "parallelSetsHeaderTextSize"?: number;
+        "parallelSetsHeaderTextWeight"?: string | { [dimensionName: string]: string };
         "parallelSetsMaxAxisSegmentCount"?: number | { [dimensionName: string]: number };
         "parallelSetsRibbonTension"?: number;
         "parallelSetsWidth"?: string;
@@ -548,6 +552,10 @@ declare namespace LocalJSX {
         "ribbonAndRowHighlightOpacity"?: number;
         "ribbonAndRowOpacity"?: number;
         "statisticsColumnDefinitions"?: { dimensionName: string; visType: StatisticsColumnsVisType; scaleMinMax?: [number, number] }[];
+        "statisticsColumnsHeaderTextColor"?: string | { [dimensionName: string]: string };
+        "statisticsColumnsHeaderTextMaxLetterCount"?: number;
+        "statisticsColumnsHeaderTextSize"?: number;
+        "statisticsColumnsHeaderTextWeight"?: string | { [dimensionName: string]: string };
         "statisticsColumnsWidth"?: string;
     }
     interface SStatisticsColumn {

@@ -464,7 +464,7 @@ export class AppWeatherVis implements ComponentInterface {
           ])}
           parallelSetsDimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
           parallelSetsFooter={this.variableUnitDict}
-          headerTextColor={this.headerTextColor}
+          statisticsColumnsHeaderTextColor={this.headerTextColor}
           onParallelSetsAxisSegmentClick={({ detail }) => this.drawHeatmapOnMapView(detail.dimensionName, detail.value, detail.dataNodes, isSecondaryVis)}
           onStatisticsColumnsHeaderClick={({ detail }) => this.statisticsColumnsHeaderClickHanlder(detail)}
         ></s-set-stat>

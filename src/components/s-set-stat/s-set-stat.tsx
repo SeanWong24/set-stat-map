@@ -20,10 +20,10 @@ export class SSetStat implements ComponentInterface {
   @Prop() data: any[] = [];
   @Prop() parallelSetsWidth: string = '60%';
   @Prop() statisticsColumnsWidth: string = '40%';
-  @Prop() headerTextSize: number = 16;
-  @Prop() headerTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
-  @Prop() headerTextWeight: string | { [dimensionName: string]: string } = 'bold';
-  @Prop() headerTextMaxLetterCount: number;
+  @Prop() statisticsColumnsHeaderTextSize: number = 16;
+  @Prop() statisticsColumnsHeaderTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() statisticsColumnsHeaderTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() statisticsColumnsHeaderTextMaxLetterCount: number;
   @Prop() ribbonAndRowOpacity: number = 0.5;
   @Prop() ribbonAndRowHighlightOpacity: number = 0.8;
   @Prop() ribbonAndRowDimOpacity: number = 0.2;
@@ -45,6 +45,10 @@ export class SSetStat implements ComponentInterface {
     { dimensionName: 'D2', visType: 'box' },
     { dimensionName: 'D3', visType: 'box' },
   ];
+  @Prop() parallelSetsHeaderTextSize: number = 16;
+  @Prop() parallelSetsHeaderTextColor: string | { [dimensionName: string]: string } = 'rgb(0,0,0)';
+  @Prop() parallelSetsHeaderTextWeight: string | { [dimensionName: string]: string } = 'bold';
+  @Prop() parallelSetsHeaderTextMaxLetterCount: number;
 
   @State() lastAxisSegmentValueAndPositionDict: {
     [value: string]: {
@@ -66,29 +70,32 @@ export class SSetStat implements ComponentInterface {
 
   @Method()
   async reorderParallelSetsLastAxisByDimension(dimensionName?: string, orderBy?: 'ascending' | 'descending') {
+    const lastDimension = this.parallelSetsDimensions?.[this.parallelSetsDimensions?.length - 1];
     const obtainMedian = dataValue => {
-      const dataRecords = this.data.filter(dataRecord => dataRecord['Date'] === dataValue);
-      const values = dataRecords.map(dataRecord => +dataRecord[dimensionName]);
+      const dataRecords = this.data.filter(dataRecord => dataRecord[lastDimension] === dataValue);
+      const values = dataRecords.map(dataRecord => +dataRecord[dimensionName]).filter(d => !Number.isNaN(d));
       const median = d3.median(values);
       return median;
     };
     let parallelSetsLastAxisSortingMethod: ParallelSetsDimensionValueSortingHandler;
     if (dimensionName && orderBy === 'ascending') {
-      parallelSetsLastAxisSortingMethod = (a, b) => d3.ascending(obtainMedian(a), obtainMedian(b));
+      parallelSetsLastAxisSortingMethod = (a, b) => {
+        return d3.ascending(obtainMedian(a), obtainMedian(b));
+      };
     } else if (dimensionName && orderBy === 'descending') {
       parallelSetsLastAxisSortingMethod = (a, b) => d3.descending(obtainMedian(a), obtainMedian(b));
-      this.headerTextColor = 'black';
     } else {
       parallelSetsLastAxisSortingMethod = undefined;
     }
 
     if (this.parallelSetsDimensionValueSortingMethods) {
-      this.parallelSetsDimensionValueSortingMethods['Date'] = parallelSetsLastAxisSortingMethod;
+      const parallelSetsDimensionValueSortingMethods = { ...this.parallelSetsDimensionValueSortingMethods };
+      parallelSetsDimensionValueSortingMethods[lastDimension] = parallelSetsLastAxisSortingMethod;
+      this.parallelSetsDimensionValueSortingMethods = parallelSetsLastAxisSortingMethod;
     } else {
-      this.parallelSetsDimensionValueSortingMethods = {
-        '': (a, b) => +a.toString().split(' ~ ')[0] - +b.toString().split(' ~ ')[0],
-        'Date': parallelSetsLastAxisSortingMethod,
-      };
+      const parallelSetsDimensionValueSortingMethods = { '': () => null };
+      parallelSetsDimensionValueSortingMethods[lastDimension] = parallelSetsLastAxisSortingMethod;
+      this.parallelSetsDimensionValueSortingMethods = parallelSetsDimensionValueSortingMethods;
     }
 
     return this.parallelSetsDimensionValueSortingMethods;
@@ -105,7 +112,6 @@ export class SSetStat implements ComponentInterface {
           style={{ width: this.parallelSetsWidth }}
           data={this.data}
           dimensions={this.parallelSetsDimensions}
-          axisHeaderTextSize={this.headerTextSize}
           colorScheme={this.colorScheme}
           maxAxisSegmentCount={this.parallelSetsMaxAxisSegmentCount}
           autoMergedAxisSegmentName={this.parallelSetsAutoMergedAxisSegmentName}
@@ -116,9 +122,10 @@ export class SSetStat implements ComponentInterface {
           ribbonHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           ribbonDimOpacity={this.ribbonAndRowDimOpacity}
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
-          axisHeaderTextColor={this.headerTextColor}
-          axisHeaderTextWeight={this.headerTextWeight}
-          axisHeaderTextMaxLetterCount={this.headerTextMaxLetterCount}
+          axisFooterTextSize={this.parallelSetsHeaderTextSize}
+          axisHeaderTextColor={this.parallelSetsHeaderTextColor}
+          axisHeaderTextWeight={this.parallelSetsHeaderTextWeight}
+          axisHeaderTextMaxLetterCount={this.parallelSetsHeaderTextMaxLetterCount}
           axisFooter={this.parallelSetsFooter}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
           dimensionValueSortingMethods={this.parallelSetsDimensionValueSortingMethods}
@@ -132,10 +139,10 @@ export class SSetStat implements ComponentInterface {
           rowValueAndPositionDict={this.lastAxisSegmentValueAndPositionDict}
           rowValueAndBackgroundDict={this.lastAxisSegmentValueAndBackgroundDict}
           dimensionDisplyedNameDict={this.dimensionDisplyedNameDict}
-          headerTextSize={this.headerTextSize}
-          headerTextColor={this.headerTextColor}
-          headerTextWeight={this.headerTextWeight}
-          headerTextMaxLetterCount={this.headerTextMaxLetterCount}
+          headerTextSize={this.statisticsColumnsHeaderTextSize}
+          headerTextColor={this.statisticsColumnsHeaderTextColor}
+          headerTextWeight={this.statisticsColumnsHeaderTextWeight}
+          headerTextMaxLetterCount={this.statisticsColumnsHeaderTextMaxLetterCount}
           rowOpacity={this.ribbonAndRowOpacity}
           rowHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           autoMergedAxisSegmentName={this.lastAxisAutoMergedAxisSegmentName}

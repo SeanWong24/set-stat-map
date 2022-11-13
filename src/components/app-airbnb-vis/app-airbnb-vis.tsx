@@ -16,6 +16,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
   private DB: SqlJs.Database;
   private loadingElement: HTMLIonLoadingElement;
   private setStatOnLoadDetail: ParallelSetsOnLoadDetail;
+  private parallelSetsLastAxisSortBy: { dimensionName?: string; orderBy?: 'ascending' | 'descending' };
 
   private readonly categoricalVariableOptions: string[] = [
     'room_id',
@@ -44,6 +45,11 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
 
   @State() dateOptions: string[] = [];
   @State() data: any[];
+  @State() statisticsColumnsHeaderTextColor:
+    | string
+    | {
+        [dimensionName: string]: string;
+      };
 
   @State() selectedParallelSetsVariables: string[] = [];
 
@@ -169,7 +175,31 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             // parallelSetsDimensionValueSortingMethods={{
             //   '': (a: string, b: string) => a.localeCompare(b),
             // }}
-            headerTextMaxLetterCount={this.dimensionMaxTextLength}
+            statisticsColumnsHeaderTextColor={this.statisticsColumnsHeaderTextColor}
+            onStatisticsColumnsHeaderClick={async ({ detail: dimensionName, currentTarget }) => {
+              if (this.parallelSetsLastAxisSortBy?.dimensionName === dimensionName && this.parallelSetsLastAxisSortBy?.orderBy === 'ascending') {
+                this.parallelSetsLastAxisSortBy = { dimensionName, orderBy: 'descending' };
+                const headerTextColor = {};
+                headerTextColor[''] = 'black';
+                headerTextColor[dimensionName] = 'blue';
+                this.statisticsColumnsHeaderTextColor = headerTextColor;
+              } else if (this.parallelSetsLastAxisSortBy?.dimensionName === dimensionName && this.parallelSetsLastAxisSortBy?.orderBy === 'descending') {
+                this.parallelSetsLastAxisSortBy = undefined;
+                this.statisticsColumnsHeaderTextColor = 'black';
+              } else {
+                this.parallelSetsLastAxisSortBy = { dimensionName, orderBy: 'ascending' };
+                const headerTextColor = {};
+                headerTextColor[''] = 'black';
+                headerTextColor[dimensionName] = 'red';
+                this.statisticsColumnsHeaderTextColor = headerTextColor;
+              }
+              await (currentTarget as HTMLSSetStatElement)?.reorderParallelSetsLastAxisByDimension(
+                this.parallelSetsLastAxisSortBy?.dimensionName,
+                this.parallelSetsLastAxisSortBy?.orderBy,
+              );
+            }}
+            parallelSetsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
+            statisticsColumnsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
           ></s-set-stat>
           <app-map-view
             centerPoint={[51.03229, -114.068613]}

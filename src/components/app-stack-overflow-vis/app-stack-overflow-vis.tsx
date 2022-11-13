@@ -12,24 +12,23 @@ import { StatisticsColumnsVisType } from '../s-statistics-columns/utils';
   scoped: true,
 })
 export class AppStackOverflowVis implements ComponentInterface, AppVisComponent {
-
   private SQL: SqlJs.SqlJsStatic;
   private DB: SqlJs.Database;
   private loadingElement: HTMLIonLoadingElement;
 
-  private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = (textureGenerator) => [
+  private readonly defineTexturesHandler: (textureGenerator: any) => (() => any)[] = textureGenerator => [
     () => textureGenerator.lines().orientation('0/8').size(10),
     () => textureGenerator.lines().orientation('2/8').size(10),
     () => textureGenerator.lines().orientation('6/8').size(10),
     () => textureGenerator.lines().orientation('8/8').size(10),
-    () => textureGenerator.lines().stroke('transparent')
+    () => textureGenerator.lines().stroke('transparent'),
   ];
 
   @State() data: any[];
-  @State() datasetInfo: { techs: string[], locations: string[], years: string[] };
+  @State() datasetInfo: { techs: string[]; locations: string[]; years: string[] };
   @State() statisticsColumnDefinitions: {
-    dimensionName: string,
-    visType: StatisticsColumnsVisType
+    dimensionName: string;
+    visType: StatisticsColumnsVisType;
   }[] = [];
   @State() orderedTechs: string[];
   @State() dimensionMaxTextLength: number = 10;
@@ -53,7 +52,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
     this.orderedTechs = [...selectedTechs];
     this.statisticsColumnDefinitions = selectedTechs.map(selectedTech => ({
       dimensionName: selectedTech,
-      visType: 'box'
+      visType: 'box',
     }));
   }
 
@@ -95,24 +94,25 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           <s-set-stat
             data={this.data}
             parallelSetsMaxAxisSegmentCount={{
-              'Location': 8,
-              'Tech': 5
+              Location: 8,
+              Tech: 5,
             }}
             defineTexturesHandler={this.defineTexturesHandler}
             parallelSetsDimensions={['Location', 'Tech', 'Year']}
             colorScheme={['#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff', '#f7ede2', '#f5cac3', '#84a59d']}
-            parallelSetsAutoMergedAxisSegmentMaxRatio={.1}
-            parallelSetsRibbonTension={.5}
+            parallelSetsAutoMergedAxisSegmentMaxRatio={0.1}
+            parallelSetsRibbonTension={0.5}
             statisticsColumnDefinitions={this.statisticsColumnDefinitions}
             parallelSetsDimensionValueSortingMethods={{
-              'Tech': (a, b) => this.orderedTechs ? this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()) : 0,
-              'Year': (a, b) => +a - +b,
-              'Location': (a, b) => this.data.filter(d => d['Location'] === b).length - this.data.filter(d => d['Location'] === a).length
+              Tech: (a, b) => (this.orderedTechs ? this.orderedTechs.indexOf(a.toString()) - this.orderedTechs.indexOf(b.toString()) : 0),
+              Year: (a, b) => +a - +b,
+              Location: (a, b) => this.data.filter(d => d['Location'] === b).length - this.data.filter(d => d['Location'] === a).length,
             }}
-            headerTextMaxLetterCount={this.dimensionMaxTextLength}
+            parallelSetsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
+            statisticsColumnsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
           ></s-set-stat>
           <app-heatmap-view
-            header='Year/Tech'
+            header="Year/Tech"
             data={heatmapData?.data}
             xLabels={heatmapData?.xLabels}
             yLabels={heatmapData?.yLabels}
@@ -131,15 +131,12 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
           <ion-input
             type="number"
             value={this.dimensionMaxTextLength}
-            onIonChange={({ detail }) => this.dimensionMaxTextLength = ((detail.value === '') ? undefined : +detail.value)}
+            onIonChange={({ detail }) => (this.dimensionMaxTextLength = detail.value === '' ? undefined : +detail.value)}
           ></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>Avtive Years Segments</ion-label>
-          <ion-toggle
-            checked={this.isActiveYearsSegmentsEnabled}
-            onIonChange={() => this.isActiveYearsSegmentsEnabled = !this.isActiveYearsSegmentsEnabled}
-          ></ion-toggle>
+          <ion-toggle checked={this.isActiveYearsSegmentsEnabled} onIonChange={() => (this.isActiveYearsSegmentsEnabled = !this.isActiveYearsSegmentsEnabled)}></ion-toggle>
         </ion-item>
         <ion-item
           button
@@ -154,8 +151,8 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
                   this.selectedTechs = value;
                   await modal.dismiss();
                 },
-                cancelHandler: async () => await modal.dismiss()
-              }
+                cancelHandler: async () => await modal.dismiss(),
+              },
             });
             await modal.present();
           }}
@@ -176,8 +173,8 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
                   this.selectedLocations = value;
                   await modal.dismiss();
                 },
-                cancelHandler: async () => await modal.dismiss()
-              }
+                cancelHandler: async () => await modal.dismiss(),
+              },
             });
             await modal.present();
           }}
@@ -198,8 +195,8 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
                   this.selectedYears = value;
                   await modal.dismiss();
                 },
-                cancelHandler: async () => await modal.dismiss()
-              }
+                cancelHandler: async () => await modal.dismiss(),
+              },
             });
             await modal.present();
           }}
@@ -209,15 +206,10 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
         </ion-item>
         <ion-item disabled={!this.datasetInfo?.techs}>
           <ion-label>Stat Columns Option</ion-label>
-          <ion-select
-            value={this.statisticsColumnsOption}
-            onIonChange={({ detail }) => this.statisticsColumnsOption = detail.value}
-          >
-            {
-              ['active-years', 'tech-count', 'tech-count-all'].map(option => (
-                <ion-select-option value={option}>{option}</ion-select-option>
-              ))
-            }
+          <ion-select value={this.statisticsColumnsOption} onIonChange={({ detail }) => (this.statisticsColumnsOption = detail.value)}>
+            {['active-years', 'tech-count', 'tech-count-all'].map(option => (
+              <ion-select-option value={option}>{option}</ion-select-option>
+            ))}
           </ion-select>
         </ion-item>
         <ion-item>
@@ -231,21 +223,21 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
                 this.orderedTechs = orderedTechs;
               }}
             >
-              {
-                this.orderedTechs?.map(tech => (
-                  <ion-item>
-                    <ion-label>{tech}</ion-label>
-                    <ion-reorder slot="start"></ion-reorder>
-                  </ion-item>
-                ))
-              }
+              {this.orderedTechs?.map(tech => (
+                <ion-item>
+                  <ion-label>{tech}</ion-label>
+                  <ion-reorder slot="start"></ion-reorder>
+                </ion-item>
+              ))}
             </ion-reorder-group>
           </ion-content>
         </ion-item>
         <ion-button
           expand="block"
-          onClick={() => this.orderedTechs = [...this.orderedTechs.sort((a, b) => this.data.filter(d => d['Tech'] === b).length - this.data.filter(d => d['Tech'] === a).length)]}
-        >Sort Tech by Popularity</ion-button>
+          onClick={() => (this.orderedTechs = [...this.orderedTechs.sort((a, b) => this.data.filter(d => d['Tech'] === b).length - this.data.filter(d => d['Tech'] === a).length)])}
+        >
+          Sort Tech by Popularity
+        </ion-button>
       </ion-list>
     );
   }
@@ -263,14 +255,14 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       } else {
         this.alertInvalidDatabase();
       }
-    } catch { }
+    } catch {}
   }
 
   private async alertInvalidDatabase() {
     const alert = await alertController.create({
       header: 'Invalid Database File',
       message: 'The database file opened seems to be invalid, please check the file and try again.',
-      buttons: ['OK']
+      buttons: ['OK'],
     });
     await alert.present();
   }
@@ -278,21 +270,21 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private async obtainDatasetInfo() {
     if (this.DB) {
       const loading = await loadingController.create({
-        message: `Obtaining dataset info...`
+        message: `Obtaining dataset info...`,
       });
       await loading.present();
 
       let sqlQueryString = 'select distinct Tech from stackoverflow';
       let result = this.DB.exec(sqlQueryString)?.[0];
-      const techs = result.values.map((value => value.toString()));
+      const techs = result.values.map(value => value.toString());
 
       sqlQueryString = 'select distinct Location from stackoverflow';
       result = this.DB.exec(sqlQueryString)?.[0];
-      const locations = result.values.map((value => value.toString()));
+      const locations = result.values.map(value => value.toString());
 
       sqlQueryString = 'select distinct Year from stackoverflow order by Year';
       result = this.DB.exec(sqlQueryString)?.[0];
-      const years = result.values.map((value => value.toString()));
+      const years = result.values.map(value => value.toString());
 
       this.selectedLocations = locations;
       this.selectedYears = years;
@@ -307,20 +299,36 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   private async queryData() {
     if (this.DB && this.datasetInfo && this.selectedTechs.length > 0) {
       const loading = await loadingController.create({
-        message: `Qeurying data...`
+        message: `Qeurying data...`,
       });
       await loading.present();
 
       let sqlQueryString = '';
       switch (this.statisticsColumnsOption) {
         case 'active-years':
-          sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
+          sqlQueryString = `select stackoverflow.*, helper.ActiveYears from stackoverflow, (select (max(Year) - min(Year) + 1) as ActiveYears, UserId from stackoverflow group by UserId) as helper where stackoverflow.userId = helper.userId and stackoverflow.Tech in (${this.selectedTechs
+            .map(value => `\'${value}\'`)
+            .join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations
+            .map(value => `\'${value}\'`)
+            .join(', ')})`;
           break;
         case 'tech-count':
-          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow where Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
+          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow where Tech in (${this.selectedTechs
+            .map(value => `\'${value}\'`)
+            .join(
+              ', ',
+            )}) group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs
+            .map(value => `\'${value}\'`)
+            .join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations
+            .map(value => `\'${value}\'`)
+            .join(', ')})`;
           break;
         case 'tech-count-all':
-          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations.map(value => `\'${value}\'`).join(', ')})`;
+          sqlQueryString = `select stackoverflow.*, helper.TechCount from stackoverflow, (select count(distinct Tech) as TechCount, UserId, Year from stackoverflow group by UserId, Year) as helper where stackoverflow.userId = helper.userId and stackoverflow.Year = helper.Year and stackoverflow.Tech in (${this.selectedTechs
+            .map(value => `\'${value}\'`)
+            .join(', ')}) and stackoverflow.Year in (${this.selectedYears.map(value => `\'${value}\'`).join(', ')}) and stackoverflow.Location in (${this.selectedLocations
+            .map(value => `\'${value}\'`)
+            .join(', ')})`;
           break;
       }
       const result = this.DB.exec(sqlQueryString)?.[0];
@@ -328,7 +336,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       const data = result?.values.map(value => {
         const datum = {};
         for (let i = 0; i < value.length; i++) {
-          datum[result.columns[i]] = (['Tech', 'UserId', 'Location'].indexOf(result.columns[i]) >= 0) ? value[i] : (value[i] ? +value[i] : 0);
+          datum[result.columns[i]] = ['Tech', 'UserId', 'Location'].indexOf(result.columns[i]) >= 0 ? value[i] : value[i] ? +value[i] : 0;
         }
         return datum;
       });
@@ -356,7 +364,7 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
       const allActiveYearsValues = new Set(data.map(d => +d['ActiveYears']));
       const minValue = d3.min(allActiveYearsValues);
       const maxValue = d3.max(allActiveYearsValues);
-      const thresholds = [minValue, minValue + (maxValue - minValue) * .25, minValue + (maxValue - minValue) * .5, minValue + (maxValue - minValue) * .75, maxValue];
+      const thresholds = [minValue, minValue + (maxValue - minValue) * 0.25, minValue + (maxValue - minValue) * 0.5, minValue + (maxValue - minValue) * 0.75, maxValue];
       const scale = d3.scaleThreshold().domain(thresholds).range([-1, 0, 1, 2, 3]);
       for (const datum of data) {
         const activeYearsIndex = scale(datum['ActiveYears']);
@@ -369,7 +377,10 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
 
   private generateHeatmapData() {
     if (this.data && this.orderedTechs) {
-      const xLabels = this.data.filter((d, i) => this.data.findIndex(dd => dd.Year == d.Year) === i).map(d => d.Year).sort(d3.ascending);
+      const xLabels = this.data
+        .filter((d, i) => this.data.findIndex(dd => dd.Year == d.Year) === i)
+        .map(d => d.Year)
+        .sort(d3.ascending);
       const yLabels = this.orderedTechs;
       const data = [];
       for (const yLabel of yLabels) {
@@ -386,5 +397,4 @@ export class AppStackOverflowVis implements ComponentInterface, AppVisComponent 
   // private resetVisStates() {
 
   // }
-
 }
