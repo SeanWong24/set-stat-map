@@ -66,7 +66,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     await this.queryData();
   }
 
-  @State() categorizationMethod: 'quantile' | 'uniform' = 'uniform';
+  @State() categorizationMethod: 'quantile' | 'value' = 'value';
   @Watch('categorizationMethod')
   async categorizationMethodWatchHandler() {
     await this.queryData();
@@ -200,6 +200,11 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             <ion-select-option value="quantile">Quantile</ion-select-option>
             <ion-select-option value="uniform">Uniform</ion-select-option>
           </ion-select>
+          <ion-input
+            type="number"
+            value={this.dimensionMaxTextLength}
+            onIonChange={({ detail }) => (this.dimensionMaxTextLength = detail.value === '' ? undefined : +detail.value)}
+          ></ion-input>
         </ion-item>
         <ion-item
           button
@@ -326,9 +331,9 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
       await loading.present();
 
       const selectedVariables = this.selectedParallelSetsVariables
-        .filter(d => d[0] !== '_')
         .concat(this.selectedStatisticsColumnsVariables)
-        .filter((d, i, a) => a.indexOf(d) === i);
+        .filter((d, i, a) => a.indexOf(d) === i)
+        .map(d => (d.startsWith('_') ? d.slice(1) : d));
       selectedVariables.push('latitude');
       selectedVariables.push('longitude');
 
@@ -398,7 +403,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             categorizedValueMap.get(variable).filter(v => data.filter(d => d[`_${variable}`] === v).length > 0),
           );
         });
-      } else if (this.categorizationMethod === 'uniform') {
+      } else if (this.categorizationMethod === 'value') {
         const valueScaleDict = {};
         const valueThresholdDict = {};
         variables.forEach(variable => {
