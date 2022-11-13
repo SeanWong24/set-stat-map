@@ -4,7 +4,7 @@ import initSqlJs from 'sql.js';
 import { SqlJs } from 'sql.js/module';
 import * as d3 from 'd3';
 import { AppVisComponent } from '../../global/utilts';
-import { ParallelSetsOnLoadDetail } from '../s-parallel-sets/utils';
+import { ParallelSetsDataNode, ParallelSetsOnLoadDetail } from '../s-parallel-sets/utils';
 
 @Component({
   tag: 'app-airbnb-vis',
@@ -50,6 +50,8 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     | {
         [dimensionName: string]: string;
       };
+
+  @State() mapViewHeader: string;
 
   @State() selectedParallelSetsVariables: string[] = [];
 
@@ -129,37 +131,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
           <s-set-stat
             onVisLoad={({ detail }) => {
               this.setStatOnLoadDetail = detail;
-              setTimeout(() => {
-                this.mapViewHeatmapData = {
-                  dataPoints:
-                    this.data?.map(d => {
-                      let primaryValue = d[this.selectedParallelSetsVariables?.[0]];
-                      if (!this.setStatOnLoadDetail.valuesDict[this.selectedParallelSetsVariables?.[0]].includes(primaryValue)) {
-                        primaryValue = '*Other*';
-                      }
-                      let secondaryValue = d[this.selectedParallelSetsVariables?.[1]];
-                      if (!this.setStatOnLoadDetail.valuesDict[this.selectedParallelSetsVariables?.[1]].includes(secondaryValue)) {
-                        secondaryValue = '*Other*';
-                      }
-                      return {
-                        latitude: +d.latitude,
-                        longitude: +d.longitude,
-                        primaryValue,
-                        color: this.setStatOnLoadDetail?.colorDict?.[primaryValue],
-                        secondaryValue,
-                        textureGenerator: this.setStatOnLoadDetail?.textureGeneratorDict?.[secondaryValue],
-                        radius: 5,
-                      };
-                    }) || [],
-                  colorLegendTitle: this.selectedParallelSetsVariables?.[0],
-                  colorLegendDefinitions: Object.entries(this.setStatOnLoadDetail?.colorDict || {}).map(([value, color]) => ({ value, color })),
-                  textureLegendTitle: this.selectedParallelSetsVariables?.[1],
-                  textureLegendDefinitions: Object.entries(this.setStatOnLoadDetail?.textureGeneratorDict || {}).map(([value, textureGenerator]) => ({ value, textureGenerator })),
-                  primaryValueTitle: this.selectedParallelSetsVariables?.[0],
-                  secondaryValueHeader: this.selectedParallelSetsVariables?.[1],
-                  isTooltipEnabled: true,
-                };
-              });
+              setTimeout(() => this.updateMapViewHeatmapData());
             }}
             data={this.data}
             parallelSetsMaxAxisSegmentCount={5}
@@ -198,6 +170,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
                 this.parallelSetsLastAxisSortBy?.orderBy,
               );
             }}
+            onParallelSetsAxisSegmentClick={({ detail }) => this.updateMapViewHeatmapData(detail)}
             parallelSetsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
             statisticsColumnsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
           ></s-set-stat>
@@ -207,6 +180,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             zoom={11}
             onMouseDraw={({ detail }) => (this.mapRange = detail)}
             heatmapData={this.mapViewHeatmapData}
+            header={this.mapViewHeader}
           ></app-map-view>
         </ion-card>
       </Host>
@@ -325,6 +299,51 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
         </ion-item>
       </ion-list>
     );
+  }
+
+  private updateMapViewHeatmapData(selectedParallelSetsSegment?: {
+    dimensionName: string;
+    value: string | number;
+    count: number;
+    proportion: number;
+    dataNodes: ParallelSetsDataNode[];
+  }) {
+    let data = this.data;
+    if (selectedParallelSetsSegment) {
+      data = data?.filter(d => selectedParallelSetsSegment.dataNodes?.find(node => node.dataRecords?.find(record => record === d)));
+      this.mapViewHeader = `${selectedParallelSetsSegment.dimensionName} - ${selectedParallelSetsSegment.value}`;
+    } else {
+      this.mapViewHeader = '';
+    }
+    this.mapViewHeatmapData = {
+      dataPoints:
+        data?.map(d => {
+          let primaryValue = d[this.selectedParallelSetsVariables?.[0]];
+          if (!this.setStatOnLoadDetail.valuesDict[this.selectedParallelSetsVariables?.[0]].includes(primaryValue)) {
+            primaryValue = '*Other*';
+          }
+          let secondaryValue = d[this.selectedParallelSetsVariables?.[1]];
+          if (!this.setStatOnLoadDetail.valuesDict[this.selectedParallelSetsVariables?.[1]].includes(secondaryValue)) {
+            secondaryValue = '*Other*';
+          }
+          return {
+            latitude: +d.latitude,
+            longitude: +d.longitude,
+            primaryValue,
+            color: this.setStatOnLoadDetail?.colorDict?.[primaryValue],
+            secondaryValue,
+            textureGenerator: this.setStatOnLoadDetail?.textureGeneratorDict?.[secondaryValue],
+            radius: 5,
+          };
+        }) || [],
+      colorLegendTitle: this.selectedParallelSetsVariables?.[0],
+      colorLegendDefinitions: Object.entries(this.setStatOnLoadDetail?.colorDict || {}).map(([value, color]) => ({ value, color })),
+      textureLegendTitle: this.selectedParallelSetsVariables?.[1],
+      textureLegendDefinitions: Object.entries(this.setStatOnLoadDetail?.textureGeneratorDict || {}).map(([value, textureGenerator]) => ({ value, textureGenerator })),
+      primaryValueTitle: this.selectedParallelSetsVariables?.[0],
+      secondaryValueHeader: this.selectedParallelSetsVariables?.[1],
+      isTooltipEnabled: true,
+    };
   }
 
   private async loadDB(file: File) {
