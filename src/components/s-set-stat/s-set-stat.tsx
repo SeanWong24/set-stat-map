@@ -66,6 +66,7 @@ export class SSetStat implements ComponentInterface {
   @Event() visWillRender: EventEmitter;
   @Event() visLoad: EventEmitter<ParallelSetsOnLoadDetail>;
   @Event() parallelSetsAxisSegmentClick: EventEmitter<{ dimensionName: string; value: string | number; count: number; proportion: number; dataNodes: ParallelSetsDataNode[] }>;
+  @Event() parallelSetsRibbonClick: EventEmitter<{ dimensions: string[]; valueHistory: (string | number)[]; count: number; proportion: number; dataNode: ParallelSetsDataNode }>;
   @Event() statisticsColumnsHeaderClick: EventEmitter<string>;
 
   @Method()
@@ -121,6 +122,7 @@ export class SSetStat implements ComponentInterface {
           ribbonOpacity={this.ribbonAndRowOpacity}
           ribbonHighlightOpacity={this.ribbonAndRowHighlightOpacity}
           ribbonDimOpacity={this.ribbonAndRowDimOpacity}
+          onRibbonClick={({ detail }) => this.parallelSetsRibbonClick.emit(detail)}
           onVisLoad={({ detail }) => this.parallelSetsLoadHandler(detail)}
           axisFooterTextSize={this.parallelSetsHeaderTextSize}
           axisHeaderTextColor={this.parallelSetsHeaderTextColor}

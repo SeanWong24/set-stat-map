@@ -171,6 +171,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
               );
             }}
             onParallelSetsAxisSegmentClick={({ detail }) => this.updateMapViewHeatmapData(detail)}
+            onParallelSetsRibbonClick={({ detail }) => this.updateMapViewHeatmapDataForRibbonSelection(detail)}
             parallelSetsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
             statisticsColumnsHeaderTextMaxLetterCount={this.dimensionMaxTextLength}
           ></s-set-stat>
@@ -301,6 +302,21 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     );
   }
 
+  private updateMapViewHeatmapDataForRibbonSelection(selectedParallelSetsRibbon: {
+    dimensions: string[];
+    valueHistory: (string | number)[];
+    count: number;
+    proportion: number;
+    dataNode: ParallelSetsDataNode;
+  }) {
+    debugger
+    this.updateMapViewHeatmapData({
+      ...selectedParallelSetsRibbon,
+      dimensionName: '',
+      value: selectedParallelSetsRibbon?.valueHistory?.toString(),
+      dataNodes: [selectedParallelSetsRibbon?.dataNode],
+    });
+  }
   private updateMapViewHeatmapData(selectedParallelSetsSegment?: {
     dimensionName: string;
     value: string | number;

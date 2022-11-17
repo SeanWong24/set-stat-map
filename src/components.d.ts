@@ -532,6 +532,7 @@ declare namespace LocalJSX {
         "defineTexturesHandler"?: (textureGenerator: any) => (() => any)[];
         "dimensionDisplyedNameDict"?: { [dimensionName: string]: string };
         "onParallelSetsAxisSegmentClick"?: (event: CustomEvent<{ dimensionName: string; value: string | number; count: number; proportion: number; dataNodes: ParallelSetsDataNode[] }>) => void;
+        "onParallelSetsRibbonClick"?: (event: CustomEvent<{ dimensions: string[]; valueHistory: (string | number)[]; count: number; proportion: number; dataNode: ParallelSetsDataNode }>) => void;
         "onStatisticsColumnsHeaderClick"?: (event: CustomEvent<string>) => void;
         "onVisLoad"?: (event: CustomEvent<ParallelSetsOnLoadDetail>) => void;
         "onVisWillRender"?: (event: CustomEvent<any>) => void;
