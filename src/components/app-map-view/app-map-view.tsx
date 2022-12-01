@@ -8,12 +8,6 @@ import leaflet from 'leaflet';
   // shadow: true,
 })
 export class AppMapView implements ComponentInterface {
-  private readonly mapTileUrlTemplate = 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
-  // TODO finish tile attribution string
-  // private readonly mapTileAttribution =
-  //   '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' +
-  //   ', Tiles courtesy of <a href="https://geo6.be/">GEO-6</a>';
-
   private map: leaflet.Map;
   private heatmapLayerGroup: leaflet.LayerGroup;
   private legendControl: leaflet.Control;
@@ -26,8 +20,9 @@ export class AppMapView implements ComponentInterface {
   private mouseDrawRectLayer: leaflet.Layer;
   private datasetRangeIndicatorLayer: leaflet.Layer;
 
-  @Element() hostElement: HTMLElement;
+  @Element() hostElement: HTMLAppMapViewElement;
 
+  @Prop() mapTileUrlTemplate = 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
   @Prop() centerPoint: [number, number] = [0, 0];
   @Prop() zoom: number = 1;
   @Prop() datasetRange: {

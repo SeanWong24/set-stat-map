@@ -182,6 +182,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
             onMouseDraw={({ detail }) => (this.mapRange = detail)}
             heatmapData={this.mapViewHeatmapData}
             header={this.mapViewHeader}
+            mapTileUrlTemplate="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
           ></app-map-view>
         </ion-card>
       </Host>
@@ -309,7 +310,7 @@ export class AppAirbnbVis implements ComponentInterface, AppVisComponent {
     proportion: number;
     dataNode: ParallelSetsDataNode;
   }) {
-    debugger
+    debugger;
     this.updateMapViewHeatmapData({
       ...selectedParallelSetsRibbon,
       dimensionName: '',

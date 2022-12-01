@@ -65,6 +65,7 @@ export namespace Components {
   };
         "heatmapHighlightOpacity": number;
         "heatmapOpacity": number;
+        "mapTileUrlTemplate": string;
         "zoom": number;
     }
     interface AppMultipleSelect {
@@ -427,6 +428,7 @@ declare namespace LocalJSX {
   };
         "heatmapHighlightOpacity"?: number;
         "heatmapOpacity"?: number;
+        "mapTileUrlTemplate"?: string;
         "onMouseDraw"?: (event: CustomEvent<{
     minLatitude: number;
     maxLatitude: number;
